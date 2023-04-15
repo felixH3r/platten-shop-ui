@@ -1,0 +1,1 @@
+import{l as t,q as o,m as a,r as s,s as n,o as _,v as c}from"./entry.cf985003.js";const r={class:"layout-wrapper"},d=t({__name:"default",setup(p){return o(()=>n().path==="/"),(u,m)=>{const e=c;return _(),a("div",r,[s(e)])}}});export{d as default};

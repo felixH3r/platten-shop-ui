@@ -1,0 +1,12 @@
+@import "global-variables";
+
+html {
+  font-family: $font-family-body;
+  font-size: $font-size-body-regular;
+}
+
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
