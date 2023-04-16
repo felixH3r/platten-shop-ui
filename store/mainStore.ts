@@ -1,12 +1,22 @@
-import { defineStore } from 'pinia'
+import {defineStore} from 'pinia'
+
 export const useMainStore = defineStore('main', {
     state: () => ({
-        counter: 0,
+        panelConfigurator: {
+            thickness: 0,
+            length: 0,
+            width: 0,
+        },
     }),
     actions: {
-        increment() {
-            // `this` is the store instance
-            this.counter++
+        setThickness(thickness: number) {
+            this.panelConfigurator.thickness = thickness;
         },
+        setLength(length: number) {
+            this.panelConfigurator.length = length;
+        },
+        setWidth(width: number) {
+            this.panelConfigurator.width = width;
+        }
     },
 })

@@ -9,10 +9,12 @@
 </template>
 
 <script lang="ts" setup>
+  import {TC} from "~/components/utils/text-content";
+
   const props = defineProps({
     showToConfigurator: Boolean,
   })
-  const routingTo = computed((): string => props.showToConfigurator ? 'Konfigurator' : 'Home');
+  const routingTo = computed((): string => props.showToConfigurator ? TC.mainHeader.configurator : TC.mainHeader.home);
 </script>
 
 <style scoped lang="scss">
@@ -21,9 +23,11 @@
     align-items: center;
     justify-content: flex-end;
     position: fixed;
-    width: 90%;
+    top: 0;
+    right: 0;
+    width: 100%;
     height: 3rem;
-    background-color: #38470B;
+    padding: 0 3rem;
   }
 
   .header-content {

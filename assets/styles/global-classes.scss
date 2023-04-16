@@ -1,8 +1,46 @@
 @import "global-variables";
 
-html {
+h1 {
+  font-family: $font-family-headers;
+  font-size: $font-size-h1;
+  font-weight: $font-bold;
+}
+
+h2 {
+  font-family: $font-family-headers;
+  font-size: $font-size-h2;
+  font-weight: $font-bold;
+}
+
+h3 {
+  font-family: $font-family-headers;
+  font-size: $font-size-h3;
+  font-weight: $font-regular;
+}
+
+h4 {
+  font-family: $font-family-headers;
+  font-size: $font-size-h4;
+  font-weight: $font-regular;
+}
+
+h5 {
+  font-family: $font-family-headers;
+  font-size: $font-size-h5;
+  font-weight: $font-regular;
+}
+
+h5 {
+  font-family: $font-family-headers;
+  font-size: $font-size-h6;
+  font-weight: $font-regular;
+}
+
+body {
+  margin: 0;
   font-family: $font-family-body;
   font-size: $font-size-body-regular;
+  font-weight: $font-thinner;
 }
 
 .flex-center {

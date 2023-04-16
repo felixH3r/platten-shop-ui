@@ -11,15 +11,25 @@ $font-family-headers: Montserrat;
 $font-family-body: Montserrat;
 
 // font-size
-$font-size-h1: 96px;
-$font-size-h2: 60px;
-$font-size-h3: 48px;
-$font-size-h4: 34px;
-$font-size-h5: 24px;
+$font-size-h1: 48px;
+$font-size-h2: 34px;
+$font-size-h3: 24px;
+$font-size-h4: 20px;
+$font-size-h5: 20px;
 $font-size-h6: 20px;
 
 $font-size-body-regular: 16px;
 $font-size-body-small: 14px;
 
 $button: 14px;
+
+// font-weight
+$font-thin: 100;
+$font-thinner: 300;
+$font-regular: 400;
+$font-thicker: 500;
+$font-bold: 700;
+
+// border
+$le_ri_fully_rounded: 999px;
 

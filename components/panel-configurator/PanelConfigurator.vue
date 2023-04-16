@@ -1,5 +1,7 @@
 <template>
-  <Sidebar/>
+  <div class="panel-configurator-wrapper">
+    <Sidebar/>
+  </div>
 </template>
 
 <script lang="ts" setup>
@@ -8,5 +10,7 @@
 </script>
 
 <style scoped lang="scss">
-
+  .panel-configurator-wrapper {
+    overflow: hidden;
+  }
 </style>
