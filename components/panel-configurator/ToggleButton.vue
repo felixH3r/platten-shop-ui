@@ -6,7 +6,7 @@
 </template>
 
 <script lang="ts" setup>
-  import {TC} from "../utils/text-content";
+  import {TC} from "../../utils/text-content";
   import {useMainStore} from "~/store/mainStore";
 
   const mainStore = useMainStore();
@@ -25,7 +25,7 @@
   .toggle-button {
     background-color: white;
     border-radius: $le_ri_fully_rounded;
-    width: 5.5rem;
+    width: 100%;
     height: 2.5rem;
     gap: 0.5rem;
     cursor: pointer;

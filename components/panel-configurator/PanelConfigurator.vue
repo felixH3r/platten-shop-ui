@@ -1,6 +1,7 @@
 <template>
   <div class="panel-configurator-wrapper">
     <Sidebar/>
+    <PanelContentWrapper/>
   </div>
 </template>
 
@@ -11,6 +12,7 @@
 
 <style scoped lang="scss">
   .panel-configurator-wrapper {
+    display: flex;
     overflow: hidden;
   }
 </style>

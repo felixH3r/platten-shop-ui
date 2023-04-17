@@ -9,7 +9,7 @@
 </template>
 
 <script lang="ts" setup>
-  import {TC} from "~/components/utils/text-content";
+  import {TC} from "~/utils/text-content";
 
   const props = defineProps({
     showToConfigurator: Boolean,
