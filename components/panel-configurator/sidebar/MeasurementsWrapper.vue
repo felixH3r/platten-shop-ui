@@ -1,13 +1,41 @@
 <template>
   <h4>{{ header }}</h4>
-  <input :placeholder="props.inputPlaceholder" class="measurement-input">
+  <input :placeholder="props.inputPlaceholder" class="measurement-input" @input="saveInput" ref="measurementInput">
 </template>
 
 <script lang="ts" setup>
+  import {useMainStore} from "~/store/mainStore";
+  import {usage} from "browserslist";
+
+  const measurementInput = ref<HTMLInputElement | null>(null);
+
   const props = defineProps({
     header: String,
     inputPlaceholder: String,
+    usage: {
+      type: String,
+      required: true,
+      validator(value: string) {
+        return ['length', 'width'].includes(value);
+      }
+    }
   });
+
+  onMounted(() => {
+    measurementInput.value;
+  })
+
+  const mainStore = useMainStore();
+  const saveInput = (_event: InputEvent) => {
+    if (!measurementInput.value) {
+      return
+    }
+    if (props.usage === 'width') {
+      mainStore.setWidth(parseInt(measurementInput.value.value));
+    } else if (props.usage === 'length') {
+      mainStore.setLength(parseInt(measurementInput.value.value));
+    }
+  }
 
 </script>
 
