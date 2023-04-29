@@ -2,8 +2,10 @@
   <div class="sidebar-wrapper">
     <h3>{{ TC.pcSidebar.header }}</h3>
     <thickness-wrapper/>
-    <MeasurementsWrapper :header="TC.pcSidebar.lengthHeader" :input-placeholder="TC.pcSidebar.lengthPlaceholder"/>
-    <MeasurementsWrapper :header="TC.pcSidebar.widthHeader" :input-placeholder="TC.pcSidebar.widthPlaceholder"/>
+    <MeasurementsWrapper :header="TC.pcSidebar.lengthHeader" :input-placeholder="TC.pcSidebar.lengthPlaceholder"
+                         :usage="'length'"/>
+    <MeasurementsWrapper :header="TC.pcSidebar.widthHeader" :input-placeholder="TC.pcSidebar.widthPlaceholder"
+                         :usage="'width'"/>
     <descr-wrapper/>
   </div>
 </template>
