@@ -1,6 +1,12 @@
 <template>
   <h1>main page</h1>
   <div>{{ postStore.products }}</div>
+  <div>{{ postStore.products }}</div>
+  <div>{{ postStore.products }}</div>
+  <div>{{ postStore.products }}</div>
+  <div>{{ postStore.products }}</div>
+  <div>{{ postStore.products }}</div>
+
 
 </template>
 

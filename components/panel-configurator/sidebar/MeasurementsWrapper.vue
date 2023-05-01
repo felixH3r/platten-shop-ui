@@ -1,13 +1,21 @@
 <template>
   <h4>{{ header }}</h4>
-  <input :placeholder="props.inputPlaceholder" class="measurement-input" @input="saveInput" ref="measurementInput">
+  <input :placeholder="props.inputPlaceholder" class="measurement-input" @input="getInput" ref="measurementInput">
 </template>
 
 <script lang="ts" setup>
-  import {useMainStore} from "~/store/mainStore";
-  import {usage} from "browserslist";
+  import {DEFAULT_LENGTH, DEFAULT_WIDTH, useMainStore} from "~/store/mainStore";
 
   const measurementInput = ref<HTMLInputElement | null>(null);
+  let timeout: NodeJS.Timeout | null = null;
+  const debounce = (fnc: () => void, delayMs?: number) => {
+    if (timeout) {
+      clearTimeout(timeout);
+    }
+    timeout = setTimeout(() => {
+      fnc();
+    }, delayMs || 500);
+  };
 
   const props = defineProps({
     header: String,
@@ -23,19 +31,30 @@
 
   onMounted(() => {
     measurementInput.value;
-  })
+  });
 
   const mainStore = useMainStore();
-  const saveInput = (_event: InputEvent) => {
+  const getInput = (_event: InputEvent) => {
+    debounce(saveInput);
+  };
+
+  const saveInput = () => {
     if (!measurementInput.value) {
-      return
+      return;
     }
     if (props.usage === 'width') {
+      if (!(!measurementInput.value.value || measurementInput.value.value === '')) {
+      } else {
+        mainStore.setWidth(DEFAULT_WIDTH);
+      }
       mainStore.setWidth(parseInt(measurementInput.value.value));
     } else if (props.usage === 'length') {
+      if (!measurementInput.value.value || measurementInput.value.value === '') {
+        mainStore.setWidth(DEFAULT_LENGTH);
+      }
       mainStore.setLength(parseInt(measurementInput.value.value));
     }
-  }
+  };
 
 </script>
 

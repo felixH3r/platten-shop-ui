@@ -1,8 +1,10 @@
 <template>
-  <div class="panel-view-wrapper" ref="panelViewWrapper" @resize="screenWidth()">
-    <HumanSVG class="human-svg"/>
-    <div class="panel-img-wrapper">
-      <img src="@/assets/eiche_dekor.png" class="panel-img"/>
+  <div class="panel-view-wrapper" ref="panelViewWrapper">
+    <div class="human-and-panel-wrapper">
+      <HumanSVG class="human-svg"/>
+      <div class="panel-img-wrapper">
+        <img :src="panelTexture" class="panel-img"/>
+      </div>
     </div>
   </div>
 </template>
@@ -13,6 +15,10 @@
 
   const mainStore = useMainStore();
   const panelViewWrapper = ref<HTMLDivElement | null>(null);
+
+  const panelTexture = computed(() => {
+    return mainStore.selectedProduct?.image.mediaItemUrl;
+  });
 
   const panelMeasureFactor = computed(() => {
     return mainStore.panelConfigurator.width / mainStore.panelConfigurator.length;
@@ -43,11 +49,22 @@
 <style scoped lang="scss">
   .panel-view-wrapper {
     display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 65%;
+  }
+
+  .human-and-panel-wrapper {
+    display: flex;
     align-items: flex-end;
+    justify-content: center;
+    gap: 0 4rem;
   }
 
   .human-svg {
     display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
   }
 
   .panel-img-wrapper {

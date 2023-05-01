@@ -1,6 +1,7 @@
 <template>
   <div class="panel-content-wrapper">
     <PanelView/>
+    <PanelOptionsSlider/>
   </div>
 </template>
 
@@ -11,7 +12,13 @@
 </script>
 
 <style scoped lang="scss">
+  @import "../sidebar/_utils/sidebar-variables.scss";
+
   .panel-content-wrapper {
-    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: calc(100% - $sidebar-width);
+    height: 100vh;
   }
 </style>

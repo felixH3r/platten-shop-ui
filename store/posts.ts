@@ -3,35 +3,43 @@ import {Page} from "csstype";
 
 
 export interface Post {
-    id: string
-    slug: string
-    title: string
-    content: string
-    excerpt: string
-    uri: string
-    status: string
+  id: string;
+  slug: string;
+  title: string;
+  content: string;
+  excerpt: string;
+  uri: string;
+  status: string;
 }
 
 export interface PageInfo {
-    endCursor: string
-    hasNextPage: boolean
-    hasPreviousPage: boolean
-    startCursor: string
+  endCursor: string;
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+  startCursor: string;
 }
 
 export interface Product {
-    id: string;
-    name: string;
-    productId: string;
-    description: string;
-    slug: string;
+  name: string;
+  productId: string;
+  id: string;
+  image: {
+    mediaItemUrl: string
+  },
+  description: string;
+}
+
+export interface Products {
+  products: {
+    nodes: Product[],
+  };
 }
 
 export interface PostsState {
-    nodes: Post[];
-    pageInfo: PageInfo;
-    post: Post;
-    products: Product[];
+  nodes: Post[];
+  pageInfo: PageInfo;
+  post: Post;
+  products: Product[];
 }
 
 const postsQuery = gql`
@@ -72,7 +80,7 @@ const postsQuery = gql`
       }
     }
   }
-`
+`;
 
 const postQuery = gql`
   fragment postData on Post {
@@ -101,67 +109,69 @@ const postQuery = gql`
       }
     }
   }
-`
+`;
 
 const productsQuery = gql`
   query GetProducts {
     products {
-    nodes {
-     id
-     name
-     productId
-     description
-     slug
+        nodes {
+          name
+          productId
+          id
+          image {
+            mediaItemUrl
+          }
+          description(format: RAW)
+        }
     }
-    }
-  }`
+  }`;
 
 export const usePostStore = defineStore('post', {
-    state: (): PostsState => (
-        {
-            nodes: [],
-            pageInfo: {
-                endCursor: '',
-                hasNextPage: false,
-                hasPreviousPage: false,
-                startCursor: '',
-            },
-            post: {
-                id: '',
-                slug: '',
-                title: '',
-                content: '',
-                excerpt: '',
-                uri: '',
-                status: '',
-            },
-            products: [],
-        }
-    ),
-    actions: {
-        async getPosts(variables: any) {
-            const {data} = await useAsyncQuery<{ nodes: Post[], pageInfo: PageInfo }>(postsQuery, variables);
-            if (!data.value) {
-                return;
-            }
-            const {nodes, pageInfo} = data.value;
-            this.nodes = nodes;
-            this.pageInfo = pageInfo;
+  state: (): PostsState => (
+      {
+        nodes: [],
+        pageInfo: {
+          endCursor: '',
+          hasNextPage: false,
+          hasPreviousPage: false,
+          startCursor: '',
         },
+        post: {
+          id: '',
+          slug: '',
+          title: '',
+          content: '',
+          excerpt: '',
+          uri: '',
+          status: '',
+        },
+        products: [],
+      }
+  ),
+  actions: {
+    async getPosts(variables: any) {
+      const {data} = await useAsyncQuery<{ nodes: Post[], pageInfo: PageInfo }>(postsQuery, variables);
+      if (!data.value) {
+        return;
+      }
+      const {nodes, pageInfo} = data.value;
+      this.nodes = nodes;
+      this.pageInfo = pageInfo;
+    },
 
-        async getPost(slug: string) {
-            const {data} = await useAsyncQuery<Post>(postQuery, {id: slug});
-            if (!data.value) {
-                return;
-            }
-            this.post = data.value;
-        },
-        async getProducts() {
-            const {data} = await useAsyncQuery<Product[]>(productsQuery);
-            if (!data.value) {
-                return;
-            }
-            this.products = data.value;
-        }
+    async getPost(slug: string) {
+      const {data} = await useAsyncQuery<Post>(postQuery, {id: slug});
+      if (!data.value) {
+        return;
+      }
+      this.post = data.value;
+    },
+    async getProducts() {
+      const {data} = await useAsyncQuery<Products>(productsQuery);
+      if (!data.value) {
+        return;
+      }
+      this.products = data.value?.products.nodes;
     }
-})
+  }
+});

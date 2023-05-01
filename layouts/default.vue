@@ -7,7 +7,7 @@
 
 <script lang="ts" setup>
   const onHome = computed((): boolean => {
-    return useRoute().path === '/'
+    return useRoute().path === '/';
   });
 </script>
 
