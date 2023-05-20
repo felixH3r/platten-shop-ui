@@ -9,13 +9,17 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "@medusajs/medusa-js": "^5.0.0",
     "@pinia/nuxt": "^0.4.8",
     "pinia": "^2.0.34"
   },
   "devDependencies": {
     "@nuxtjs/apollo": "^5.0.0-alpha.6",
-    "nuxt": "3.3.0",
     "@nuxtjs/google-fonts": "3.0.0-1",
+    "graphql": "^16.6.0",
+    "nuxt": "3.3.0",
+    "nuxt-graphql-request": "^6.0.3",
+    "nuxt-medusa": "^0.4.0",
     "sass": "^1.62.0",
     "sass-loader": "^10.4.1"
   },

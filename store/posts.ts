@@ -126,6 +126,37 @@ const productsQuery = gql`
     }
   }`;
 
+const addToCartMutation = gql`
+  mutation addToCartMutation($productId: Int!, $extraData: String!) {
+    addToCart(input: {productId: $productId, extraData: $extraData}) {
+      cartItem {
+        product {
+          node {
+            id
+          }
+        }
+        extraData
+      }
+    }
+  }`;
+
+const myMutation = gql`
+mutation MyMutation {
+  addToCart(input: {productId: 24, extraData: "{width:1000}"}) {
+    cartItem {
+      product {
+        node {
+          id
+        }
+      }
+      extraData {
+        id
+      }
+    }
+  }
+}
+`;
+
 export const usePostStore = defineStore('post', {
   state: (): PostsState => (
       {
@@ -172,6 +203,11 @@ export const usePostStore = defineStore('post', {
         return;
       }
       this.products = data.value?.products.nodes;
+    },
+    async addToCart(productID: number, width: number, length: number) {
+      // const variables = {id: productID, extraData: "{\"width\":100,\"length\":200}\"}"};
+      const {mutate} = useMutation(myMutation);
+      console.log(await mutate());
     }
   }
 });

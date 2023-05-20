@@ -1,5 +1,7 @@
 import {defineStore} from 'pinia';
 import {Product} from "~/store/posts";
+import {PricedProduct} from "@medusajs/medusa/dist/types/pricing";
+import {MedusaProduct} from "~/store/backendData";
 
 export const DEFAULT_THICKNESS = 0;
 export const DEFAULT_LENGTH = 2000;
@@ -12,7 +14,7 @@ export const useMainStore = defineStore('main', {
       length: DEFAULT_LENGTH,
       width: DEFAULT_WIDTH,
     },
-    selectedProduct: null as Nullable<Product>
+    selectedProduct: null as Nullable<PricedProduct>
   }),
   actions: {
     setThickness(thickness: number) {
@@ -24,7 +26,7 @@ export const useMainStore = defineStore('main', {
     setWidth(width: number) {
       this.panelConfigurator.width = width;
     },
-    setSelectedProduct(selectedProduct: Product) {
+    setSelectedProduct(selectedProduct: PricedProduct) {
       this.selectedProduct = selectedProduct;
     }
   },

@@ -1,24 +1,31 @@
 <template>
   <div class="panel-option-slider">
     <PanelOptionCard v-for="product in products" :product="product"
-                     :selected="product.productId === selectedProductId"/>
+                     :selected="product.id === selectedProductId"/>
   </div>
 </template>
 
 <script lang="ts" setup>
-  import {Product, usePostStore} from "~/store/posts";
   import {useMainStore} from "~/store/mainStore";
+  import {MedusaProduct, useBackendDataStore} from "~/store/backendData";
+  import {PricedProduct} from "@medusajs/medusa/dist/types/pricing";
 
-  const postStore = usePostStore();
   const mainStore = useMainStore();
+  const backendData = useBackendDataStore();
 
-  await postStore.getProducts();
   const products = computed(() => {
-    return postStore.products;
+    // if(!backendData.products){
+    //   return null;
+    // }
+    // const pro = backendData.products;
+    return backendData.products;
   });
-  mainStore.setSelectedProduct(products.value[0]);
+  onMounted(() => {
+    mainStore.setSelectedProduct(products.value[0]);
+  });
 
-  const selectedProductId = mainStore.selectedProduct?.productId;
+
+  const selectedProductId = mainStore.selectedProduct?.id;
 
 
 </script>

@@ -12,12 +12,16 @@
 <script lang="ts" setup>
   import HumanSVG from "~/components/icons/HumanSVG.vue";
   import {useMainStore} from "~/store/mainStore";
+  import {useBackendDataStore} from "~/store/backendData";
 
   const mainStore = useMainStore();
+  const backendData = useBackendDataStore();
   const panelViewWrapper = ref<HTMLDivElement | null>(null);
 
+  await backendData.getProducts();
+
   const panelTexture = computed(() => {
-    return mainStore.selectedProduct?.image.mediaItemUrl;
+    return mainStore.selectedProduct?.thumbnail;
   });
 
   const panelMeasureFactor = computed(() => {

@@ -3,7 +3,7 @@
     <div class="panel-option-img-wrapper">
       <img :src="mediaItemUrl" class="panel-option-img">
     </div>
-    <span class="panel-option-name">{{ props.product.name }}</span>
+    <span class="panel-option-name">{{ props.product.title }}</span>
   </div>
 </template>
 
@@ -11,23 +11,25 @@
   import {Product} from '@/store/posts';
   import {SymbolKind} from "vscode-languageserver-types";
   import {useMainStore} from "~/store/mainStore";
+  import {MedusaProduct} from "~/store/backendData";
+  import {PricedProduct} from "@medusajs/medusa/dist/types/pricing";
 
-  const props = defineProps<{ product: Product, selected: Boolean }>();
+  const props = defineProps<{ product: PricedProduct, selected: Boolean }>();
   const mainStore = useMainStore();
 
   const mediaItemUrl = computed((): string => {
-    if (!props.product.image || !props.product.image.mediaItemUrl) {
+    if (!props.product.thumbnail) {
       return '';
     }
-    return props.product.image.mediaItemUrl;
+    return props.product.thumbnail;
   });
 
   function selectProduct() {
-    mainStore.setSelectedProduct(toRaw(props.product));
+    mainStore.setSelectedProduct(props.product);
   }
 
   const isSelected = computed(() => {
-    return props.product.productId === mainStore.selectedProduct?.productId;
+    return props.product.id === mainStore.selectedProduct?.id;
   });
 </script>
 

@@ -1,4 +1,4 @@
-import { version as version$1, getCurrentInstance, inject, defineComponent, h, Suspense, nextTick, Transition, computed, provide, reactive, ref, watchEffect, watch, onServerPrefetch, useSSRContext, createApp, markRaw, effectScope, isRef, isReactive, toRaw, unref, getCurrentScope, onScopeDispose, onErrorCaptured, toRefs, toRef, shallowRef, isReadonly, defineAsyncComponent, withCtx, createVNode } from 'vue';
+import { getCurrentInstance, version as version$1, inject, ref, onBeforeUnmount, defineComponent, h as h$1, Suspense, nextTick, Transition, computed, provide, reactive, watchEffect, watch, onServerPrefetch, isRef, useSSRContext, createApp, markRaw, effectScope, isReactive, toRaw, unref, getCurrentScope, onScopeDispose, onUnmounted, onErrorCaptured, toRefs, toRef, shallowRef, isReadonly, defineAsyncComponent, withCtx, createVNode } from 'vue';
 import { $fetch } from 'ofetch';
 import { createHooks } from 'hookable';
 import { getContext, executeAsync } from 'unctx';
@@ -9,6 +9,9 @@ import { defineHeadPlugin } from '@unhead/shared';
 import { RouterView, createMemoryHistory, createRouter, useRoute as useRoute$1 } from 'vue-router';
 import { sendRedirect, createError as createError$1, appendHeader } from 'h3';
 import { hasProtocol, parseURL, joinURL, isEqual as isEqual$1 } from 'ufo';
+import Ks from 'axios';
+import * as P from 'retry-axios';
+import m from 'qs';
 import { invariant, InvariantError } from 'ts-invariant';
 import { Observable } from 'zen-observable-ts';
 import { hash, isEqual } from 'ohash';
@@ -17,9 +20,10 @@ import { Kind, visit, print, BREAK, isSelectionNode } from 'graphql';
 import { wrap, dep } from 'optimism';
 import { equal } from '@wry/equality';
 import { Trie } from '@wry/trie';
-import { ssrRenderSuspense, ssrRenderComponent, ssrRenderAttrs } from 'vue/server-renderer';
+import { ssrRenderSuspense, ssrRenderComponent } from 'vue/server-renderer';
 import { defu } from 'defu';
 import { a as useRuntimeConfig$1 } from '../nitro/node-server.mjs';
+import crypto from 'crypto';
 import 'node-fetch-native/polyfill';
 import 'node:http';
 import 'node:https';
@@ -30,6 +34,63 @@ import 'radix3';
 import 'node:fs';
 import 'node:url';
 import 'pathe';
+
+const rnds8Pool = new Uint8Array(256); // # of random values to pre-allocate
+
+let poolPtr = rnds8Pool.length;
+function rng() {
+  if (poolPtr > rnds8Pool.length - 16) {
+    crypto.randomFillSync(rnds8Pool);
+    poolPtr = 0;
+  }
+
+  return rnds8Pool.slice(poolPtr, poolPtr += 16);
+}
+
+/**
+ * Convert array of 16 byte values to UUID string format of the form:
+ * XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
+ */
+
+const byteToHex = [];
+
+for (let i = 0; i < 256; ++i) {
+  byteToHex.push((i + 0x100).toString(16).slice(1));
+}
+
+function unsafeStringify(arr, offset = 0) {
+  // Note: Be careful editing this code!  It's been tuned for performance
+  // and works in ways you may not expect. See https://github.com/uuidjs/uuid/pull/434
+  return (byteToHex[arr[offset + 0]] + byteToHex[arr[offset + 1]] + byteToHex[arr[offset + 2]] + byteToHex[arr[offset + 3]] + '-' + byteToHex[arr[offset + 4]] + byteToHex[arr[offset + 5]] + '-' + byteToHex[arr[offset + 6]] + byteToHex[arr[offset + 7]] + '-' + byteToHex[arr[offset + 8]] + byteToHex[arr[offset + 9]] + '-' + byteToHex[arr[offset + 10]] + byteToHex[arr[offset + 11]] + byteToHex[arr[offset + 12]] + byteToHex[arr[offset + 13]] + byteToHex[arr[offset + 14]] + byteToHex[arr[offset + 15]]).toLowerCase();
+}
+
+const native = {
+  randomUUID: crypto.randomUUID
+};
+
+function v4(options, buf, offset) {
+  if (native.randomUUID && !buf && !options) {
+    return native.randomUUID();
+  }
+
+  options = options || {};
+  const rnds = options.random || (options.rng || rng)(); // Per 4.4, set bits for version and `clock_seq_hi_and_reserved`
+
+  rnds[6] = rnds[6] & 0x0f | 0x40;
+  rnds[8] = rnds[8] & 0x3f | 0x80; // Copy bytes to buffer, if provided
+
+  if (buf) {
+    offset = offset || 0;
+
+    for (let i = 0; i < 16; ++i) {
+      buf[offset + i] = rnds[i];
+    }
+
+    return buf;
+  }
+
+  return unsafeStringify(rnds);
+}
 
 /******************************************************************************
 Copyright (c) Microsoft Corporation.
@@ -637,10 +698,10 @@ function resolveUnrefHeadInput(ref2, lastKey = "") {
     return root.map((r) => resolveUnrefHeadInput(r, lastKey));
   if (typeof root === "object") {
     return Object.fromEntries(
-      Object.entries(root).map(([k, v]) => {
-        if (k === "titleTemplate" || k.startsWith("on"))
-          return [k, unref(v)];
-        return [k, resolveUnrefHeadInput(v, k)];
+      Object.entries(root).map(([k2, v2]) => {
+        if (k2 === "titleTemplate" || k2.startsWith("on"))
+          return [k2, unref(v2)];
+        return [k2, resolveUnrefHeadInput(v2, k2)];
       })
     );
   }
@@ -1048,7 +1109,15 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import('./_nuxt/index-5dfcd16a.mjs').then((m) => m.default || m)
+    component: () => import('./_nuxt/index-84c28b34.mjs').then((m2) => m2.default || m2)
+  },
+  {
+    name: "shop-app",
+    path: "/shop-app",
+    meta: {},
+    alias: [],
+    redirect: void 0,
+    component: () => import('./_nuxt/shop-app-b974f801.mjs').then((m2) => m2.default || m2)
   }
 ];
 const routerOptions0 = {
@@ -1089,12 +1158,12 @@ function _getHashElementScrollMarginTop(selector) {
   }
   return 0;
 }
-function _isDifferentRoute(a, b) {
-  const samePageComponent = a.matched[0] === b.matched[0];
+function _isDifferentRoute(a, b2) {
+  const samePageComponent = a.matched[0] === b2.matched[0];
   if (!samePageComponent) {
     return true;
   }
-  if (samePageComponent && JSON.stringify(a.params) !== JSON.stringify(b.params)) {
+  if (samePageComponent && JSON.stringify(a.params) !== JSON.stringify(b2.params)) {
     return true;
   }
   return false;
@@ -1253,6 +1322,1607 @@ const router_jmwsqit4Rs = /* @__PURE__ */ defineNuxtPlugin(async (nuxtApp) => {
     }
   });
   return { provide: { router } };
+});
+var d = class extends Error {
+  constructor() {
+    super();
+  }
+  static factory(s) {
+    switch (s) {
+      case c.INVALID_REQUEST:
+        return new g();
+      case c.AUTHENTICATION:
+        return new A();
+      case c.API:
+        return new f();
+      case c.PERMISSION:
+        return new y();
+      case c.CONNECTION:
+        return new q();
+    }
+  }
+}, c = ((n) => (n[n.INVALID_REQUEST = 0] = "INVALID_REQUEST", n[n.API = 1] = "API", n[n.AUTHENTICATION = 2] = "AUTHENTICATION", n[n.PERMISSION = 3] = "PERMISSION", n[n.CONNECTION = 4] = "CONNECTION", n))(c || {}), g = class extends d {
+}, f = class extends d {
+}, A = class extends d {
+}, y = class extends d {
+}, q = class extends d {
+};
+var S = class {
+  constructor() {
+    this.publishableApiKey = null;
+  }
+  registerPublishableApiKey(s) {
+    this.publishableApiKey = s;
+  }
+  getPublishableApiKey() {
+    return this.publishableApiKey;
+  }
+}, p = new S();
+var Vs = { "/admin/auth": "POST", "/admin/users/password-token": "POST", "/admin/users/reset-password": "POST", "/admin/invites/accept": "POST" }, Qe = { maxRetries: 0, baseUrl: "http://localhost:9000" }, C = class {
+  constructor(s) {
+    this.axiosClient = this.createClient({ ...Qe, ...s }), this.config = { ...Qe, ...s };
+  }
+  shouldRetryCondition(s, e, t) {
+    return e >= t ? false : !s.response || s.response.status === 409 || s.response.status > 500 && s.response.status <= 599;
+  }
+  normalizeHeaders(s) {
+    return s && typeof s == "object" ? Object.keys(s).reduce((e, t) => (e[this.normalizeHeader(t)] = s[t], e), {}) : s;
+  }
+  normalizeHeader(s) {
+    return s.split("-").map((e) => e.charAt(0).toUpperCase() + e.substr(1).toLowerCase()).join("-");
+  }
+  requiresAuthentication(s, e) {
+    return s.startsWith("/admin") && Vs[s] !== e;
+  }
+  setHeaders(s, e, t, r = {}) {
+    let n = { Accept: "application/json", "Content-Type": "application/json" };
+    this.config.apiKey && this.requiresAuthentication(t, e) && (n = { ...n, Authorization: `Bearer ${this.config.apiKey}` });
+    let a = this.config.publishableApiKey || p.getPublishableApiKey();
+    return a && (n["x-publishable-api-key"] = a), this.config.maxRetries > 0 && e === "POST" && (n["Idempotency-Key"] = v4()), Object.assign({}, n, this.normalizeHeaders(s), r);
+  }
+  createClient(s) {
+    let e = Ks.create({ baseURL: s.baseUrl });
+    return P.attach(e), e.defaults.raxConfig = { instance: e, retry: s.maxRetries, backoffType: "exponential", shouldRetry: (t) => {
+      let r = P.getConfig(t);
+      return r ? this.shouldRetryCondition(t, r.currentRetryAttempt ?? 1, r.retry ?? 3) : false;
+    } }, e;
+  }
+  async request(s, e, t = {}, r = {}, n = {}) {
+    let a = { method: s, withCredentials: true, url: e, json: true, headers: this.setHeaders(r, s, e, n) };
+    ["POST", "DELETE"].includes(s) && (a.data = t);
+    let { data: u, ...Us } = await this.axiosClient(a);
+    return { ...u, response: Us };
+  }
+}, T = C;
+var i = class {
+  constructor(s) {
+    this.client = s;
+  }
+};
+var O = class extends i {
+  addAddress(s, e = {}) {
+    let t = "/store/customers/me/addresses";
+    return this.client.request("POST", t, s, {}, e);
+  }
+  deleteAddress(s, e = {}) {
+    let t = `/store/customers/me/addresses/${s}`;
+    return this.client.request("DELETE", t, void 0, {}, e);
+  }
+  updateAddress(s, e, t = {}) {
+    let r = `/store/customers/me/addresses/${s}`;
+    return this.client.request("POST", r, e, {}, t);
+  }
+}, $ = O;
+var E = class extends i {
+  authenticate(s, e = {}) {
+    let t = "/store/auth";
+    return this.client.request("POST", t, s, {}, e);
+  }
+  deleteSession(s = {}) {
+    let e = "/store/auth";
+    return this.client.request("DELETE", e, {}, {}, s);
+  }
+  getSession(s = {}) {
+    let e = "/store/auth";
+    return this.client.request("GET", e, void 0, {}, s);
+  }
+  exists(s, e = {}) {
+    let t = `/store/auth/${s}`;
+    return this.client.request("GET", t, void 0, {}, e);
+  }
+}, x = E;
+var G = class extends i {
+  create(s, e, t = {}) {
+    let r = `/store/carts/${s}/line-items`;
+    return this.client.request("POST", r, e, {}, t);
+  }
+  update(s, e, t, r = {}) {
+    let n = `/store/carts/${s}/line-items/${e}`;
+    return this.client.request("POST", n, t, {}, r);
+  }
+  delete(s, e, t = {}) {
+    let r = `/store/carts/${s}/line-items/${e}`;
+    return this.client.request("DELETE", r, void 0, {}, t);
+  }
+}, D = G;
+var L = class extends i {
+  constructor() {
+    super(...arguments);
+    this.lineItems = new D(this.client);
+  }
+  addShippingMethod(e, t, r = {}) {
+    let n = `/store/carts/${e}/shipping-methods`;
+    return this.client.request("POST", n, t, {}, r);
+  }
+  complete(e, t = {}) {
+    let r = `/store/carts/${e}/complete`;
+    return this.client.request("POST", r, void 0, {}, t);
+  }
+  create(e, t = {}) {
+    let r = "/store/carts";
+    return this.client.request("POST", r, e, {}, t);
+  }
+  createPaymentSessions(e, t = {}) {
+    let r = `/store/carts/${e}/payment-sessions`;
+    return this.client.request("POST", r, void 0, {}, t);
+  }
+  deleteDiscount(e, t, r = {}) {
+    let n = `/store/carts/${e}/discounts/${t}`;
+    return this.client.request("DELETE", n, void 0, {}, r);
+  }
+  deletePaymentSession(e, t, r = {}) {
+    let n = `/store/carts/${e}/payment-sessions/${t}`;
+    return this.client.request("DELETE", n, void 0, {}, r);
+  }
+  refreshPaymentSession(e, t, r = {}) {
+    let n = `/store/carts/${e}/payment-sessions/${t}/refresh`;
+    return this.client.request("POST", n, void 0, {}, r);
+  }
+  retrieve(e, t = {}) {
+    let r = `/store/carts/${e}`;
+    return this.client.request("GET", r, void 0, {}, t);
+  }
+  setPaymentSession(e, t, r = {}) {
+    let n = `/store/carts/${e}/payment-session`;
+    return this.client.request("POST", n, t, {}, r);
+  }
+  update(e, t, r = {}) {
+    let n = `/store/carts/${e}`;
+    return this.client.request("POST", n, t, {}, r);
+  }
+  updatePaymentSession(e, t, r, n = {}) {
+    let a = `/store/carts/${e}/payment-sessions/${t}`;
+    return this.client.request("POST", a, r, {}, n);
+  }
+}, b = L;
+var w = class extends i {
+  retrieve(s, e = {}) {
+    let t = `/store/collections/${s}`;
+    return this.client.request("GET", t, void 0, {}, e);
+  }
+  list(s, e = {}) {
+    let t = "/store/collections";
+    return s && (t = `/store/collections?${m.stringify(s)}`), this.client.request("GET", t, void 0, {}, e);
+  }
+}, v = w;
+var B = class extends i {
+  list(s = {}) {
+    let e = "/store/customers/me/payment-methods";
+    return this.client.request("GET", e, void 0, {}, s);
+  }
+}, R = B;
+var I = class extends i {
+  constructor() {
+    super(...arguments);
+    this.paymentMethods = new R(this.client);
+    this.addresses = new $(this.client);
+  }
+  create(e, t = {}) {
+    let r = "/store/customers";
+    return this.client.request("POST", r, e, {}, t);
+  }
+  retrieve(e = {}) {
+    let t = "/store/customers/me";
+    return this.client.request("GET", t, void 0, {}, e);
+  }
+  update(e, t = {}) {
+    let r = "/store/customers/me";
+    return this.client.request("POST", r, e, {}, t);
+  }
+  listOrders(e, t = {}) {
+    let r = "/store/customers/me/orders";
+    if (e) {
+      let n = m.stringify(e);
+      n && (r += `?${n}`);
+    }
+    return this.client.request("GET", r, void 0, {}, t);
+  }
+  resetPassword(e, t = {}) {
+    let r = "/store/customers/password-reset";
+    return this.client.request("POST", r, e, {}, t);
+  }
+  generatePasswordToken(e, t = {}) {
+    let r = "/store/customers/password-token";
+    return this.client.request("POST", r, e, {}, t);
+  }
+}, k = I;
+var U = class extends i {
+  retrieve(s, e = {}) {
+    let t = `/store/gift-cards/${s}`;
+    return this.client.request("GET", t, void 0, {}, e);
+  }
+}, K = U;
+var N = class extends i {
+  retrieve(s, e = {}) {
+    let t = `/store/order-edits/${s}`;
+    return this.client.request("GET", t, void 0, {}, e);
+  }
+  decline(s, e, t = {}) {
+    let r = `/store/order-edits/${s}/decline`;
+    return this.client.request("POST", r, e, {}, t);
+  }
+  complete(s, e = {}) {
+    let t = `/store/order-edits/${s}/complete`;
+    return this.client.request("POST", t, void 0, {}, e);
+  }
+}, V = N;
+var F = class extends i {
+  retrieve(s, e = {}) {
+    let t = `/store/orders/${s}`;
+    return this.client.request("GET", t, void 0, {}, e);
+  }
+  retrieveByCartId(s, e = {}) {
+    let t = `/store/orders/cart/${s}`;
+    return this.client.request("GET", t, void 0, {}, e);
+  }
+  lookupOrder(s, e = {}) {
+    let t = "/store/orders?";
+    return t = `/store/orders?${m.stringify(s)}`, this.client.request("GET", t, s, {}, e);
+  }
+  requestCustomerOrders(s, e = {}) {
+    let t = "/store/orders/batch/customer/token";
+    return this.client.request("POST", t, s, {}, e);
+  }
+  confirmRequest(s, e = {}) {
+    let t = "/store/orders/customer/confirm";
+    return this.client.request("POST", t, s, {}, e);
+  }
+}, M = F;
+var z = class extends i {
+  retrieve(s, e, t = {}) {
+    let r = `/store/payment-collections/${s}`;
+    if (e) {
+      let n = m.stringify(e);
+      r += `?${n}`;
+    }
+    return this.client.request("GET", r, void 0, {}, t);
+  }
+  authorizePaymentSession(s, e, t = {}) {
+    let r = `/store/payment-collections/${s}/sessions/${e}/authorize`;
+    return this.client.request("POST", r, void 0, {}, t);
+  }
+  authorizePaymentSessionsBatch(s, e, t = {}) {
+    let r = `/store/payment-collections/${s}/sessions/batch/authorize`;
+    return this.client.request("POST", r, e, {}, t);
+  }
+  managePaymentSessionsBatch(s, e, t = {}) {
+    let r = `/store/payment-collections/${s}/sessions/batch`;
+    return this.client.request("POST", r, e, {}, t);
+  }
+  managePaymentSession(s, e, t = {}) {
+    let r = `/store/payment-collections/${s}/sessions`;
+    return this.client.request("POST", r, e, {}, t);
+  }
+  refreshPaymentSession(s, e, t = {}) {
+    let r = `/store/payment-collections/${s}/sessions/${e}`;
+    return this.client.request("POST", r, void 0, {}, t);
+  }
+}, H = z;
+var j = class extends i {
+  retrieve(s, e, t = {}) {
+    let r = `/store/product-categories/${s}`;
+    if (e) {
+      let n = m.stringify(e);
+      r = `${r}?${n}`;
+    }
+    return this.client.request("GET", r, void 0, {}, t);
+  }
+  list(s, e = {}) {
+    let t = "/store/product-categories";
+    if (s) {
+      let r = m.stringify(s);
+      t = `${t}?${r}`;
+    }
+    return this.client.request("GET", t, void 0, {}, e);
+  }
+}, J = j;
+var _ = class extends i {
+  list(s, e = {}) {
+    let t = "/store/product-tags";
+    if (s) {
+      let r = m.stringify(s);
+      t += `?${r}`;
+    }
+    return this.client.request("GET", t, void 0, {}, e);
+  }
+}, Q = _;
+var W = class extends i {
+  list(s, e = {}) {
+    let t = "/store/product-types";
+    if (s) {
+      let r = m.stringify(s);
+      t += `?${r}`;
+    }
+    return this.client.request("GET", t, void 0, {}, e);
+  }
+}, X = W;
+var Y = class extends i {
+  retrieve(s, e = {}) {
+    let t = `/store/variants/${s}`;
+    return this.client.request("GET", t, void 0, {}, e);
+  }
+  list(s, e = {}) {
+    let t = "/store/variants";
+    if (s) {
+      let r = m.stringify(s);
+      t += `?${r}`;
+    }
+    return this.client.request("GET", t, void 0, {}, e);
+  }
+}, Xe = Y;
+var Z = class extends i {
+  constructor() {
+    super(...arguments);
+    this.variants = new Xe(this.client);
+  }
+  retrieve(e, t = {}) {
+    let r = `/store/products/${e}`;
+    return this.client.request("GET", r, void 0, {}, t);
+  }
+  search(e, t = {}) {
+    let r = "/store/products/search";
+    return this.client.request("POST", r, e, {}, t);
+  }
+  list(e, t = {}) {
+    let r = "/store/products";
+    return e && (r = `/store/products?${m.stringify(e)}`), this.client.request("GET", r, void 0, {}, t);
+  }
+}, ee = Z;
+var se = class extends i {
+  list(s = {}) {
+    let e = "/store/regions";
+    return this.client.request("GET", e, void 0, {}, s);
+  }
+  retrieve(s, e = {}) {
+    let t = `/store/regions/${s}`;
+    return this.client.request("GET", t, void 0, {}, e);
+  }
+}, te = se;
+var re = class extends i {
+  retrieve(s, e = {}) {
+    let t = `/store/return-reasons/${s}`;
+    return this.client.request("GET", t, void 0, {}, e);
+  }
+  list(s = {}) {
+    let e = "/store/return-reasons";
+    return this.client.request("GET", e, void 0, {}, s);
+  }
+}, ne = re;
+var ie = class extends i {
+  create(s, e = {}) {
+    let t = "/store/returns";
+    return this.client.request("POST", t, s, {}, e);
+  }
+}, oe = ie;
+var ae = class extends i {
+  listCartOptions(s, e = {}) {
+    let t = `/store/shipping-options/${s}`;
+    return this.client.request("GET", t, void 0, {}, e);
+  }
+  list(s, e = {}) {
+    let t = "/store/shipping-options";
+    return s && (t = `/store/shipping-options?${m.stringify(s)}`), this.client.request("GET", t, void 0, {}, e);
+  }
+}, de = ae;
+var me = class extends i {
+  create(s, e = {}) {
+    let t = "/store/swaps";
+    return this.client.request("POST", t, s, {}, e);
+  }
+  retrieveByCartId(s, e = {}) {
+    let t = `/store/swaps/${s}`;
+    return this.client.request("GET", t, void 0, {}, e);
+  }
+}, ce = me;
+var ue = class extends i {
+  getSession(s = {}) {
+    let e = "/admin/auth";
+    return this.client.request("GET", e, void 0, {}, s);
+  }
+  deleteSession(s = {}) {
+    let e = "/admin/auth";
+    return this.client.request("DELETE", e, void 0, {}, s);
+  }
+  createSession(s, e = {}) {
+    let t = "/admin/auth";
+    return this.client.request("POST", t, s, {}, e);
+  }
+}, Ye = ue;
+function Ze(o) {
+  let s = (e) => {
+    let t = {};
+    return Object.keys(e).reduce((r, n) => (e[n] === null ? r[n] = "null" : typeof e[n] == "object" ? r[n] = s(e[n]) : r[n] = e[n], r), t), t;
+  };
+  return s(o);
+}
+var pe = class extends i {
+  create(s, e = {}) {
+    let t = "/admin/batch-jobs";
+    return this.client.request("POST", t, s, {}, e);
+  }
+  list(s, e = {}) {
+    let t = "/admin/batch-jobs";
+    return s && (t = `/admin/batch-jobs?${m.stringify(Ze(s))}`), this.client.request("GET", t, void 0, {}, e);
+  }
+  cancel(s, e = {}) {
+    let t = `/admin/batch-jobs/${s}/cancel`;
+    return this.client.request("POST", t, void 0, {}, e);
+  }
+  confirm(s, e = {}) {
+    let t = `/admin/batch-jobs/${s}/confirm`;
+    return this.client.request("POST", t, void 0, {}, e);
+  }
+  retrieve(s, e = {}) {
+    let t = `/admin/batch-jobs/${s}`;
+    return this.client.request("GET", t, void 0, {}, e);
+  }
+}, es = pe;
+var Re = class extends i {
+  create(s, e = {}) {
+    let t = "/admin/collections";
+    return this.client.request("POST", t, s, {}, e);
+  }
+  update(s, e, t = {}) {
+    let r = `/admin/collections/${s}`;
+    return this.client.request("POST", r, e, {}, t);
+  }
+  delete(s, e = {}) {
+    let t = `/admin/collections/${s}`;
+    return this.client.request("DELETE", t, void 0, {}, e);
+  }
+  retrieve(s, e = {}) {
+    let t = `/admin/collections/${s}`;
+    return this.client.request("GET", t, void 0, {}, e);
+  }
+  list(s, e = {}) {
+    let t = "/admin/collections";
+    return s && (t = `/admin/collections?${m.stringify(s)}`), this.client.request("GET", t, void 0, {}, e);
+  }
+  addProducts(s, e, t = {}) {
+    let r = `/admin/collections/${s}/products/batch`;
+    return this.client.request("POST", r, e, {}, t);
+  }
+  removeProducts(s, e, t = {}) {
+    let r = `/admin/collections/${s}/products/batch`;
+    return this.client.request("DELETE", r, e, {}, t);
+  }
+}, ss = Re;
+var le = class extends i {
+  list(s, e = {}) {
+    let t = "/admin/currencies";
+    if (s) {
+      let r = m.stringify(s);
+      t += `?${r}`;
+    }
+    return this.client.request("GET", t, void 0, {}, e);
+  }
+  update(s, e, t = {}) {
+    let r = `/admin/currencies/${s}`;
+    return this.client.request("POST", r, e, {}, t);
+  }
+}, ts = le;
+var he = class extends i {
+  create(s, e = {}) {
+    let t = "/admin/customer-groups";
+    return this.client.request("POST", t, s, {}, e);
+  }
+  retrieve(s, e, t = {}) {
+    let r = `/admin/customer-groups/${s}`;
+    if (e) {
+      let n = m.stringify(e);
+      r += `?${n}`;
+    }
+    return this.client.request("GET", r, void 0, {}, t);
+  }
+  update(s, e, t = {}) {
+    let r = `/admin/customer-groups/${s}`;
+    return this.client.request("POST", r, e, {}, t);
+  }
+  delete(s, e = {}) {
+    let t = `/admin/customer-groups/${s}`;
+    return this.client.request("DELETE", t, void 0, {}, e);
+  }
+  list(s, e = {}) {
+    let t = "/admin/customer-groups";
+    return s && (t = `/admin/customer-groups?${m.stringify(s)}`), this.client.request("GET", t, void 0, {}, e);
+  }
+  addCustomers(s, e, t = {}) {
+    let r = `/admin/customer-groups/${s}/customers/batch`;
+    return this.client.request("POST", r, e, {}, t);
+  }
+  removeCustomers(s, e, t = {}) {
+    let r = `/admin/customer-groups/${s}/customers/batch`;
+    return this.client.request("DELETE", r, e, {}, t);
+  }
+  listCustomers(s, e, t = {}) {
+    let r = `/admin/customer-groups/${s}/customers`;
+    if (e) {
+      let n = m.stringify(e);
+      r += `?${n}`;
+    }
+    return this.client.request("GET", r, void 0, {}, t);
+  }
+}, rs = he;
+var ge = class extends i {
+  create(s, e = {}) {
+    let t = "/admin/customers";
+    return this.client.request("POST", t, s, {}, e);
+  }
+  update(s, e, t = {}) {
+    let r = `/admin/customers/${s}`;
+    return this.client.request("POST", r, e, {}, t);
+  }
+  retrieve(s, e = {}) {
+    let t = `/admin/customers/${s}`;
+    return this.client.request("GET", t, void 0, {}, e);
+  }
+  list(s, e = {}) {
+    let t = "/admin/customers";
+    return s && (t = `/admin/customers?${m.stringify(s)}`), this.client.request("GET", t, void 0, {}, e);
+  }
+}, ns = ge;
+var fe = class extends i {
+  addRegion(s, e, t = {}) {
+    let r = `/admin/discounts/${s}/regions/${e}`;
+    return this.client.request("POST", r, void 0, {}, t);
+  }
+  create(s, e = {}) {
+    let t = "/admin/discounts";
+    return this.client.request("POST", t, s, {}, e);
+  }
+  update(s, e, t = {}) {
+    let r = `/admin/discounts/${s}`;
+    return this.client.request("POST", r, e, {}, t);
+  }
+  createDynamicCode(s, e, t = {}) {
+    let r = `/admin/discounts/${s}/dynamic-codes`;
+    return this.client.request("POST", r, e, {}, t);
+  }
+  delete(s, e = {}) {
+    let t = `/admin/discounts/${s}`;
+    return this.client.request("DELETE", t, void 0, {}, e);
+  }
+  deleteDynamicCode(s, e, t = {}) {
+    let r = `/admin/discounts/${s}/dynamic-codes/${e}`;
+    return this.client.request("DELETE", r, void 0, {}, t);
+  }
+  retrieve(s, e = {}) {
+    let t = `/admin/discounts/${s}`;
+    return this.client.request("GET", t, void 0, {}, e);
+  }
+  retrieveByCode(s, e = {}) {
+    let t = `/admin/discounts/code/${s}`;
+    return this.client.request("GET", t, void 0, {}, e);
+  }
+  list(s, e = {}) {
+    let t = "/admin/discounts";
+    if (s) {
+      let r = m.stringify(s);
+      t += `?${r}`;
+    }
+    return this.client.request("GET", t, void 0, {}, e);
+  }
+  removeRegion(s, e, t = {}) {
+    let r = `/admin/discounts/${s}/regions/${e}`;
+    return this.client.request("DELETE", r, void 0, {}, t);
+  }
+  createCondition(s, e, t = {}, r = {}) {
+    let n = `/admin/discounts/${s}/conditions`;
+    if (t) {
+      let a = m.stringify(t);
+      n += `?${a}`;
+    }
+    return this.client.request("POST", n, e, {}, r);
+  }
+  updateCondition(s, e, t, r = {}, n = {}) {
+    let a = `/admin/discounts/${s}/conditions/${e}`;
+    if (r) {
+      let u = m.stringify(r);
+      a += `?${u}`;
+    }
+    return this.client.request("POST", a, t, {}, n);
+  }
+  deleteCondition(s, e, t = {}) {
+    let r = `/admin/discounts/${s}/conditions/${e}`;
+    return this.client.request("DELETE", r, void 0, {}, t);
+  }
+  getCondition(s, e, t, r = {}) {
+    let n = `/admin/discounts/${s}/conditions/${e}`;
+    if (t) {
+      let a = m.stringify(t);
+      n += `?${a}`;
+    }
+    return this.client.request("GET", n, void 0, {}, r);
+  }
+  addConditionResourceBatch(s, e, t, r, n = {}) {
+    let a = `/admin/discounts/${s}/conditions/${e}/batch`;
+    if (r) {
+      let u = m.stringify(r);
+      a += `?${u}`;
+    }
+    return this.client.request("POST", a, t, {}, n);
+  }
+  deleteConditionResourceBatch(s, e, t, r = {}) {
+    let n = `/admin/discounts/${s}/conditions/${e}/batch`;
+    return this.client.request("DELETE", n, t, {}, r);
+  }
+}, is = fe;
+var Ae = class extends i {
+  create(s, e = {}) {
+    let t = "/admin/draft-orders";
+    return this.client.request("POST", t, s, {}, e);
+  }
+  addLineItem(s, e, t = {}) {
+    let r = `/admin/draft-orders/${s}/line-items`;
+    return this.client.request("POST", r, e, {}, t);
+  }
+  delete(s, e = {}) {
+    let t = `/admin/draft-orders/${s}`;
+    return this.client.request("DELETE", t, void 0, {}, e);
+  }
+  removeLineItem(s, e, t = {}) {
+    let r = `/admin/draft-orders/${s}/line-items/${e}`;
+    return this.client.request("DELETE", r, void 0, {}, t);
+  }
+  retrieve(s, e = {}) {
+    let t = `/admin/draft-orders/${s}`;
+    return this.client.request("GET", t, void 0, {}, e);
+  }
+  list(s, e = {}) {
+    let t = "/admin/draft-orders";
+    return s && (t = `/admin/draft-orders?${m.stringify(s)}`), this.client.request("GET", t, void 0, {}, e);
+  }
+  markPaid(s, e = {}) {
+    let t = `/admin/draft-orders/${s}/pay`;
+    return this.client.request("POST", t, {}, e);
+  }
+  update(s, e, t = {}) {
+    let r = `/admin/draft-orders/${s}`;
+    return this.client.request("POST", r, e, {}, t);
+  }
+  updateLineItem(s, e, t, r = {}) {
+    let n = `/admin/draft-orders/${s}/line-items/${e}`;
+    return this.client.request("POST", n, t, {}, r);
+  }
+}, os = Ae;
+var ye = class extends i {
+  create(s, e = {}) {
+    let t = "/admin/gift-cards";
+    return this.client.request("POST", t, s, {}, e);
+  }
+  update(s, e, t = {}) {
+    let r = `/admin/gift-cards/${s}`;
+    return this.client.request("POST", r, e, {}, t);
+  }
+  delete(s, e = {}) {
+    let t = `/admin/gift-cards/${s}`;
+    return this.client.request("DELETE", t, void 0, {}, e);
+  }
+  retrieve(s, e = {}) {
+    let t = `/admin/gift-cards/${s}`;
+    return this.client.request("GET", t, void 0, {}, e);
+  }
+  list(s, e = {}) {
+    let t = "/admin/gift-cards/";
+    return s && (t = `/admin/gift-cards?${m.stringify(s)}`), this.client.request("GET", t, void 0, {}, e);
+  }
+}, as = ye;
+var qe = class extends i {
+  accept(s, e = {}) {
+    let t = "/admin/invites/accept";
+    return this.client.request("POST", t, s, {}, e);
+  }
+  create(s, e = {}) {
+    let t = "/admin/invites";
+    return this.client.request("POST", t, s, {}, e);
+  }
+  delete(s, e = {}) {
+    let t = `/admin/invites/${s}`;
+    return this.client.request("DELETE", t, void 0, {}, e);
+  }
+  list(s = {}) {
+    let e = "/admin/invites";
+    return this.client.request("GET", e, void 0, {}, s);
+  }
+  resend(s, e = {}) {
+    let t = `/admin/invites/${s}`;
+    return this.client.request("POST", t, void 0, {}, e);
+  }
+}, ds = qe;
+var Se = class extends i {
+  create(s, e = {}) {
+    let t = "/admin/notes";
+    return this.client.request("POST", t, s, {}, e);
+  }
+  update(s, e, t = {}) {
+    let r = `/admin/notes/${s}`;
+    return this.client.request("POST", r, e, {}, t);
+  }
+  delete(s, e = {}) {
+    let t = `/admin/notes/${s}`;
+    return this.client.request("DELETE", t, void 0, {}, e);
+  }
+  retrieve(s, e = {}) {
+    let t = `/admin/notes/${s}`;
+    return this.client.request("GET", t, void 0, {}, e);
+  }
+  list(s, e = {}) {
+    let t = "/admin/notes/";
+    return s && (t = `/admin/notes?${m.stringify(s)}`), this.client.request("GET", t, void 0, {}, e);
+  }
+}, ms = Se;
+var Ce = class extends i {
+  list(s, e = {}) {
+    let t = "/admin/notifications";
+    return s && (t = `/admin/notifications?${m.stringify(s)}`), this.client.request("GET", t, void 0, {}, e);
+  }
+  resend(s, e, t = {}) {
+    let r = `/admin/notifications/${s}/resend`;
+    return this.client.request("POST", r, e, {}, t);
+  }
+}, cs = Ce;
+var Te = class extends i {
+  retrieve(s, e, t = {}) {
+    let r = `/admin/order-edits/${s}`;
+    if (e) {
+      let n = m.stringify(e);
+      r += `?${n}`;
+    }
+    return this.client.request("GET", r, void 0, {}, t);
+  }
+  list(s, e = {}) {
+    let t = "/admin/order-edits";
+    if (s) {
+      let r = m.stringify(s);
+      t += `?${r}`;
+    }
+    return this.client.request("GET", t, void 0, {}, e);
+  }
+  create(s, e = {}) {
+    let t = "/admin/order-edits";
+    return this.client.request("POST", t, s, {}, e);
+  }
+  update(s, e, t = {}) {
+    let r = `/admin/order-edits/${s}`;
+    return this.client.request("POST", r, e, {}, t);
+  }
+  delete(s, e = {}) {
+    let t = `/admin/order-edits/${s}`;
+    return this.client.request("DELETE", t, void 0, {}, e);
+  }
+  addLineItem(s, e, t = {}) {
+    let r = `/admin/order-edits/${s}/items`;
+    return this.client.request("POST", r, e, {}, t);
+  }
+  deleteItemChange(s, e, t = {}) {
+    let r = `/admin/order-edits/${s}/changes/${e}`;
+    return this.client.request("DELETE", r, void 0, {}, t);
+  }
+  requestConfirmation(s, e = {}) {
+    let t = `/admin/order-edits/${s}/request`;
+    return this.client.request("POST", t, void 0, {}, e);
+  }
+  cancel(s, e = {}) {
+    let t = `/admin/order-edits/${s}/cancel`;
+    return this.client.request("POST", t, void 0, {}, e);
+  }
+  confirm(s, e = {}) {
+    let t = `/admin/order-edits/${s}/confirm`;
+    return this.client.request("POST", t, void 0, {}, e);
+  }
+  updateLineItem(s, e, t, r = {}) {
+    let n = `/admin/order-edits/${s}/items/${e}`;
+    return this.client.request("POST", n, t, {}, r);
+  }
+  removeLineItem(s, e, t = {}) {
+    let r = `/admin/order-edits/${s}/items/${e}`;
+    return this.client.request("DELETE", r, void 0, {}, t);
+  }
+}, ps = Te;
+var Oe = class extends i {
+  update(s, e, t = {}) {
+    let r = `/admin/orders/${s}`;
+    return this.client.request("POST", r, e, {}, t);
+  }
+  retrieve(s, e, t = {}) {
+    let r = `/admin/orders/${s}`;
+    if (e) {
+      let n = m.stringify(e);
+      r = `/admin/orders/${s}?${n}`;
+    }
+    return this.client.request("GET", r, void 0, {}, t);
+  }
+  list(s, e = {}) {
+    let t = "/admin/orders";
+    return s && (t = `/admin/orders?${m.stringify(s)}`), this.client.request("GET", t, void 0, {}, e);
+  }
+  complete(s, e = {}) {
+    let t = `/admin/orders/${s}/complete`;
+    return this.client.request("POST", t, void 0, {}, e);
+  }
+  capturePayment(s, e = {}) {
+    let t = `/admin/orders/${s}/capture`;
+    return this.client.request("POST", t, void 0, {}, e);
+  }
+  refundPayment(s, e, t = {}) {
+    let r = `/admin/orders/${s}/refund`;
+    return this.client.request("POST", r, e, {}, t);
+  }
+  createFulfillment(s, e, t = {}) {
+    let r = `/admin/orders/${s}/fulfillment`;
+    return this.client.request("POST", r, e, {}, t);
+  }
+  cancelFulfillment(s, e, t = {}) {
+    let r = `/admin/orders/${s}/fulfillments/${e}/cancel`;
+    return this.client.request("POST", r, void 0, {}, t);
+  }
+  cancelSwapFulfillment(s, e, t, r = {}) {
+    let n = `/admin/orders/${s}/swaps/${e}/fulfillments/${t}/cancel`;
+    return this.client.request("POST", n, void 0, {}, r);
+  }
+  cancelClaimFulfillment(s, e, t, r = {}) {
+    let n = `/admin/orders/${s}/claims/${e}/fulfillments/${t}/cancel`;
+    return this.client.request("POST", n, void 0, {}, r);
+  }
+  createShipment(s, e, t = {}) {
+    let r = `/admin/orders/${s}/shipment`;
+    return this.client.request("POST", r, e, {}, t);
+  }
+  requestReturn(s, e, t = {}) {
+    let r = `/admin/orders/${s}/return`;
+    return this.client.request("POST", r, e, {}, t);
+  }
+  cancel(s, e = {}) {
+    let t = `/admin/orders/${s}/cancel`;
+    return this.client.request("POST", t, void 0, {}, e);
+  }
+  addShippingMethod(s, e, t = {}) {
+    let r = `/admin/orders/${s}/shipping-methods`;
+    return this.client.request("POST", r, e, {}, t);
+  }
+  archive(s, e = {}) {
+    let t = `/admin/orders/${s}/archive`;
+    return this.client.request("POST", t, void 0, {}, e);
+  }
+  createSwap(s, e, t = {}) {
+    let r = `/admin/orders/${s}/swaps`;
+    return this.client.request("POST", r, e, {}, t);
+  }
+  cancelSwap(s, e, t = {}) {
+    let r = `/admin/orders/${s}/swaps/${e}/cancel`;
+    return this.client.request("POST", r, void 0, {}, t);
+  }
+  fulfillSwap(s, e, t, r = {}) {
+    let n = `/admin/orders/${s}/swaps/${e}/fulfillments`;
+    return this.client.request("POST", n, t, {}, r);
+  }
+  createSwapShipment(s, e, t, r = {}) {
+    let n = `/admin/orders/${s}/swaps/${e}/shipments`;
+    return this.client.request("POST", n, t, {}, r);
+  }
+  processSwapPayment(s, e, t = {}) {
+    let r = `/admin/orders/${s}/swaps/${e}/process-payment`;
+    return this.client.request("POST", r, void 0, {}, t);
+  }
+  createClaim(s, e, t = {}) {
+    let r = `/admin/orders/${s}/claims`;
+    return this.client.request("POST", r, e, {}, t);
+  }
+  cancelClaim(s, e, t = {}) {
+    let r = `/admin/orders/${s}/claims/${e}/cancel`;
+    return this.client.request("POST", r, void 0, {}, t);
+  }
+  updateClaim(s, e, t, r = {}) {
+    let n = `/admin/orders/${s}/claims/${e}`;
+    return this.client.request("POST", n, t, {}, r);
+  }
+  fulfillClaim(s, e, t, r = {}) {
+    let n = `/admin/orders/${s}/claims/${e}/fulfillments`;
+    return this.client.request("POST", n, t, {}, r);
+  }
+  createClaimShipment(s, e, t, r = {}) {
+    let n = `/admin/orders/${s}/claims/${e}/shipments`;
+    return this.client.request("POST", n, t, {}, r);
+  }
+}, ls = Oe;
+var $e = class extends i {
+  retrieve(s, e, t = {}) {
+    let r = `/admin/payment-collections/${s}`;
+    if (e) {
+      let n = m.stringify(e);
+      r += `?${n}`;
+    }
+    return this.client.request("GET", r, void 0, {}, t);
+  }
+  update(s, e, t = {}) {
+    let r = `/admin/payment-collections/${s}`;
+    return this.client.request("POST", r, e, {}, t);
+  }
+  delete(s, e = {}) {
+    let t = `/admin/payment-collections/${s}`;
+    return this.client.request("DELETE", t, void 0, {}, e);
+  }
+  markAsAuthorized(s, e = {}) {
+    let t = `/admin/payment-collections/${s}/authorize`;
+    return this.client.request("POST", t, void 0, {}, e);
+  }
+}, Ps = $e;
+var Ee = class extends i {
+  retrieve(s, e, t = {}) {
+    let r = `/admin/payments/${s}`;
+    if (e) {
+      let n = m.stringify(e);
+      r = `/admin/payments/${s}?${n}`;
+    }
+    return this.client.request("GET", r, void 0, {}, t);
+  }
+  capturePayment(s, e = {}) {
+    let t = `/admin/payments/${s}/capture`;
+    return this.client.request("POST", t, void 0, {}, e);
+  }
+  refundPayment(s, e, t = {}) {
+    let r = `/admin/payments/${s}/refund`;
+    return this.client.request("POST", r, e, {}, t);
+  }
+}, hs = Ee;
+var xe = class extends i {
+  create(s, e = {}) {
+    let t = "/admin/price-lists";
+    return this.client.request("POST", t, s, {}, e);
+  }
+  update(s, e, t = {}) {
+    let r = `/admin/price-lists/${s}`;
+    return this.client.request("POST", r, e, {}, t);
+  }
+  delete(s, e = {}) {
+    let t = `/admin/price-lists/${s}`;
+    return this.client.request("DELETE", t, void 0, {}, e);
+  }
+  retrieve(s, e = {}) {
+    let t = `/admin/price-lists/${s}`;
+    return this.client.request("GET", t, void 0, {}, e);
+  }
+  list(s, e = {}) {
+    let t = "/admin/price-lists/";
+    return s && (t = `/admin/price-lists?${m.stringify(s)}`), this.client.request("GET", t, void 0, {}, e);
+  }
+  listProducts(s, e, t = {}) {
+    let r = `/admin/price-lists/${s}/products`;
+    if (e) {
+      let n = m.stringify(e);
+      r = `/admin/price-lists/${s}/products?${n}`;
+    }
+    return this.client.request("GET", r, void 0, {}, t);
+  }
+  addPrices(s, e, t = {}) {
+    let r = `/admin/price-lists/${s}/prices/batch`;
+    return this.client.request("POST", r, e, {}, t);
+  }
+  deletePrices(s, e, t = {}) {
+    let r = `/admin/price-lists/${s}/prices/batch`;
+    return this.client.request("DELETE", r, e, {}, t);
+  }
+  deleteProductPrices(s, e, t = {}) {
+    let r = `/admin/price-lists/${s}/products/${e}/prices`;
+    return this.client.request("DELETE", r, void 0, {}, t);
+  }
+  deleteVariantPrices(s, e, t = {}) {
+    let r = `/admin/price-lists/${s}/variants/${e}/prices`;
+    return this.client.request("DELETE", r, void 0, {}, t);
+  }
+}, fs = xe;
+var Ge = class extends i {
+  retrieve(s, e, t = {}) {
+    let r = `/admin/product-categories/${s}`;
+    if (e) {
+      let n = m.stringify(e);
+      r = `${r}?${n}`;
+    }
+    return this.client.request("GET", r, void 0, {}, t);
+  }
+  create(s, e = {}) {
+    let t = "/admin/product-categories";
+    return this.client.request("POST", t, s, {}, e);
+  }
+  update(s, e, t = {}) {
+    let r = `/admin/product-categories/${s}`;
+    return this.client.request("POST", r, e, {}, t);
+  }
+  list(s, e = {}) {
+    let t = "/admin/product-categories";
+    if (s) {
+      let r = m.stringify(s);
+      t += `?${r}`;
+    }
+    return this.client.request("GET", t, void 0, {}, e);
+  }
+  delete(s, e = {}) {
+    let t = `/admin/product-categories/${s}`;
+    return this.client.request("DELETE", t, void 0, {}, e);
+  }
+  removeProducts(s, e, t = {}) {
+    let r = `/admin/product-categories/${s}/products/batch`;
+    return this.client.request("DELETE", r, e, {}, t);
+  }
+  addProducts(s, e, t = {}) {
+    let r = `/admin/product-categories/${s}/products/batch`;
+    return this.client.request("POST", r, e, {}, t);
+  }
+}, ys = Ge;
+var De = class extends i {
+  list(s) {
+    let e = "/admin/product-tags";
+    return s && (e = `/admin/product-tags?${m.stringify(s)}`), this.client.request("GET", e);
+  }
+}, qs = De;
+var Le = class extends i {
+  list(s, e = {}) {
+    let t = "/admin/product-types";
+    if (s) {
+      let r = m.stringify(s);
+      t += `?${r}`;
+    }
+    return this.client.request("GET", t, void 0, {}, e);
+  }
+}, Ss = Le;
+var be = class extends i {
+  create(s, e = {}) {
+    let t = "/admin/products/";
+    return this.client.request("POST", t, s, {}, e);
+  }
+  retrieve(s, e = {}) {
+    let t = `/admin/products/${s}`;
+    return this.client.request("GET", t, void 0, {}, e);
+  }
+  update(s, e, t = {}) {
+    let r = `/admin/products/${s}`;
+    return this.client.request("POST", r, e, {}, t);
+  }
+  delete(s, e = {}) {
+    let t = `/admin/products/${s}`;
+    return this.client.request("DELETE", t, void 0, {}, e);
+  }
+  list(s, e = {}) {
+    let t = "/admin/products";
+    return s && (t = `/admin/products?${m.stringify(s)}`), this.client.request("GET", t, void 0, {}, e);
+  }
+  listTypes(s = {}) {
+    let e = "/admin/products/types";
+    return this.client.request("GET", e, void 0, {}, s);
+  }
+  listTags(s = {}) {
+    let e = "/admin/products/tag-usage";
+    return this.client.request("GET", e, void 0, {}, s);
+  }
+  setMetadata(s, e, t = {}) {
+    let r = `/admin/products/${s}/metadata`;
+    return this.client.request("POST", r, e, {}, t);
+  }
+  createVariant(s, e, t = {}) {
+    let r = `/admin/products/${s}/variants`;
+    return this.client.request("POST", r, e, {}, t);
+  }
+  updateVariant(s, e, t, r = {}) {
+    let n = `/admin/products/${s}/variants/${e}`;
+    return this.client.request("POST", n, t, {}, r);
+  }
+  deleteVariant(s, e, t = {}) {
+    let r = `/admin/products/${s}/variants/${e}`;
+    return this.client.request("DELETE", r, void 0, {}, t);
+  }
+  addOption(s, e, t = {}) {
+    let r = `/admin/products/${s}/options`;
+    return this.client.request("POST", r, e, {}, t);
+  }
+  updateOption(s, e, t, r = {}) {
+    let n = `/admin/products/${s}/options/${e}`;
+    return this.client.request("POST", n, t, {}, r);
+  }
+  deleteOption(s, e, t = {}) {
+    let r = `/admin/products/${s}/options/${e}`;
+    return this.client.request("DELETE", r, void 0, {}, t);
+  }
+}, Cs = be;
+var ve = class extends i {
+  retrieve(s, e, t = {}) {
+    let r = `/admin/publishable-api-keys/${s}`;
+    if (e) {
+      let n = m.stringify(e);
+      r += `?${n}`;
+    }
+    return this.client.request("GET", r, void 0, {}, t);
+  }
+  list(s, e = {}) {
+    let t = "/admin/publishable-api-keys";
+    if (s) {
+      let r = m.stringify(s);
+      t += `?${r}`;
+    }
+    return this.client.request("GET", t, void 0, {}, e);
+  }
+  create(s, e = {}) {
+    let t = "/admin/publishable-api-keys";
+    return this.client.request("POST", t, s, {}, e);
+  }
+  update(s, e, t = {}) {
+    let r = `/admin/publishable-api-keys/${s}`;
+    return this.client.request("POST", r, e, {}, t);
+  }
+  delete(s, e = {}) {
+    let t = `/admin/publishable-api-keys/${s}`;
+    return this.client.request("DELETE", t, void 0, {}, e);
+  }
+  revoke(s, e = {}) {
+    let t = `/admin/publishable-api-keys/${s}/revoke`;
+    return this.client.request("POST", t, {}, {}, e);
+  }
+  addSalesChannelsBatch(s, e, t = {}) {
+    let r = `/admin/publishable-api-keys/${s}/sales-channels/batch`;
+    return this.client.request("POST", r, e, {}, t);
+  }
+  deleteSalesChannelsBatch(s, e, t = {}) {
+    let r = `/admin/publishable-api-keys/${s}/sales-channels/batch`;
+    return this.client.request("DELETE", r, e, {}, t);
+  }
+  listSalesChannels(s, e, t = {}) {
+    let r = `/admin/publishable-api-keys/${s}/sales-channels`;
+    if (e) {
+      let n = m.stringify(e);
+      r += `?${n}`;
+    }
+    return this.client.request("GET", r, void 0, {}, t);
+  }
+}, Ts = ve;
+var Be = class extends i {
+  create(s, e = {}) {
+    let t = "/admin/regions";
+    return this.client.request("POST", t, s, {}, e);
+  }
+  update(s, e, t = {}) {
+    let r = `/admin/regions/${s}`;
+    return this.client.request("POST", r, e, {}, t);
+  }
+  delete(s, e = {}) {
+    let t = `/admin/regions/${s}`;
+    return this.client.request("DELETE", t, void 0, {}, e);
+  }
+  retrieve(s, e = {}) {
+    let t = `/admin/regions/${s}`;
+    return this.client.request("GET", t, void 0, {}, e);
+  }
+  list(s, e = {}) {
+    let t = "/admin/regions";
+    return s && (t = `/admin/regions?${m.stringify(s)}`), this.client.request("GET", t, void 0, {}, e);
+  }
+  addCountry(s, e, t = {}) {
+    let r = `/admin/regions/${s}/countries`;
+    return this.client.request("POST", r, e, {}, t);
+  }
+  deleteCountry(s, e, t = {}) {
+    let r = `/admin/regions/${s}/countries/${e}`;
+    return this.client.request("DELETE", r, void 0, {}, t);
+  }
+  addFulfillmentProvider(s, e, t = {}) {
+    let r = `/admin/regions/${s}/fulfillment-providers`;
+    return this.client.request("POST", r, e, {}, t);
+  }
+  deleteFulfillmentProvider(s, e, t = {}) {
+    let r = `/admin/regions/${s}/fulfillment-providers/${e}`;
+    return this.client.request("DELETE", r, void 0, {}, t);
+  }
+  retrieveFulfillmentOptions(s, e = {}) {
+    let t = `/admin/regions/${s}/fulfillment-options`;
+    return this.client.request("GET", t, void 0, {}, e);
+  }
+  addPaymentProvider(s, e, t = {}) {
+    let r = `/admin/regions/${s}/payment-providers`;
+    return this.client.request("POST", r, e, {}, t);
+  }
+  deletePaymentProvider(s, e, t = {}) {
+    let r = `/admin/regions/${s}/payment-providers/${e}`;
+    return this.client.request("DELETE", r, void 0, {}, t);
+  }
+}, Os = Be;
+var Ie = class extends i {
+  create(s, e = {}) {
+    let t = "/admin/return-reasons";
+    return this.client.request("POST", t, s, {}, e);
+  }
+  update(s, e, t = {}) {
+    let r = `/admin/return-reasons/${s}`;
+    return this.client.request("POST", r, e, {}, t);
+  }
+  delete(s, e = {}) {
+    let t = `/admin/return-reasons/${s}`;
+    return this.client.request("DELETE", t, void 0, {}, e);
+  }
+  retrieve(s, e = {}) {
+    let t = `/admin/return-reasons/${s}`;
+    return this.client.request("GET", t, void 0, {}, e);
+  }
+  list(s = {}) {
+    let e = "/admin/return-reasons";
+    return this.client.request("GET", e, void 0, {}, s);
+  }
+}, $s = Ie;
+var ke = class extends i {
+  cancel(s, e = {}) {
+    let t = `/admin/returns/${s}/cancel`;
+    return this.client.request("POST", t, void 0, {}, e);
+  }
+  receive(s, e, t = {}) {
+    let r = `/admin/returns/${s}/receive`;
+    return this.client.request("POST", r, e, {}, t);
+  }
+  list(s, e = {}) {
+    let t = "/admin/returns/";
+    return s && (t = `/admin/returns?${m.stringify(s)}`), this.client.request("GET", t, void 0, {}, e);
+  }
+}, Es = ke;
+var Ue = class extends i {
+  retrieve(s, e = {}) {
+    let t = `/admin/sales-channels/${s}`;
+    return this.client.request("GET", t, void 0, {}, e);
+  }
+  create(s, e = {}) {
+    let t = "/admin/sales-channels";
+    return this.client.request("POST", t, s, {}, e);
+  }
+  update(s, e, t = {}) {
+    let r = `/admin/sales-channels/${s}`;
+    return this.client.request("POST", r, e, {}, t);
+  }
+  list(s, e = {}) {
+    let t = "/admin/sales-channels";
+    if (s) {
+      let r = m.stringify(s);
+      t += `?${r}`;
+    }
+    return this.client.request("GET", t, void 0, {}, e);
+  }
+  delete(s, e = {}) {
+    let t = `/admin/sales-channels/${s}`;
+    return this.client.request("DELETE", t, void 0, {}, e);
+  }
+  removeProducts(s, e, t = {}) {
+    let r = `/admin/sales-channels/${s}/products/batch`;
+    return this.client.request("DELETE", r, e, {}, t);
+  }
+  addProducts(s, e, t = {}) {
+    let r = `/admin/sales-channels/${s}/products/batch`;
+    return this.client.request("POST", r, e, {}, t);
+  }
+  addLocation(s, e, t = {}) {
+    let r = `/admin/sales-channels/${s}/stock-locations`;
+    return this.client.request("POST", r, e, {}, t);
+  }
+  removeLocation(s, e, t = {}) {
+    let r = `/admin/sales-channels/${s}/stock-locations`;
+    return this.client.request("DELETE", r, e, {}, t);
+  }
+}, xs = Ue;
+var Ke = class extends i {
+  create(s, e = {}) {
+    let t = "/admin/shipping-options";
+    return this.client.request("POST", t, s, {}, e);
+  }
+  update(s, e, t = {}) {
+    let r = `/admin/shipping-options/${s}`;
+    return this.client.request("POST", r, e, {}, t);
+  }
+  delete(s, e = {}) {
+    let t = `/admin/shipping-options/${s}`;
+    return this.client.request("DELETE", t, void 0, {}, e);
+  }
+  retrieve(s, e = {}) {
+    let t = `/admin/shipping-options/${s}`;
+    return this.client.request("GET", t, void 0, {}, e);
+  }
+  list(s, e = {}) {
+    let t = "/admin/shipping-options";
+    return s && (t = `/admin/shipping-options?${m.stringify(s)}`), this.client.request("GET", t, void 0, {}, e);
+  }
+}, Gs = Ke;
+var Ne = class extends i {
+  create(s, e = {}) {
+    let t = "/admin/shipping-profiles/";
+    return this.client.request("POST", t, s, {}, e);
+  }
+  update(s, e, t = {}) {
+    let r = `/admin/shipping-profiles/${s}`;
+    return this.client.request("POST", r, e, {}, t);
+  }
+  delete(s, e = {}) {
+    let t = `/admin/shipping-profiles/${s}`;
+    return this.client.request("DELETE", t, void 0, {}, e);
+  }
+  retrieve(s, e = {}) {
+    let t = `/admin/shipping-profiles/${s}`;
+    return this.client.request("GET", t, void 0, {}, e);
+  }
+  list(s = {}) {
+    let e = "/admin/shipping-profiles/";
+    return this.client.request("GET", e, void 0, {}, s);
+  }
+}, Ds = Ne;
+var Ve = class extends i {
+  create(s, e = {}) {
+    let t = "/admin/stock-locations";
+    return this.client.request("POST", t, s, {}, e);
+  }
+  retrieve(s, e = {}) {
+    let t = `/admin/stock-locations/${s}`;
+    return this.client.request("GET", t, void 0, {}, e);
+  }
+  update(s, e, t = {}) {
+    let r = `/admin/stock-locations/${s}`;
+    return this.client.request("POST", r, e, {}, t);
+  }
+  delete(s, e = {}) {
+    let t = `/admin/stock-locations/${s}`;
+    return this.client.request("DELETE", t, void 0, {}, e);
+  }
+  list(s, e = {}) {
+    let t = "/admin/stock-locations";
+    if (s) {
+      let r = m.stringify(s);
+      t += `?${r}`;
+    }
+    return this.client.request("GET", t, void 0, {}, e);
+  }
+}, Ls = Ve;
+var Fe = class extends i {
+  update(s, e = {}) {
+    let t = "/admin/store/";
+    return this.client.request("POST", t, s, {}, e);
+  }
+  addCurrency(s, e = {}) {
+    let t = `/admin/store/${s}`;
+    return this.client.request("POST", t, void 0, {}, e);
+  }
+  deleteCurrency(s, e = {}) {
+    let t = `/admin/store/currencies/${s}`;
+    return this.client.request("DELETE", t, void 0, {}, e);
+  }
+  retrieve(s = {}) {
+    let e = "/admin/store/";
+    return this.client.request("GET", e, void 0, {}, s);
+  }
+  listPaymentProviders(s = {}) {
+    let e = "/admin/store/payment-providers";
+    return this.client.request("GET", e, void 0, {}, s);
+  }
+  listTaxProviders(s = {}) {
+    let e = "/admin/store/tax-providers";
+    return this.client.request("GET", e, void 0, {}, s);
+  }
+}, bs = Fe;
+var Me = class extends i {
+  retrieve(s, e = {}) {
+    let t = `/admin/swaps/${s}`;
+    return this.client.request("GET", t, void 0, {}, e);
+  }
+  list(s, e = {}) {
+    let t = "/admin/swaps/";
+    return s && (t = `/admin/swaps?${m.stringify(s)}`), this.client.request("GET", t, void 0, {}, e);
+  }
+}, ws = Me;
+var ze = class extends i {
+  retrieve(s, e, t = {}) {
+    let r = `/admin/tax-rates/${s}`;
+    if (e) {
+      let n = m.stringify(e);
+      r = `/admin/tax-rates/${s}?${n}`;
+    }
+    return this.client.request("GET", r, void 0, {}, t);
+  }
+  list(s, e = {}) {
+    let t = "/admin/tax-rates";
+    return s && (t = `/admin/tax-rates?${m.stringify(s)}`), this.client.request("GET", t, void 0, {}, e);
+  }
+  create(s, e, t = {}) {
+    let r = "/admin/tax-rates";
+    return e && (r = `/admin/tax-rates?${m.stringify(e)}`), this.client.request("POST", r, s, {}, t);
+  }
+  update(s, e, t, r = {}) {
+    let n = `/admin/tax-rates/${s}`;
+    if (t) {
+      let a = m.stringify(t);
+      n = `/admin/tax-rates/${s}?${a}`;
+    }
+    return this.client.request("POST", n, e, {}, r);
+  }
+  addProducts(s, e, t, r = {}) {
+    let n = `/admin/tax-rates/${s}/products/batch`;
+    if (t) {
+      let a = m.stringify(t);
+      n = `/admin/tax-rates/${s}/products/batch?${a}`;
+    }
+    return this.client.request("POST", n, e, {}, r);
+  }
+  addProductTypes(s, e, t, r = {}) {
+    let n = `/admin/tax-rates/${s}/product-types/batch`;
+    if (t) {
+      let a = m.stringify(t);
+      n = `/admin/tax-rates/${s}/product-types/batch?${a}`;
+    }
+    return this.client.request("POST", n, e, {}, r);
+  }
+  addShippingOptions(s, e, t, r = {}) {
+    let n = `/admin/tax-rates/${s}/shipping-options/batch`;
+    if (t) {
+      let a = m.stringify(t);
+      n = `/admin/tax-rates/${s}/shipping-options/batch?${a}`;
+    }
+    return this.client.request("POST", n, e, {}, r);
+  }
+  removeProducts(s, e, t, r = {}) {
+    let n = `/admin/tax-rates/${s}/products/batch`;
+    if (t) {
+      let a = m.stringify(t);
+      n = `/admin/tax-rates/${s}/products/batch?${a}`;
+    }
+    return this.client.request("DELETE", n, e, {}, r);
+  }
+  removeProductTypes(s, e, t, r = {}) {
+    let n = `/admin/tax-rates/${s}/product-types/batch`;
+    if (t) {
+      let a = m.stringify(t);
+      n = `/admin/tax-rates/${s}/product-types/batch?${a}`;
+    }
+    return this.client.request("DELETE", n, e, {}, r);
+  }
+  removeShippingOptions(s, e, t, r = {}) {
+    let n = `/admin/tax-rates/${s}/shipping-options/batch`;
+    if (t) {
+      let a = m.stringify(t);
+      n = `/admin/tax-rates/${s}/shipping-options/batch?${a}`;
+    }
+    return this.client.request("DELETE", n, e, {}, r);
+  }
+  delete(s, e = {}) {
+    let t = `/admin/tax-rates/${s}`;
+    return this.client.request("DELETE", t, void 0, {}, e);
+  }
+}, vs = ze;
+var He = class extends i {
+  constructor() {
+    super(...arguments);
+    this.headers = { "Content-Type": "multipart/form-data" };
+  }
+  create(e) {
+    let t = "/admin/uploads", r = this._createPayload(e);
+    return this.client.request("POST", t, r, {}, this.headers);
+  }
+  createProtected(e) {
+    let t = "/admin/uploads/protected", r = this._createPayload(e);
+    return this.client.request("POST", t, r, {}, this.headers);
+  }
+  delete(e, t = {}) {
+    let r = "/admin/uploads";
+    return this.client.request("DELETE", r, e, {}, t);
+  }
+  getPresignedDownloadUrl(e, t = {}) {
+    let r = "/admin/uploads/download-url";
+    return this.client.request("POST", r, e, {}, t);
+  }
+  _createPayload(e) {
+    let t = new FormData();
+    return Array.isArray(e) ? e.forEach((r) => t.append("files", r)) : t.append("files", e), t;
+  }
+}, Bs = He;
+var je = class extends i {
+  sendResetPasswordToken(s, e = {}) {
+    let t = "/admin/users/password-token";
+    return this.client.request("POST", t, s, {}, e);
+  }
+  resetPassword(s, e = {}) {
+    let t = "admin/users/reset-password";
+    return this.client.request("POST", t, s, {}, e);
+  }
+  retrieve(s, e = {}) {
+    let t = `/admin/users/${s}`;
+    return this.client.request("GET", t, void 0, {}, e);
+  }
+  create(s, e = {}) {
+    let t = "/admin/users";
+    return this.client.request("POST", t, s, {}, e);
+  }
+  update(s, e, t = {}) {
+    let r = `/admin/users/${s}`;
+    return this.client.request("POST", r, e, {}, t);
+  }
+  delete(s, e = {}) {
+    let t = `/admin/users/${s}`;
+    return this.client.request("DELETE", t, void 0, {}, e);
+  }
+  list(s = {}) {
+    let e = "/admin/users";
+    return this.client.request("GET", e, void 0, {}, s);
+  }
+}, Is = je;
+var Je = class extends i {
+  list(s, e = {}) {
+    let t = "/admin/variants";
+    return s && (t = `/admin/variants?${m.stringify(s)}`), this.client.request("GET", t, void 0, {}, e);
+  }
+  getInventory(s, e = {}) {
+    let t = `/admin/variants/${s}/inventory`;
+    return this.client.request("GET", t, void 0, {}, e);
+  }
+}, ks = Je;
+var h = class extends i {
+  constructor() {
+    super(...arguments);
+    this.auth = new Ye(this.client);
+    this.batchJobs = new es(this.client);
+    this.customers = new ns(this.client);
+    this.customerGroups = new rs(this.client);
+    this.discounts = new is(this.client);
+    this.currencies = new ts(this.client);
+    this.collections = new ss(this.client);
+    this.draftOrders = new os(this.client);
+    this.giftCards = new as(this.client);
+    this.invites = new ds(this.client);
+    this.notes = new ms(this.client);
+    this.priceLists = new fs(this.client);
+    this.products = new Cs(this.client);
+    this.productTags = new qs(this.client);
+    this.productTypes = new Ss(this.client);
+    this.users = new Is(this.client);
+    this.returns = new Es(this.client);
+    this.orders = new ls(this.client);
+    this.orderEdits = new ps(this.client);
+    this.publishableApiKeys = new Ts(this.client);
+    this.returnReasons = new $s(this.client);
+    this.variants = new ks(this.client);
+    this.salesChannels = new xs(this.client);
+    this.swaps = new ws(this.client);
+    this.shippingProfiles = new Ds(this.client);
+    this.stockLocations = new Ls(this.client);
+    this.store = new bs(this.client);
+    this.shippingOptions = new Gs(this.client);
+    this.regions = new Os(this.client);
+    this.notifications = new cs(this.client);
+    this.taxRates = new vs(this.client);
+    this.uploads = new Bs(this.client);
+    this.paymentCollections = new Ps(this.client);
+    this.payments = new hs(this.client);
+    this.productCategories = new ys(this.client);
+  }
+};
+var _e = class {
+  constructor(s) {
+    this.client = new T(s), this.admin = new h(this.client), this.auth = new x(this.client), this.carts = new b(this.client), this.customers = new k(this.client), this.errors = new d(), this.orders = new M(this.client), this.orderEdits = new V(this.client), this.products = new ee(this.client), this.productTypes = new X(this.client), this.regions = new te(this.client), this.returnReasons = new ne(this.client), this.returns = new oe(this.client), this.shippingOptions = new de(this.client), this.swaps = new ce(this.client), this.collections = new v(this.client), this.giftCards = new K(this.client), this.paymentMethods = new R(this.client), this.paymentCollections = new H(this.client), this.productTags = new Q(this.client), this.productCategories = new J(this.client);
+  }
+  setPublishableKey(s) {
+    p.registerPublishableApiKey(s);
+  }
+}, vo = _e;
+const plugin_iGFVkagQDO = /* @__PURE__ */ defineNuxtPlugin((nuxtApp) => {
+  const { medusa: config } = useRuntimeConfig().public;
+  const medusaClient = new vo(config);
+  nuxtApp.provide("medusa", medusaClient);
 });
 function maybe$1(thunk) {
   try {
@@ -1565,8 +3235,8 @@ function isInlineFragment(selection) {
 }
 function checkDocument(doc) {
   invariant(doc && doc.kind === "Document", 47);
-  var operations = doc.definitions.filter(function(d) {
-    return d.kind !== "FragmentDefinition";
+  var operations = doc.definitions.filter(function(d2) {
+    return d2.kind !== "FragmentDefinition";
   }).map(function(definition) {
     if (definition.kind !== "OperationDefinition") {
       throw new InvariantError(48);
@@ -1585,8 +3255,8 @@ function getOperationDefinition(doc) {
 function getOperationName(doc) {
   return doc.definitions.filter(function(definition) {
     return definition.kind === "OperationDefinition" && !!definition.name;
-  }).map(function(x) {
-    return x.name.value;
+  }).map(function(x2) {
+    return x2.name.value;
   })[0] || null;
 }
 function getFragmentDefinitions(doc) {
@@ -1693,7 +3363,7 @@ function removeDirectivesFromDocument(directives, doc) {
   var getInUseByOperationName = makeInUseGetterFunction("");
   var getInUseByFragmentName = makeInUseGetterFunction("");
   var getInUse = function(ancestors) {
-    for (var p = 0, ancestor = void 0; p < ancestors.length && (ancestor = ancestors[p]); ++p) {
+    for (var p2 = 0, ancestor = void 0; p2 < ancestors.length && (ancestor = ancestors[p2]); ++p2) {
       if (isArray(ancestor))
         continue;
       if (ancestor.kind === Kind.OPERATION_DEFINITION) {
@@ -1706,8 +3376,8 @@ function removeDirectivesFromDocument(directives, doc) {
     return null;
   };
   var operationCount = 0;
-  for (var i = doc.definitions.length - 1; i >= 0; --i) {
-    if (doc.definitions[i].kind === Kind.OPERATION_DEFINITION) {
+  for (var i2 = doc.definitions.length - 1; i2 >= 0; --i2) {
+    if (doc.definitions[i2].kind === Kind.OPERATION_DEFINITION) {
       ++operationCount;
     }
   }
@@ -1859,8 +3529,8 @@ var addTypenameToDocument = Object.assign(function(doc) {
           return;
         }
         var field = parent;
-        if (isField(field) && field.directives && field.directives.some(function(d) {
-          return d.name.value === "export";
+        if (isField(field) && field.directives && field.directives.some(function(d2) {
+          return d2.name.value === "export";
         })) {
           return;
         }
@@ -1928,8 +3598,8 @@ function mergeDeepArray(sources) {
   var count = sources.length;
   if (count > 1) {
     var merger = new DeepMerger();
-    for (var i = 1; i < count; ++i) {
-      target = merger.merge(target, sources[i]);
+    for (var i2 = 1; i2 < count; ++i2) {
+      target = merger.merge(target, sources[i2]);
     }
   }
   return target;
@@ -1999,8 +3669,8 @@ function cloneDeepHelper(val, seen) {
         return seen.get(val);
       var copy_1 = val.slice(0);
       seen.set(val, copy_1);
-      copy_1.forEach(function(child, i) {
-        copy_1[i] = cloneDeepHelper(child, seen);
+      copy_1.forEach(function(child, i2) {
+        copy_1[i2] = cloneDeepHelper(child, seen);
       });
       return copy_1;
     }
@@ -2179,7 +3849,7 @@ var Concast = function(_super) {
       _this.sources = [];
       _this.handlers.complete();
     };
-    _this.promise.catch(function(_) {
+    _this.promise.catch(function(_2) {
     });
     if (typeof sources === "function") {
       sources = [new Observable(sources)];
@@ -2261,8 +3931,8 @@ function mergeIncrementalData(prevResult, result) {
   if (isExecutionPatchIncrementalResult(result) && isNonEmptyArray(result.incremental)) {
     result.incremental.forEach(function(_a) {
       var data = _a.data, path = _a.path;
-      for (var i = path.length - 1; i >= 0; --i) {
-        var key = path[i];
+      for (var i2 = path.length - 1; i2 >= 0; --i2) {
+        var key = path[i2];
         var isNumericKey = !isNaN(+key);
         var parent_1 = isNumericKey ? [] : {};
         parent_1[key] = data;
@@ -2411,8 +4081,8 @@ var ApolloLink = function() {
   ApolloLink2.from = function(links) {
     if (links.length === 0)
       return ApolloLink2.empty();
-    return links.map(toLink).reduce(function(x, y) {
-      return x.concat(y);
+    return links.map(toLink).reduce(function(x2, y2) {
+      return x2.concat(y2);
     });
   };
   ApolloLink2.split = function(test, left, right) {
@@ -2739,9 +4409,9 @@ var ApolloError = function(_super) {
 }(Error);
 var hasOwnProperty$1 = Object.prototype.hasOwnProperty;
 function readMultipartBody(response, observer) {
-  var _a, _b, _c, _d, _e;
+  var _a, _b, _c, _d, _e2;
   return __awaiter(this, void 0, void 0, function() {
-    var decoder, contentType, delimiter, boundaryVal, boundary, buffer, iterator, running, _f, value, done, chunk, bi, message, i, headers, contentType_1, body, result, next;
+    var decoder, contentType, delimiter, boundaryVal, boundary, buffer, iterator, running, _f, value, done, chunk, bi, message, i2, headers, contentType_1, body, result, next;
     var _g, _h;
     return __generator(this, function(_j) {
       switch (_j.label) {
@@ -2775,13 +4445,13 @@ function readMultipartBody(response, observer) {
               buffer.slice(bi + boundary.length)
             ], message = _g[0], buffer = _g[1];
             if (message.trim()) {
-              i = message.indexOf("\r\n\r\n");
-              headers = parseHeaders(message.slice(0, i));
+              i2 = message.indexOf("\r\n\r\n");
+              headers = parseHeaders(message.slice(0, i2));
               contentType_1 = headers["content-type"];
               if (contentType_1 && contentType_1.toLowerCase().indexOf("application/json") === -1) {
                 throw new Error("Unsupported patch content type: application/json is required.");
               }
-              body = message.slice(i);
+              body = message.slice(i2);
               try {
                 result = parseJsonBody(response, body.replace("\r\n", ""));
                 if (Object.keys(result).length > 1 || "data" in result || "incremental" in result || "errors" in result || "payload" in result) {
@@ -2808,7 +4478,7 @@ function readMultipartBody(response, observer) {
           }
           return [3, 1];
         case 3:
-          (_e = observer.complete) === null || _e === void 0 ? void 0 : _e.call(observer);
+          (_e2 = observer.complete) === null || _e2 === void 0 ? void 0 : _e2.call(observer);
           return [2];
       }
     });
@@ -2817,10 +4487,10 @@ function readMultipartBody(response, observer) {
 function parseHeaders(headerText) {
   var headersInit = {};
   headerText.split("\n").forEach(function(line) {
-    var i = line.indexOf(":");
-    if (i > -1) {
-      var name_1 = line.slice(0, i).trim().toLowerCase();
-      var value = line.slice(i + 1).trim();
+    var i2 = line.indexOf(":");
+    if (i2 > -1) {
+      var name_1 = line.slice(0, i2).trim().toLowerCase();
+      var value = line.slice(i2 + 1).trim();
       headersInit[name_1] = value;
     }
   });
@@ -2883,10 +4553,10 @@ function parseAndCheckHttpResponse(operations) {
     });
   };
 }
-var serializeFetchParameter = function(p, label) {
+var serializeFetchParameter = function(p2, label) {
   var serialized;
   try {
-    serialized = JSON.stringify(p);
+    serialized = JSON.stringify(p2);
   } catch (e) {
     var parseError = new InvariantError(24);
     parseError.parseError = e;
@@ -3075,11 +4745,11 @@ var createHttpLink = function(linkOptions) {
       if (controller)
         options.signal = signal;
     }
-    var definitionIsMutation = function(d) {
-      return d.kind === "OperationDefinition" && d.operation === "mutation";
+    var definitionIsMutation = function(d2) {
+      return d2.kind === "OperationDefinition" && d2.operation === "mutation";
     };
-    var definitionIsSubscription = function(d) {
-      return d.kind === "OperationDefinition" && d.operation === "subscription";
+    var definitionIsSubscription = function(d2) {
+      return d2.kind === "OperationDefinition" && d2.operation === "subscription";
     };
     var isSubscription = definitionIsSubscription(getMainDefinition(operation.query));
     var hasDefer = hasDirectives(["defer"], operation.query);
@@ -3239,8 +4909,8 @@ var MissingFieldError = function(_super) {
     _this.variables = variables;
     if (Array.isArray(_this.path)) {
       _this.missing = _this.message;
-      for (var i = _this.path.length - 1; i >= 0; --i) {
-        _this.missing = (_a = {}, _a[_this.path[i]] = _this.missing, _a);
+      for (var i2 = _this.path.length - 1; i2 >= 0; --i2) {
+        _this.missing = (_a = {}, _a[_this.path[i2]] = _this.missing, _a);
       }
     } else {
       _this.missing = _this.path;
@@ -3739,10 +5409,10 @@ var Layer = function(_super) {
     return hasOwn.call(this.data, dataId) ? __assign(__assign({}, fromParent), _super.prototype.findChildRefIds.call(this, dataId)) : fromParent;
   };
   Layer2.prototype.getStorage = function() {
-    var p = this.parent;
-    while (p.parent)
-      p = p.parent;
-    return p.getStorage.apply(p, arguments);
+    var p2 = this.parent;
+    while (p2.parent)
+      p2 = p2.parent;
+    return p2.getStorage.apply(p2, arguments);
   };
   return Layer2;
 }(EntityStore);
@@ -3827,8 +5497,8 @@ var ObjectCanon = function() {
           if (!node.object) {
             var obj_1 = node.object = Object.create(proto_1);
             this.known.add(obj_1);
-            keys.sorted.forEach(function(key, i) {
-              obj_1[key] = array_1[firstValueIndex_1 + i];
+            keys.sorted.forEach(function(key, i2) {
+              obj_1[key] = array_1[firstValueIndex_1 + i2];
             });
           }
           return node.object;
@@ -4048,17 +5718,17 @@ var StoreReader = function() {
     var field = _a.field, array = _a.array, enclosingRef = _a.enclosingRef, context = _a.context;
     var missing;
     var missingMerger = new DeepMerger();
-    function handleMissing(childResult, i) {
+    function handleMissing(childResult, i2) {
       var _a2;
       if (childResult.missing) {
-        missing = missingMerger.merge(missing, (_a2 = {}, _a2[i] = childResult.missing, _a2));
+        missing = missingMerger.merge(missing, (_a2 = {}, _a2[i2] = childResult.missing, _a2));
       }
       return childResult.result;
     }
     if (field.selectionSet) {
       array = array.filter(context.store.canRead);
     }
-    array = array.map(function(item, i) {
+    array = array.map(function(item, i2) {
       if (item === null) {
         return null;
       }
@@ -4068,7 +5738,7 @@ var StoreReader = function() {
           array: item,
           enclosingRef,
           context
-        }), i);
+        }), i2);
       }
       if (field.selectionSet) {
         return handleMissing(_this.executeSelectionSet({
@@ -4076,7 +5746,7 @@ var StoreReader = function() {
           objectOrReference: item,
           enclosingRef: isReference(item) ? item : enclosingRef,
           context
-        }), i);
+        }), i2);
       }
       return item;
     });
@@ -4089,7 +5759,7 @@ var StoreReader = function() {
 }();
 function firstMissing(tree) {
   try {
-    JSON.stringify(tree, function(_, value) {
+    JSON.stringify(tree, function(_2, value) {
       if (typeof value === "string")
         throw value;
       return value;
@@ -4323,10 +5993,10 @@ function keyArgsFnFromSpecifier(specifier) {
       if (firstChar === "@") {
         if (field && isNonEmptyArray(field.directives)) {
           var directiveName_1 = firstKey.slice(1);
-          var d = field.directives.find(function(d2) {
-            return d2.name.value === directiveName_1;
+          var d2 = field.directives.find(function(d3) {
+            return d3.name.value === directiveName_1;
           });
-          var directiveArgs = d && argumentsObjectFromField(d, variables);
+          var directiveArgs = d2 && argumentsObjectFromField(d2, variables);
           return directiveArgs && extractKeyPath(directiveArgs, keyPath.slice(1));
         }
         return;
@@ -4357,8 +6027,8 @@ function collectSpecifierPaths(specifier, extractor) {
     var _a;
     var toMerge = extractor(path);
     if (toMerge !== void 0) {
-      for (var i = path.length - 1; i >= 0; --i) {
-        toMerge = (_a = {}, _a[path[i]] = toMerge, _a);
+      for (var i2 = path.length - 1; i2 >= 0; --i2) {
+        toMerge = (_a = {}, _a[path[i2]] = toMerge, _a);
       }
       collected = merger.merge(collected, toMerge);
     }
@@ -4370,15 +6040,15 @@ function getSpecifierPaths(spec) {
   if (!info.paths) {
     var paths_1 = info.paths = [];
     var currentPath_1 = [];
-    spec.forEach(function(s, i) {
+    spec.forEach(function(s, i2) {
       if (isArray(s)) {
-        getSpecifierPaths(s).forEach(function(p) {
-          return paths_1.push(currentPath_1.concat(p));
+        getSpecifierPaths(s).forEach(function(p2) {
+          return paths_1.push(currentPath_1.concat(p2));
         });
         currentPath_1.length = 0;
       } else {
         currentPath_1.push(s);
-        if (!isArray(spec[i + 1])) {
+        if (!isArray(spec[i2 + 1])) {
           paths_1.push(currentPath_1.slice(0));
           currentPath_1.length = 0;
         }
@@ -4423,7 +6093,7 @@ var mergeTrueFn = function(existing, incoming, _a) {
   var mergeObjects = _a.mergeObjects;
   return mergeObjects(existing, incoming);
 };
-var mergeFalseFn = function(_, incoming) {
+var mergeFalseFn = function(_2, incoming) {
   return incoming;
 };
 var Policies = function() {
@@ -4606,8 +6276,8 @@ var Policies = function() {
         }
       };
       var needToCheckFuzzySubtypes = !!(result && this.fuzzySubtypes.size);
-      for (var i = 0; i < workQueue_1.length; ++i) {
-        var supertypeSet = workQueue_1[i];
+      for (var i2 = 0; i2 < workQueue_1.length; ++i2) {
+        var supertypeSet = workQueue_1[i2];
         if (supertypeSet.has(supertype)) {
           if (!typenameSupertypeSet.has(supertype)) {
             typenameSupertypeSet.add(supertype);
@@ -4615,7 +6285,7 @@ var Policies = function() {
           return true;
         }
         supertypeSet.forEach(maybeEnqueue_1);
-        if (needToCheckFuzzySubtypes && i === workQueue_1.length - 1 && selectionSetMatchesResult(fragment.selectionSet, result, variables)) {
+        if (needToCheckFuzzySubtypes && i2 === workQueue_1.length - 1 && selectionSetMatchesResult(fragment.selectionSet, result, variables)) {
           needToCheckFuzzySubtypes = false;
           this.fuzzySubtypes.forEach(function(regExp, fuzzyString) {
             var match = typename.match(regExp);
@@ -4934,9 +6604,9 @@ var StoreWriter = function() {
       return value;
     }
     if (isArray(value)) {
-      return value.map(function(item, i) {
-        var value2 = _this.processFieldValue(item, field, context, getChildMergeTree(mergeTree, i));
-        maybeRecycleChildMergeTree(mergeTree, i);
+      return value.map(function(item, i2) {
+        var value2 = _this.processFieldValue(item, field, context, getChildMergeTree(mergeTree, i2));
+        maybeRecycleChildMergeTree(mergeTree, i2);
         return value2;
       });
     }
@@ -5122,15 +6792,15 @@ var InMemoryCache = function(_super) {
       canon: resetResultIdentities ? void 0 : previousReader && previousReader.canon,
       fragments
     }), fragments);
-    this.maybeBroadcastWatch = wrap(function(c, options) {
-      return _this.broadcastWatch(c, options);
+    this.maybeBroadcastWatch = wrap(function(c2, options) {
+      return _this.broadcastWatch(c2, options);
     }, {
       max: this.config.resultCacheMaxSize,
-      makeCacheKey: function(c) {
-        var store = c.optimistic ? _this.optimisticData : _this.data;
+      makeCacheKey: function(c2) {
+        var store = c2.optimistic ? _this.optimisticData : _this.data;
         if (supportsResultCaching(store)) {
-          var optimistic = c.optimistic, id = c.id, variables = c.variables;
-          return store.makeCacheKey(c.query, c.callback, canonicalStringify({ optimistic, id, variables }));
+          var optimistic = c2.optimistic, id = c2.id, variables = c2.variables;
+          return store.makeCacheKey(c2.query, c2.callback, canonicalStringify({ optimistic, id, variables }));
         }
       }
     });
@@ -5349,24 +7019,24 @@ var InMemoryCache = function(_super) {
   InMemoryCache2.prototype.broadcastWatches = function(options) {
     var _this = this;
     if (!this.txCount) {
-      this.watches.forEach(function(c) {
-        return _this.maybeBroadcastWatch(c, options);
+      this.watches.forEach(function(c2) {
+        return _this.maybeBroadcastWatch(c2, options);
       });
     }
   };
-  InMemoryCache2.prototype.broadcastWatch = function(c, options) {
-    var lastDiff = c.lastDiff;
-    var diff = this.diff(c);
+  InMemoryCache2.prototype.broadcastWatch = function(c2, options) {
+    var lastDiff = c2.lastDiff;
+    var diff = this.diff(c2);
     if (options) {
-      if (c.optimistic && typeof options.optimistic === "string") {
+      if (c2.optimistic && typeof options.optimistic === "string") {
         diff.fromOptimisticTransaction = true;
       }
-      if (options.onWatchUpdated && options.onWatchUpdated.call(this, c, diff, lastDiff) === false) {
+      if (options.onWatchUpdated && options.onWatchUpdated.call(this, c2, diff, lastDiff) === false) {
         return;
       }
     }
     if (!lastDiff || !equal(lastDiff.result, diff.result)) {
-      c.callback(c.lastDiff = diff, lastDiff);
+      c2.callback(c2.lastDiff = diff, lastDiff);
     }
   };
   return InMemoryCache2;
@@ -5421,7 +7091,7 @@ var ObservableQuery = function(_super) {
     _this.queryManager = queryManager;
     _this.isTornDown = false;
     var _b = queryManager.defaultOptions.watchQuery, _c = _b === void 0 ? {} : _b, _d = _c.fetchPolicy, defaultFetchPolicy = _d === void 0 ? "cache-first" : _d;
-    var _e = options.fetchPolicy, fetchPolicy = _e === void 0 ? defaultFetchPolicy : _e, _f = options.initialFetchPolicy, initialFetchPolicy = _f === void 0 ? fetchPolicy === "standby" ? defaultFetchPolicy : fetchPolicy : _f;
+    var _e2 = options.fetchPolicy, fetchPolicy = _e2 === void 0 ? defaultFetchPolicy : _e2, _f = options.initialFetchPolicy, initialFetchPolicy = _f === void 0 ? fetchPolicy === "standby" ? defaultFetchPolicy : fetchPolicy : _f;
     _this.options = __assign(__assign({}, options), { initialFetchPolicy, fetchPolicy });
     _this.queryId = queryInfo.queryId || queryManager.generateQueryId();
     var opDef = getOperationDefinition(_this.query);
@@ -6090,8 +7760,8 @@ var LocalState = function() {
           if (result == null) {
             return result;
           }
-          var isClientField = (_b = (_a2 = field.directives) === null || _a2 === void 0 ? void 0 : _a2.some(function(d) {
-            return d.name.value === "client";
+          var isClientField = (_b = (_a2 = field.directives) === null || _a2 === void 0 ? void 0 : _a2.some(function(d2) {
+            return d2.name.value === "client";
           })) !== null && _b !== void 0 ? _b : false;
           if (Array.isArray(result)) {
             return _this.resolveSubSelectedArray(field, isClientFieldDescendant || isClientField, result, execContext);
@@ -6127,7 +7797,7 @@ var LocalState = function() {
         var matches_1 = /* @__PURE__ */ new Set();
         selectionsToResolveCache.set(definitionNode, matches_1);
         visit(definitionNode, {
-          Directive: function(node, _, __, ___, ancestors) {
+          Directive: function(node, _2, __, ___, ancestors) {
             if (node.name.value === "client") {
               ancestors.forEach(function(node2) {
                 if (isSingleASTNode(node2) && isSelectionNode(node2)) {
@@ -6136,7 +7806,7 @@ var LocalState = function() {
               });
             }
           },
-          FragmentSpread: function(spread, _, __, ___, ancestors) {
+          FragmentSpread: function(spread, _2, __, ___, ancestors) {
             var fragment = fragmentMap[spread.name.value];
             invariant(fragment, 12);
             var fragmentSelections = collectByDefinition(fragment);
@@ -6476,7 +8146,7 @@ var QueryManager = function() {
   };
   QueryManager2.prototype.mutate = function(_a) {
     var _b, _c;
-    var mutation = _a.mutation, variables = _a.variables, optimisticResponse = _a.optimisticResponse, updateQueries = _a.updateQueries, _d = _a.refetchQueries, refetchQueries = _d === void 0 ? [] : _d, _e = _a.awaitRefetchQueries, awaitRefetchQueries = _e === void 0 ? false : _e, updateWithProxyFn = _a.update, onQueryUpdated = _a.onQueryUpdated, _f = _a.fetchPolicy, fetchPolicy = _f === void 0 ? ((_b = this.defaultOptions.mutate) === null || _b === void 0 ? void 0 : _b.fetchPolicy) || "network-only" : _f, _g = _a.errorPolicy, errorPolicy = _g === void 0 ? ((_c = this.defaultOptions.mutate) === null || _c === void 0 ? void 0 : _c.errorPolicy) || "none" : _g, keepRootFields = _a.keepRootFields, context = _a.context;
+    var mutation = _a.mutation, variables = _a.variables, optimisticResponse = _a.optimisticResponse, updateQueries = _a.updateQueries, _d = _a.refetchQueries, refetchQueries = _d === void 0 ? [] : _d, _e2 = _a.awaitRefetchQueries, awaitRefetchQueries = _e2 === void 0 ? false : _e2, updateWithProxyFn = _a.update, onQueryUpdated = _a.onQueryUpdated, _f = _a.fetchPolicy, fetchPolicy = _f === void 0 ? ((_b = this.defaultOptions.mutate) === null || _b === void 0 ? void 0 : _b.fetchPolicy) || "network-only" : _f, _g = _a.errorPolicy, errorPolicy = _g === void 0 ? ((_c = this.defaultOptions.mutate) === null || _c === void 0 ? void 0 : _c.errorPolicy) || "none" : _g, keepRootFields = _a.keepRootFields, context = _a.context;
     return __awaiter(this, void 0, void 0, function() {
       var mutationId, _h, document2, hasClientExports2, mutationStoreValue, self;
       return __generator(this, function(_j) {
@@ -7100,7 +8770,7 @@ var QueryManager = function() {
     var variables = this.getVariables(query, options.variables);
     var queryInfo = this.getQuery(queryId);
     var defaults = this.defaultOptions.watchQuery;
-    var _a = options.fetchPolicy, fetchPolicy = _a === void 0 ? defaults && defaults.fetchPolicy || "cache-first" : _a, _b = options.errorPolicy, errorPolicy = _b === void 0 ? defaults && defaults.errorPolicy || "none" : _b, _c = options.returnPartialData, returnPartialData = _c === void 0 ? false : _c, _d = options.notifyOnNetworkStatusChange, notifyOnNetworkStatusChange = _d === void 0 ? false : _d, _e = options.context, context = _e === void 0 ? {} : _e;
+    var _a = options.fetchPolicy, fetchPolicy = _a === void 0 ? defaults && defaults.fetchPolicy || "cache-first" : _a, _b = options.errorPolicy, errorPolicy = _b === void 0 ? defaults && defaults.errorPolicy || "none" : _b, _c = options.returnPartialData, returnPartialData = _c === void 0 ? false : _c, _d = options.notifyOnNetworkStatusChange, notifyOnNetworkStatusChange = _d === void 0 ? false : _d, _e2 = options.context, context = _e2 === void 0 ? {} : _e2;
     var normalized = Object.assign({}, options, {
       query,
       variables,
@@ -7318,7 +8988,7 @@ var ApolloClient = function() {
     var _this = this;
     this.resetStoreCallbacks = [];
     this.clearStoreCallbacks = [];
-    var uri = options.uri, credentials = options.credentials, headers = options.headers, cache = options.cache, _a = options.ssrMode, ssrMode = _a === void 0 ? false : _a, _b = options.ssrForceFetchDelay, ssrForceFetchDelay = _b === void 0 ? 0 : _b, _c = options.connectToDevTools, connectToDevTools = _c === void 0 ? false : _c, _d = options.queryDeduplication, queryDeduplication = _d === void 0 ? true : _d, defaultOptions2 = options.defaultOptions, _e = options.assumeImmutableResults, assumeImmutableResults = _e === void 0 ? false : _e, resolvers = options.resolvers, typeDefs = options.typeDefs, fragmentMatcher = options.fragmentMatcher, clientAwarenessName = options.name, clientAwarenessVersion = options.version;
+    var uri = options.uri, credentials = options.credentials, headers = options.headers, cache = options.cache, _a = options.ssrMode, ssrMode = _a === void 0 ? false : _a, _b = options.ssrForceFetchDelay, ssrForceFetchDelay = _b === void 0 ? 0 : _b, _c = options.connectToDevTools, connectToDevTools = _c === void 0 ? false : _c, _d = options.queryDeduplication, queryDeduplication = _d === void 0 ? true : _d, defaultOptions2 = options.defaultOptions, _e2 = options.assumeImmutableResults, assumeImmutableResults = _e2 === void 0 ? false : _e2, resolvers = options.resolvers, typeDefs = options.typeDefs, fragmentMatcher = options.fragmentMatcher, clientAwarenessName = options.name, clientAwarenessVersion = options.version;
     var link = options.link;
     if (!link) {
       link = uri ? new HttpLink({ uri, credentials, headers }) : ApolloLink.empty();
@@ -7471,8 +9141,8 @@ var ApolloClient = function() {
     var _this = this;
     this.resetStoreCallbacks.push(cb);
     return function() {
-      _this.resetStoreCallbacks = _this.resetStoreCallbacks.filter(function(c) {
-        return c !== cb;
+      _this.resetStoreCallbacks = _this.resetStoreCallbacks.filter(function(c2) {
+        return c2 !== cb;
       });
     };
   };
@@ -7480,8 +9150,8 @@ var ApolloClient = function() {
     var _this = this;
     this.clearStoreCallbacks.push(cb);
     return function() {
-      _this.clearStoreCallbacks = _this.clearStoreCallbacks.filter(function(c) {
-        return c !== cb;
+      _this.clearStoreCallbacks = _this.clearStoreCallbacks.filter(function(c2) {
+        return c2 !== cb;
       });
     };
   };
@@ -7532,7 +9202,235 @@ var ApolloClient = function() {
   };
   return ApolloClient2;
 }();
+var DefaultApolloClient = Symbol("default-apollo-client");
 var ApolloClients = Symbol("apollo-clients");
+function resolveDefaultClient(providedApolloClients, providedApolloClient) {
+  const resolvedClient = providedApolloClients ? providedApolloClients.default : providedApolloClient != null ? providedApolloClient : void 0;
+  return resolvedClient;
+}
+function resolveClientWithId(providedApolloClients, clientId) {
+  if (!providedApolloClients) {
+    throw new Error(`No apolloClients injection found, tried to resolve '${clientId}' clientId`);
+  }
+  return providedApolloClients[clientId];
+}
+function useApolloClient(clientId) {
+  let resolveImpl;
+  const savedCurrentClients = currentApolloClients;
+  if (!getCurrentInstance()) {
+    resolveImpl = (id) => {
+      if (id) {
+        return resolveClientWithId(savedCurrentClients, id);
+      }
+      return resolveDefaultClient(savedCurrentClients, savedCurrentClients.default);
+    };
+  } else {
+    const providedApolloClients = inject(ApolloClients, null);
+    const providedApolloClient = inject(DefaultApolloClient, null);
+    resolveImpl = (id) => {
+      if (id) {
+        const client2 = resolveClientWithId(providedApolloClients, id);
+        if (client2) {
+          return client2;
+        }
+        return resolveClientWithId(savedCurrentClients, id);
+      }
+      const client = resolveDefaultClient(providedApolloClients, providedApolloClient);
+      if (client) {
+        return client;
+      }
+      return resolveDefaultClient(savedCurrentClients, savedCurrentClients.default);
+    };
+  }
+  function resolveClient(id = clientId) {
+    const client = resolveImpl(id);
+    if (!client) {
+      throw new Error(`Apollo client with id ${id != null ? id : "default"} not found. Use provideApolloClient() if you are outside of a component setup.`);
+    }
+    return client;
+  }
+  return {
+    resolveClient,
+    get client() {
+      return resolveClient();
+    }
+  };
+}
+var currentApolloClients = {};
+function provideApolloClients(clients) {
+  currentApolloClients = clients;
+  return function(fn) {
+    const result = fn();
+    currentApolloClients = {};
+    return result;
+  };
+}
+function useEventHook() {
+  const fns = [];
+  function on(fn) {
+    fns.push(fn);
+    return {
+      off: () => off(fn)
+    };
+  }
+  function off(fn) {
+    const index = fns.indexOf(fn);
+    if (index !== -1) {
+      fns.splice(index, 1);
+    }
+  }
+  function trigger(param) {
+    for (const fn of fns) {
+      fn(param);
+    }
+  }
+  function getCount() {
+    return fns.length;
+  }
+  return {
+    on,
+    off,
+    trigger,
+    getCount
+  };
+}
+function getAppTracking() {
+  var _a, _b, _c;
+  const vm = getCurrentInstance();
+  const root = (_c = (_a = vm == null ? void 0 : vm.$root) != null ? _a : vm == null ? void 0 : vm.root) != null ? _c : (_b = vm == null ? void 0 : vm.proxy) == null ? void 0 : _b.$root;
+  if (!root) {
+    throw new Error("Instance $root not found");
+  }
+  let appTracking;
+  if (!root._apolloAppTracking) {
+    appTracking = root._apolloAppTracking = {
+      queries: ref(0),
+      mutations: ref(0),
+      subscriptions: ref(0),
+      components: /* @__PURE__ */ new Map()
+    };
+  } else {
+    appTracking = root._apolloAppTracking;
+  }
+  return {
+    appTracking
+  };
+}
+function getCurrentTracking() {
+  const vm = getCurrentInstance();
+  if (!vm) {
+    throw new Error("getCurrentTracking must be used during a component setup");
+  }
+  const { appTracking } = getAppTracking();
+  let tracking;
+  if (!appTracking.components.has(vm)) {
+    appTracking.components.set(vm, tracking = {
+      queries: ref(0),
+      mutations: ref(0),
+      subscriptions: ref(0)
+    });
+    onUnmounted(() => {
+      appTracking.components.delete(vm);
+    });
+  } else {
+    tracking = appTracking.components.get(vm);
+  }
+  return {
+    appTracking,
+    tracking
+  };
+}
+function track(loading, type) {
+  const { appTracking, tracking } = getCurrentTracking();
+  watch(loading, (value, oldValue) => {
+    if (oldValue != null && value !== oldValue) {
+      const mod = value ? 1 : -1;
+      tracking[type].value += mod;
+      appTracking[type].value += mod;
+    }
+  }, {
+    immediate: true
+  });
+}
+function trackMutation(loading) {
+  track(loading, "mutations");
+}
+function toApolloError(error) {
+  if (!(error instanceof Error)) {
+    return new ApolloError({
+      networkError: Object.assign(new Error(), { originalError: error }),
+      errorMessage: String(error)
+    });
+  }
+  if (isApolloError(error)) {
+    return error;
+  }
+  return new ApolloError({ networkError: error, errorMessage: error.message });
+}
+function useMutation(document2, options = {}) {
+  const vm = getCurrentInstance();
+  const loading = ref(false);
+  vm && trackMutation(loading);
+  const error = ref(null);
+  const called = ref(false);
+  const doneEvent = useEventHook();
+  const errorEvent = useEventHook();
+  const { resolveClient } = useApolloClient();
+  async function mutate(variables, overrideOptions = {}) {
+    let currentDocument;
+    if (isRef(document2)) {
+      currentDocument = document2.value;
+    } else {
+      currentDocument = document2;
+    }
+    let currentOptions;
+    if (typeof options === "function") {
+      currentOptions = options();
+    } else if (isRef(options)) {
+      currentOptions = options.value;
+    } else {
+      currentOptions = options;
+    }
+    const client = resolveClient(currentOptions.clientId);
+    error.value = null;
+    loading.value = true;
+    called.value = true;
+    try {
+      const result = await client.mutate({
+        mutation: currentDocument,
+        ...currentOptions,
+        ...overrideOptions,
+        variables: (variables != null ? variables : currentOptions.variables) ? {
+          ...currentOptions.variables,
+          ...variables
+        } : void 0
+      });
+      loading.value = false;
+      doneEvent.trigger(result);
+      return result;
+    } catch (e) {
+      const apolloError = toApolloError(e);
+      error.value = apolloError;
+      loading.value = false;
+      errorEvent.trigger(apolloError);
+      if (currentOptions.throws === "always" || currentOptions.throws !== "never" && !errorEvent.getCount()) {
+        throw apolloError;
+      }
+    }
+    return null;
+  }
+  vm && onBeforeUnmount(() => {
+    loading.value = false;
+  });
+  return {
+    mutate,
+    loading,
+    error,
+    called,
+    onDone: doneEvent.on,
+    onError: errorEvent.on
+  };
+}
 function setContext(setter) {
   return new ApolloLink(function(operation, forward) {
     var request = __rest(operation, []);
@@ -7562,14 +9460,14 @@ const NuxtApollo = {
   proxyCookies: true,
   clientAwareness: false,
   cookieAttributes: { "maxAge": 604800, "secure": true },
-  clients: { "default": { "httpEndpoint": "http://wp-platten-shop.local/graphql", "authType": "Bearer", "authHeader": "Authorization", "tokenName": "apollo:default.token", "tokenStorage": "cookie" } }
+  clients: { "default": { "httpEndpoint": "http://wp-platten-shop.local/graphql", "httpLinkOptions": { "fetchOptions": { "mode": "cors" }, "credentials": "include" }, "authType": "Bearer", "authHeader": "Authorization", "tokenName": "apollo:default.token", "tokenStorage": "cookie" } }
 };
 function useAsyncQuery(...args) {
   const { key, fn } = prep(...args);
   return useAsyncData(key, fn, "$WvHsgSk08j");
 }
 const prep = (...args) => {
-  var _a, _b, _c, _d, _e;
+  var _a, _b, _c, _d, _e2;
   const { clients } = useApollo();
   const query = ((_a = args == null ? void 0 : args[0]) == null ? void 0 : _a.query) || (args == null ? void 0 : args[0]);
   ((_b = args == null ? void 0 : args[0]) == null ? void 0 : _b.cache) ?? true;
@@ -7578,7 +9476,7 @@ const prep = (...args) => {
   if (!clientId || !(clients == null ? void 0 : clients[clientId])) {
     clientId = (clients == null ? void 0 : clients.default) ? "default" : Object.keys(clients)[0];
   }
-  const key = ((_e = args == null ? void 0 : args[0]) == null ? void 0 : _e.key) || hash({ query: print(query), variables, clientId });
+  const key = ((_e2 = args == null ? void 0 : args[0]) == null ? void 0 : _e2.key) || hash({ query: print(query), variables, clientId });
   const fn = () => {
     var _a2;
     return (_a2 = clients[clientId]) == null ? void 0 : _a2.query({ query, variables, fetchPolicy: "no-cache" }).then((r) => r.data);
@@ -7660,7 +9558,7 @@ const plugin_eTVJQYlCmx = /* @__PURE__ */ defineNuxtPlugin((nuxtApp) => {
       if (!token.value) {
         if (clientConfig.tokenStorage === "cookie") {
           if (requestCookies == null ? void 0 : requestCookies.cookie) {
-            token.value = (_b2 = (_a2 = requestCookies.cookie.split(";").find((c) => c.trim().startsWith(`${clientConfig.tokenName}=`))) == null ? void 0 : _a2.split("=")) == null ? void 0 : _b2[1];
+            token.value = (_b2 = (_a2 = requestCookies.cookie.split(";").find((c2) => c2.trim().startsWith(`${clientConfig.tokenName}=`))) == null ? void 0 : _a2.split("=")) == null ? void 0 : _b2[1];
           }
         }
         if (!token.value) {
@@ -7673,7 +9571,7 @@ const plugin_eTVJQYlCmx = /* @__PURE__ */ defineNuxtPlugin((nuxtApp) => {
       }
       return `${clientConfig == null ? void 0 : clientConfig.authType} ${token.value}`;
     };
-    const authLink = setContext(async (_, { headers }) => {
+    const authLink = setContext(async (_2, { headers }) => {
       const auth = await getAuth();
       if (!auth) {
         return;
@@ -7715,6 +9613,7 @@ const plugin_eTVJQYlCmx = /* @__PURE__ */ defineNuxtPlugin((nuxtApp) => {
       nuxtApp.payload.data[cacheKey] = cache.extract();
     });
   }
+  provideApolloClients(clients);
   nuxtApp.vueApp.provide(ApolloClients, clients);
   nuxtApp._apolloClients = clients;
   const defaultClient = clients == null ? void 0 : clients.default;
@@ -7731,6 +9630,7 @@ const _plugins = [
   unhead_KgADcZ0jPj,
   vueuse_head_polyfill_M7DKUOwKp5,
   router_jmwsqit4Rs,
+  plugin_iGFVkagQDO,
   plugin_eTVJQYlCmx
 ];
 const Fragment = /* @__PURE__ */ defineComponent({
@@ -7743,10 +9643,10 @@ const Fragment = /* @__PURE__ */ defineComponent({
   }
 });
 const _wrapIf = (component, props, slots) => {
-  return { default: () => props ? h(component, props === true ? {} : props, slots) : h(Fragment, {}, slots) };
+  return { default: () => props ? h$1(component, props === true ? {} : props, slots) : h$1(Fragment, {}, slots) };
 };
 const layouts = {
-  default: () => import('./_nuxt/default-bd03ac48.mjs').then((m) => m.default || m)
+  default: () => import('./_nuxt/default-21c4faf8.mjs').then((m2) => m2.default || m2)
 };
 const LayoutLoader = /* @__PURE__ */ defineComponent({
   name: "LayoutLoader",
@@ -7758,11 +9658,11 @@ const LayoutLoader = /* @__PURE__ */ defineComponent({
   async setup(props, context) {
     const LayoutComponent = await layouts[props.name]().then((r) => r.default || r);
     return () => {
-      return h(LayoutComponent, context.attrs, context.slots);
+      return h$1(LayoutComponent, context.attrs, context.slots);
     };
   }
 });
-const __nuxt_component_0$1 = /* @__PURE__ */ defineComponent({
+const __nuxt_component_0 = /* @__PURE__ */ defineComponent({
   name: "NuxtLayout",
   inheritAttrs: false,
   props: {
@@ -7796,9 +9696,9 @@ const interpolatePath = (route, match) => {
   });
 };
 const generateRouteKey = (routeProps, override) => {
-  const matchedRoute = routeProps.route.matched.find((m) => {
+  const matchedRoute = routeProps.route.matched.find((m2) => {
     var _a;
-    return ((_a = m.components) == null ? void 0 : _a.default) === routeProps.Component.type;
+    return ((_a = m2.components) == null ? void 0 : _a.default) === routeProps.Component.type;
   });
   const source = override ?? (matchedRoute == null ? void 0 : matchedRoute.meta.key) ?? (matchedRoute && interpolatePath(routeProps.route, matchedRoute));
   return typeof source === "function" ? source(routeProps.route) : source;
@@ -7806,7 +9706,7 @@ const generateRouteKey = (routeProps, override) => {
 const wrapInKeepAlive = (props, children) => {
   return { default: () => children };
 };
-const __nuxt_component_0 = /* @__PURE__ */ defineComponent({
+const __nuxt_component_1 = /* @__PURE__ */ defineComponent({
   name: "NuxtPage",
   inheritAttrs: false,
   props: {
@@ -7832,7 +9732,7 @@ const __nuxt_component_0 = /* @__PURE__ */ defineComponent({
   setup(props, { attrs }) {
     const nuxtApp = useNuxtApp();
     return () => {
-      return h(RouterView, { name: props.name, route: props.route, ...attrs }, {
+      return h$1(RouterView, { name: props.name, route: props.route, ...attrs }, {
         default: (routeProps) => {
           if (!routeProps.Component) {
             return;
@@ -7853,12 +9753,12 @@ const __nuxt_component_0 = /* @__PURE__ */ defineComponent({
             hasTransition && transitionProps,
             wrapInKeepAlive(
               props.keepalive ?? routeProps.route.meta.keepalive ?? appKeepalive,
-              h(Suspense, {
+              h$1(Suspense, {
                 onPending: () => nuxtApp.callHook("page:start", routeProps.Component),
                 onResolve: () => {
                   nextTick(() => nuxtApp.callHook("page:finish", routeProps.Component).finally(done));
                 }
-              }, { default: () => h(RouteProvider, { key, routeProps, pageKey: key, hasTransition }) })
+              }, { default: () => h$1(RouteProvider, { key, routeProps, pageKey: key, hasTransition }) })
             )
           ).default();
         }
@@ -7890,7 +9790,7 @@ const RouteProvider = /* @__PURE__ */ defineComponent({
     }
     provide("_route", reactive(route));
     return () => {
-      return h(props.routeProps.Component);
+      return h$1(props.routeProps.Component);
     };
   }
 });
@@ -7903,11 +9803,10 @@ const _export_sfc = (sfc, props) => {
 };
 const _sfc_main$1 = {};
 function _sfc_ssrRender(_ctx, _push, _parent, _attrs) {
-  const _component_NuxtLayout = __nuxt_component_0$1;
-  const _component_NuxtPage = __nuxt_component_0;
-  _push(`<div${ssrRenderAttrs(_attrs)}>`);
-  _push(ssrRenderComponent(_component_NuxtLayout, null, {
-    default: withCtx((_, _push2, _parent2, _scopeId) => {
+  const _component_NuxtLayout = __nuxt_component_0;
+  const _component_NuxtPage = __nuxt_component_1;
+  _push(ssrRenderComponent(_component_NuxtLayout, _attrs, {
+    default: withCtx((_2, _push2, _parent2, _scopeId) => {
       if (_push2) {
         _push2(ssrRenderComponent(_component_NuxtPage, null, null, _parent2, _scopeId));
       } else {
@@ -7918,7 +9817,6 @@ function _sfc_ssrRender(_ctx, _push, _parent, _attrs) {
     }),
     _: 1
   }, _parent));
-  _push(`</div>`);
 }
 const _sfc_setup$1 = _sfc_main$1.setup;
 _sfc_main$1.setup = (props, ctx) => {
@@ -7931,8 +9829,8 @@ const _sfc_main = {
   __name: "nuxt-root",
   __ssrInlineRender: true,
   setup(__props) {
-    const ErrorComponent = /* @__PURE__ */ defineAsyncComponent(() => import('./_nuxt/error-component-05ebe8ec.mjs').then((r) => r.default || r));
-    const IslandRenderer = /* @__PURE__ */ defineAsyncComponent(() => import('./_nuxt/island-renderer-2badc5ac.mjs').then((r) => r.default || r));
+    const ErrorComponent = /* @__PURE__ */ defineAsyncComponent(() => import('./_nuxt/error-component-36b7427b.mjs').then((r) => r.default || r));
+    const IslandRenderer = /* @__PURE__ */ defineAsyncComponent(() => import('./_nuxt/island-renderer-2c084540.mjs').then((r) => r.default || r));
     const nuxtApp = useNuxtApp();
     nuxtApp.deferHydration();
     provide("_route", useRoute());
@@ -7941,8 +9839,8 @@ const _sfc_main = {
     onErrorCaptured((err, target, info) => {
       nuxtApp.hooks.callHook("vue:error", err, target, info).catch((hookError) => console.error("[nuxt] Error in `vue:error` hook", hookError));
       {
-        const p = callWithNuxt(nuxtApp, showError, [err]);
-        onServerPrefetch(() => p);
+        const p2 = callWithNuxt(nuxtApp, showError, [err]);
+        onServerPrefetch(() => p2);
       }
     });
     const { islandContext } = nuxtApp.ssrContext;
@@ -7992,5 +9890,5 @@ const plugins = normalizePlugins(_plugins);
 }
 const entry$1 = (ctx) => entry(ctx);
 
-export { __nuxt_component_0 as _, useRoute as a, useRouter as b, createError as c, defineStore as d, entry$1 as default, _export_sfc as e, useHead as f, navigateTo as n, useAsyncQuery as u };
+export { _export_sfc as _, useRuntimeConfig as a, useAsyncQuery as b, createError as c, defineStore as d, entry$1 as default, useMutation as e, useRoute as f, __nuxt_component_1 as g, useHead as h, useRouter as i, navigateTo as n, useNuxtApp as u, vo as v };
 //# sourceMappingURL=server.mjs.map
