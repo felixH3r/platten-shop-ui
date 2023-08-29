@@ -2,17 +2,32 @@
   <div class="panel-configurator-wrapper">
     <Sidebar/>
     <PanelContentWrapper/>
+    <button @click="addToCart">add to cart</button>
   </div>
 </template>
 
 <script lang="ts" setup>
   import Sidebar from "~/components/panel-configurator/sidebar/Sidebar.vue";
+  import {useBackendDataStore} from "~/store/backendData";
   import {useMainStore} from "~/store/mainStore";
-  import {usePostStore} from "~/store/posts";
+  import {useRoute} from "vue-router";
+  import {navigateTo} from "#app";
 
-  // const postStore = usePostStore();
-  //
-  // const addToCart = async () => await postStore.addToCart(24, 2000, 3000);
+  const backendData = useBackendDataStore();
+  const mainStore = useMainStore();
+  await backendData.createCart();
+  onMounted(() => {
+    if (backendData.cart) {
+      localStorage.setItem('cart_id', backendData.cart.id);
+    }
+  });
+  const addToCart = async () => {
+    if (mainStore.selectedProduct && mainStore.selectedProduct.variants[0].id) {
+      await backendData.addItemToCart(mainStore.selectedProduct.variants[0].id, 1);
+    }
+    navigateTo('/cart');
+    console.log(backendData.cart);
+  };
 
 </script>
 
