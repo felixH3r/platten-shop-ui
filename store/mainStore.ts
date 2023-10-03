@@ -1,5 +1,4 @@
 import {defineStore} from 'pinia';
-import {Product} from "~/store/posts";
 import {PricedProduct} from "@medusajs/medusa/dist/types/pricing";
 import {MedusaProduct} from "~/store/backendData";
 

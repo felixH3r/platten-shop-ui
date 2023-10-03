@@ -1,12 +1,10 @@
 <template>
-  <h1>main page</h1>
-  <div>{{ products }}</div>
+  <h1 class="text-3xl font-bold underline">main page</h1>
 
 
 </template>
 
 <script lang="ts" setup>
-  import {usePostStore} from "~/store/posts";
   import {useBackendDataStore} from "~/store/backendData";
 
 

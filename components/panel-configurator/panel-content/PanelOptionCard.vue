@@ -8,7 +8,6 @@
 </template>
 
 <script lang="ts" setup>
-  import {Product} from '@/store/posts';
   import {SymbolKind} from "vscode-languageserver-types";
   import {useMainStore} from "~/store/mainStore";
   import {MedusaProduct} from "~/store/backendData";

@@ -1,7 +1,8 @@
 import {defineStore} from "pinia";
 import {PricedProduct} from "@medusajs/medusa/dist/types/pricing";
-import {Cart} from "@medusajs/medusa";
+import {Cart, StoreShippingOptionsListRes} from "@medusajs/medusa";
 import {ca} from "date-fns/locale";
+import {useMedusaClient} from "#imports";
 
 export interface MedusaProduct {
   id: string;
@@ -12,12 +13,28 @@ export interface MedusaProduct {
 export interface BackendState {
   products: any;
   cart: Nullable<Cart>;
+  shipmentOptions: Nullable<StoreShippingOptionsListRes>;
 }
+
+export interface ShipmentData {
+  company: string,
+  first_name: string,
+  last_name: string,
+  address_1: string,
+  address_2: string,
+  city: string,
+  country_code: string,
+  province: string,
+  postal_code: string,
+  phone: string,
+}
+
 
 export const useBackendDataStore = defineStore('backend', {
   state: (): BackendState => ({
     products: [],
-    cart: null
+    cart: null,
+    shipmentOptions: null
   }),
   actions: {
     async getProducts() {
@@ -43,6 +60,28 @@ export const useBackendDataStore = defineStore('backend', {
         console.log(cart.items, 'line items');
         this.cart = cart;
       }
+    },
+    async addShipmentData(shipmentData: ShipmentData) {
+      const client = useMedusaClient();
+      if (this.cart) {
+        await client.carts.update(this.cart.id, {shipping_address: shipmentData});
+        console.log(this.cart);
+      }
+    },
+    async changeCartRegionId(region_id: string) {
+      const client = useMedusaClient();
+      if (this.cart) {
+        await client.carts.update(this.cart.id, {region_id});
+      }
+    },
+    async listShipmentOptions(): Promise<typeof this.shipmentOptions | undefined> {
+      const client = useMedusaClient();
+      if (!this.cart) {
+        return;
+      }
+      this.shipmentOptions = await client.shippingOptions.listCartOptions(this.cart.id);
+      return this.shipmentOptions;
     }
   }
 });
+

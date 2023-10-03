@@ -17,14 +17,12 @@ export default defineNuxtConfig({
     ]
   },
   css: [
-    "@/assets/styles/global-classes.scss",
-    "@/assets/styles/global-mixins.scss",
+    "~/assets/styles/main.css"
   ],
   buildModules: ['nuxt-graphql-request'],
 
   modules: [
     '@pinia/nuxt',
-    '@nuxtjs/apollo',
     '@nuxtjs/google-fonts',
     'nuxt-medusa',
   ],
@@ -40,43 +38,18 @@ export default defineNuxtConfig({
   pinia: {
     autoImports: ['defineStore', 'acceptHMRUpdate'],
   },
-  apollo: {
-    clients: {
-      default:
-          {
-            httpEndpoint: `http://wp-platten-shop.local/graphql`,
-            httpLinkOptions: {
-              fetchOptions: {
-                mode: 'cors' //Cors Needed for external Cross origins, need to allow headers from server
-              },
-              credentials: 'include',
-            },
-          }
-    },
-  },
   googleFonts: {
     families: {
       Montserrat: [100, 300, 400, 500, 700],
     }
   },
-  graphql: {
-    /**
-     * An Object of your GraphQL clients
-     */
-    clients: {
-      default: {
-        /**
-         * The client endpoint url
-         */
-        endpoint: 'http://wp-platten-shop.local/graphql',
-        /**
-         * Per-client options overrides
-         * See: https://github.com/prisma-labs/graphql-request#passing-more-options-to-fetch
-         */
-        options: {},
-      },
+  postcss: {
+    plugins: {
+      tailwindcss: {},
+      autoprefixer: {},
     },
   }
 });
+
 
 
