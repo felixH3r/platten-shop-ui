@@ -1,11 +1,18 @@
 <template>
-  <h1 class="text-3xl font-bold underline">main page</h1>
+  <div>
+    <HeaderSection/>
+    <CardsSection/>
+    <ContentCardSection/>
+  </div>
 
 
 </template>
 
 <script lang="ts" setup>
   import {useBackendDataStore} from "~/store/backendData";
+  import HeaderSection from "~/components/homepage/HeaderSection.vue";
+  import CardsSection from "~/components/homepage/CardsSection.vue";
+  import ContentCardSection from "~/components/homepage/ContentCardSection.vue";
 
 
   const backendStore = useBackendDataStore();

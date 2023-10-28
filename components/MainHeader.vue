@@ -1,6 +1,6 @@
 <template>
-  <div class="main-header">
-    <div class="header-content flex-center">
+  <div class="font-sans">
+    <div class="flex gap-5">
       <NuxtLink to="shop-app" v-if="showToConfigurator">{{ routingTo }}</NuxtLink>
       <NuxtLink to="/" v-else>Home</NuxtLink>
       <div>Warenkorb</div>
@@ -13,7 +13,7 @@
 
   const props = defineProps({
     showToConfigurator: Boolean,
-  })
+  });
   const routingTo = computed((): string => props.showToConfigurator ? TC.mainHeader.configurator : TC.mainHeader.home);
 </script>
 
