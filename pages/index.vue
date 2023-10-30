@@ -3,9 +3,9 @@
     <HeaderSection/>
     <CardsSection/>
     <ContentCardSection/>
+    <CustomerSection/>
+    <PanelOptionSection/>
   </div>
-
-
 </template>
 
 <script lang="ts" setup>
@@ -13,6 +13,8 @@
   import HeaderSection from "~/components/homepage/HeaderSection.vue";
   import CardsSection from "~/components/homepage/CardsSection.vue";
   import ContentCardSection from "~/components/homepage/ContentCardSection.vue";
+  import CustomerSection from "~/components/homepage/CustomerSection.vue";
+  import PanelOptionSection from "~/components/homepage/PanelOptionSection.vue";
 
 
   const backendStore = useBackendDataStore();
@@ -29,7 +31,6 @@
   // } catch (e: any) {
   //   console.log(e.stacktrace);
   // }
-  computed(() => postStore.nodes);
 </script>
 
 <style scoped lang="scss">

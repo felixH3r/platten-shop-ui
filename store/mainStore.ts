@@ -9,6 +9,7 @@ export const DEFAULT_WIDTH = 1000;
 export const useMainStore = defineStore('main', {
   state: () => ({
     panelConfigurator: {
+      panelType: '',
       thickness: DEFAULT_THICKNESS,
       length: DEFAULT_LENGTH,
       width: DEFAULT_WIDTH,
@@ -16,6 +17,9 @@ export const useMainStore = defineStore('main', {
     selectedProduct: null as Nullable<PricedProduct>
   }),
   actions: {
+    setPanelType(panelType: string) {
+      this.panelConfigurator.panelType = panelType;
+    },
     setThickness(thickness: number) {
       this.panelConfigurator.thickness = thickness;
     },

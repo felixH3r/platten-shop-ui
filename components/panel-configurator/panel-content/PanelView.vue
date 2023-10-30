@@ -19,6 +19,36 @@
   const panelViewWrapper = ref<HTMLDivElement | null>(null);
 
   await backendData.getProducts();
+  await backendData.getVariants();
+
+  console.log(backendData.products, 'products');
+
+  console.log(backendData.variants, 'variants');
+  console.log(backendData.variants[0].options, 'options');
+
+  let panelTypes: string[] = [];
+  // let validThickness: number[] = [];
+
+  for (let product of backendData.products) {
+
+    // console.log(product.metadata);
+    if (product.metadata) {
+      // const possibleThickness = product.metadata.thickness.trim().split(/\s*,\s*/);
+      // for (let thick of possibleThickness) {
+      //   if (!validThickness.includes(thick)) {
+      //     validThickness.push(thick);
+      //   }
+      // }
+      const possibleTypes = product.metadata.validMaterials.trim().split(/\s*,\s*/);
+      for (let pType of possibleTypes) {
+        if (!panelTypes.includes(pType)) {
+          panelTypes.push(pType);
+        }
+      }
+    }
+  }
+  console.log(panelTypes);
+  // console.log(validThickness);
 
   const panelTexture = computed(() => {
     return mainStore.selectedProduct?.thumbnail;
@@ -30,9 +60,9 @@
 
   const longerSide = computed(() => {
     if (mainStore.panelConfigurator.width - mainStore.panelConfigurator.length < 1) {
-      return mainStore.panelConfigurator.length / 6 + 'px';
+      return mainStore.panelConfigurator.length / 13 + 'px';
     }
-    return mainStore.panelConfigurator.width / 6 + 'px';
+    return mainStore.panelConfigurator.width / 13 + 'px';
   });
 
   const panelHeightFactor = computed(() => {
@@ -63,12 +93,14 @@
     align-items: flex-end;
     justify-content: center;
     gap: 0 4rem;
+    width: 90%;
   }
 
   .human-svg {
     display: flex;
     align-items: flex-end;
     justify-content: flex-end;
+    width: 3.5rem;
   }
 
   .panel-img-wrapper {

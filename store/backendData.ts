@@ -12,6 +12,7 @@ export interface MedusaProduct {
 
 export interface BackendState {
   products: any;
+  variants: any;
   cart: Nullable<Cart>;
   shipmentOptions: Nullable<StoreShippingOptionsListRes>;
 }
@@ -33,6 +34,7 @@ export interface ShipmentData {
 export const useBackendDataStore = defineStore('backend', {
   state: (): BackendState => ({
     products: [],
+    variants: [],
     cart: null,
     shipmentOptions: null
   }),
@@ -42,6 +44,13 @@ export const useBackendDataStore = defineStore('backend', {
       if (client) {
         const {products} = await client.products.list();
         this.products = products;
+      }
+    },
+    async getVariants() {
+      const client = useMedusaClient();
+      if (client) {
+        const {variants} = await client.products.variants.list();
+        this.variants = variants;
       }
     },
     async createCart() {
@@ -81,7 +90,12 @@ export const useBackendDataStore = defineStore('backend', {
       }
       this.shipmentOptions = await client.shippingOptions.listCartOptions(this.cart.id);
       return this.shipmentOptions;
-    }
+    },
+
+    // async getPanelTypes(): Promise<string[]> {
+    //   const client = useMedusaClient();
+    //   client
+    // }
   }
 });
 

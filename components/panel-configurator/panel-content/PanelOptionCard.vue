@@ -1,9 +1,8 @@
 <template>
-  <div class="panel-option-card" :class="{'selected': isSelected}" @click="selectProduct">
-    <div class="panel-option-img-wrapper">
-      <img :src="mediaItemUrl" class="panel-option-img">
-    </div>
-    <span class="panel-option-name">{{ props.product.title }}</span>
+  <div class="flex flex-col justify-between h-48 w-32 overflow-hidden min-w-fit" :class="{'selected': isSelected}"
+       @click="selectProduct">
+    <img :src="mediaItemUrl" class="rotate-90 aspect-2/1 h-2/3 w-32 object-cover">
+    <span class="flex w-32 h-1/3">{{ props.product.title }}</span>
   </div>
 </template>
 

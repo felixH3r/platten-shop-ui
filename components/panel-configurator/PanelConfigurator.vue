@@ -1,8 +1,8 @@
 <template>
-  <div class="panel-configurator-wrapper">
-    <Sidebar/>
+  <div class="flex flex-col">
     <PanelContentWrapper/>
-    <button @click="addToCart">add to cart</button>
+    <Sidebar/>
+    <!--    <button @click="addToCart">add to cart</button>-->
   </div>
 </template>
 
@@ -15,19 +15,19 @@
 
   const backendData = useBackendDataStore();
   const mainStore = useMainStore();
-  await backendData.createCart();
-  onMounted(() => {
-    if (backendData.cart) {
-      localStorage.setItem('cart_id', backendData.cart.id);
-    }
-  });
-  const addToCart = async () => {
-    if (mainStore.selectedProduct && mainStore.selectedProduct.variants[0].id) {
-      await backendData.addItemToCart(mainStore.selectedProduct.variants[0].id, 1);
-    }
-    navigateTo('/cart');
-    console.log(backendData.cart);
-  };
+  // await backendData.createCart();
+  // onMounted(() => {
+  //   if (backendData.cart) {
+  //     localStorage.setItem('cart_id', backendData.cart.id);
+  //   }
+  // });
+  // const addToCart = async () => {
+  //   if (mainStore.selectedProduct && mainStore.selectedProduct.variants[0].id) {
+  //     await backendData.addItemToCart(mainStore.selectedProduct.variants[0].id, 1);
+  //   }
+  //   navigateTo('/cart');
+  //   console.log(backendData.cart);
+  // };
 
 </script>
 

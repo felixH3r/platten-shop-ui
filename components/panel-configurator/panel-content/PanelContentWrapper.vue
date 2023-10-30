@@ -1,5 +1,5 @@
 <template>
-  <div class="panel-content-wrapper">
+  <div class="flex flex-col gap-5 p-5 pt-20">
     <PanelView/>
     <PanelOptionsSlider/>
   </div>

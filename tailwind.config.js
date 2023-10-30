@@ -16,11 +16,15 @@ module.exports = {
             'secondary': '#A0855B',
             'cta': '#38470B',
             'background': '#FFFFFF',
-            'white': '#FFFFFF'
+            'white': '#FFFFFF',
+            'transparent': 'rgba(255, 255, 255, 0)'
         },
         fontFamily: {
             sans: ['Montserrat', 'sans'],
-        }
+        },
+        aspectRatio: {
+            '2/1': '2 / 1',
+        },
     },
     plugins: [],
 }

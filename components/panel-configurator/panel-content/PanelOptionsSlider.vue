@@ -1,8 +1,14 @@
 <template>
-  <div class="panel-option-slider">
-    <PanelOptionCard v-for="product in products" :product="product"
-                     :selected="product.id === selectedProductId"/>
+  <div class="flex">
+    <div class="flex w-full overflow-scroll gap-5">
+      <PanelOptionCard v-for="product in products" :product="product"
+                       :selected="product.id === selectedProductId"/>
+    </div>
+    <div class="w-20 h-48 bg-gradient-to-r from-transparent via-white via-70% white to-white absolute right-0">
+
+    </div>
   </div>
+
 </template>
 
 <script lang="ts" setup>
@@ -34,7 +40,7 @@
   .panel-option-slider {
     display: flex;
     height: 35%;
-    width: calc(100% - 10rem);
+    width: calc(100vw - 10rem);
     overflow: scroll;
     gap: 2rem;
   }
