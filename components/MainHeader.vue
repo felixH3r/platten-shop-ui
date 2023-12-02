@@ -1,10 +1,8 @@
 <template>
-  <div class="font-sans">
-    <div class="flex gap-5">
-      <NuxtLink to="shop-app" v-if="showToConfigurator">{{ routingTo }}</NuxtLink>
-      <NuxtLink to="/" v-else>Home</NuxtLink>
-      <div>Warenkorb</div>
-    </div>
+  <div class="flex gap-5 font-sans">
+    <NuxtLink to="shop-app" v-if="showToConfigurator">{{ routingTo }}</NuxtLink>
+    <NuxtLink to="/" v-else>Home</NuxtLink>
+    <div>Warenkorb</div>
   </div>
 </template>
 

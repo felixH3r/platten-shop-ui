@@ -23,7 +23,7 @@
   });
 
   function selectProduct() {
-    mainStore.setSelectedProduct(props.product);
+    mainStore.setSelectProduct(props.product);
   }
 
   const isSelected = computed(() => {

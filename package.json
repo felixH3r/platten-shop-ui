@@ -11,7 +11,9 @@
   "dependencies": {
     "@medusajs/medusa-js": "6.0.3",
     "@pinia/nuxt": "^0.4.8",
-    "pinia": "^2.0.34"
+    "@preline/select": "^2.0.1",
+    "pinia": "^2.0.34",
+    "preline": "^2.0.2"
   },
   "devDependencies": {
     "@nuxtjs/google-fonts": "3.0.0-1",

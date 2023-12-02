@@ -8,6 +8,7 @@ module.exports = {
         "./pages/**/*.vue",
         "./plugins/**/*.{js,ts}",
         "./app.vue",
+        './node_modules/preline/preline.js',
     ],
     theme: {
         colors: {
@@ -26,6 +27,8 @@ module.exports = {
             '2/1': '2 / 1',
         },
     },
-    plugins: [],
+    plugins: [
+        require('preline/plugin'),
+    ],
 }
 

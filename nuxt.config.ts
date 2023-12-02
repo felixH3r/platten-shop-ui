@@ -21,6 +21,10 @@ export default defineNuxtConfig({
   ],
   buildModules: ['nuxt-graphql-request'],
 
+  plugins: [
+    "~/plugins/preline.client.ts"
+  ],
+
   modules: [
     '@pinia/nuxt',
     '@nuxtjs/google-fonts',

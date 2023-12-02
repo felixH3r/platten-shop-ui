@@ -96,6 +96,7 @@ export const useBackendDataStore = defineStore('backend', {
     //   const client = useMedusaClient();
     //   client
     // }
-  }
+  },
+  getters: {}
 });
 

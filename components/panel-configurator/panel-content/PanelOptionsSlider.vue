@@ -27,7 +27,7 @@
     return backendData.products;
   });
   onMounted(() => {
-    mainStore.setSelectedProduct(products.value[0]);
+    mainStore.setSelectProduct(products.value[0]);
   });
 
 

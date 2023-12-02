@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col">
+  <div class="flex flex-col justify-between h-screen overflow-hidden">
     <PanelContentWrapper/>
     <Sidebar/>
     <!--    <button @click="addToCart">add to cart</button>-->

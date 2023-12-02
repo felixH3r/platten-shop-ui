@@ -1,10 +1,16 @@
 <template>
-  <h4>{{ header }}</h4>
-  <input :placeholder="props.inputPlaceholder" class="measurement-input" @input="getInput" ref="measurementInput">
+  <div class="flex justify-between items-center">
+    <h4>{{ header }}</h4>
+    <input-component :placeholder="props.inputPlaceholder" :onInput="getInput" ref="measurementInput"/>
+    <!--    <input :placeholder="props.inputPlaceholder" type="text" @input="getInput" ref="measurementInput"-->
+    <!--           class="py-3 px-5 block w-9/12 border-gray-200 rounded-full text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400 dark:focus:ring-gray-600">-->
+  </div>
+
 </template>
 
 <script lang="ts" setup>
   import {DEFAULT_LENGTH, DEFAULT_WIDTH, useMainStore} from "~/store/mainStore";
+  import InputComponent from "~/components/utils/InputComponent.vue";
 
   const measurementInput = ref<HTMLInputElement | null>(null);
   let timeout: NodeJS.Timeout | null = null;

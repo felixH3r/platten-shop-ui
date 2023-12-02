@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="max-w-screen overflow-hidden">
     <HeaderSection/>
     <CardsSection/>
     <ContentCardSection/>
@@ -22,6 +22,7 @@
   const products = computed(() => {
     return backendStore.products ? backendStore.products : {};
   });
+
 
   // const client = useMedusaClient();
   // let pro;

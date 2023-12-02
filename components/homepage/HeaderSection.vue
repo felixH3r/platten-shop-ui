@@ -1,11 +1,10 @@
 <template>
   <section class="
-        h-screen bg-primary
-        p-10
-        flex items-center justify-start"
+          h-screen bg-primary w-screen
+          flex items-center justify-start"
   >
-    <div class="flex items-end justify-between w-full">
-      <div class="flex flex-col w-3/4">
+    <div class="flex items-end justify-between w-full lg:flex-row flex-col">
+      <div class="flex flex-col lg:w-3/4">
         <h1>{{ TC.headerSection.header }}</h1>
         <h2 class="font-normal text-2xl">{{ TC.headerSection.subHeader }}</h2>
       </div>

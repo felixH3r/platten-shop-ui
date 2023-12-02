@@ -29,8 +29,8 @@ export const useMainStore = defineStore('main', {
     setWidth(width: number) {
       this.panelConfigurator.width = width;
     },
-    setSelectedProduct(selectedProduct: PricedProduct) {
+    setSelectProduct(selectedProduct: PricedProduct) {
       this.selectedProduct = selectedProduct;
     }
-  },
+  }
 });
