@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col justify-between h-screen" ref="configurator">
+  <div class="flex flex-col justify-between" ref="configurator">
     <PanelContentWrapper/>
     <Sidebar/>
     <!--    <button @click="addToCart">add to cart</button>-->
