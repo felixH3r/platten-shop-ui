@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col justify-between h-screen">
+  <div class="flex flex-col justify-between h-screen" ref="configurator">
     <PanelContentWrapper/>
     <Sidebar/>
     <!--    <button @click="addToCart">add to cart</button>-->
@@ -15,6 +15,16 @@
 
   const backendData = useBackendDataStore();
   const mainStore = useMainStore();
+
+  const configurator = ref<HTMLDivElement | null>(null);
+
+  onMounted(() => {
+    if (configurator.value) {
+      debugger;
+      configurator.value.style.height = window.screen.availHeight + 'px';
+    }
+
+  });
   // await backendData.createCart();
   // onMounted(() => {
   //   if (backendData.cart) {
