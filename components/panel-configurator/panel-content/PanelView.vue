@@ -1,5 +1,5 @@
 <template>
-  <div class="panel-view-wrapper" ref="panelViewWrapper">
+  <div class="panel-view-wrapper h-full" ref="panelViewWrapper">
     <div class="human-and-panel-wrapper">
       <HumanSVG class="human-svg"/>
       <div class="panel-img-wrapper">
@@ -85,7 +85,6 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 65%;
   }
 
   .human-and-panel-wrapper {

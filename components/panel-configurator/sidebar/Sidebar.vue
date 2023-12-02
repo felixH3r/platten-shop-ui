@@ -1,14 +1,14 @@
 <template>
   <div class="w-full bg-primary px-5 pb-5">
     <!--    <h3>{{ TC.pcSidebar.header }}</h3>-->
-    <div class="flex gap-5 py-8">
+    <div class="flex gap-5 py-5">
       <select-component :values="['Sperrholz', 'Spanplatte']" class="w-2/3"/>
       <select-component :values="thicknessValues" class="w-1/3"/>
     </div>
 
     <MeasurementsWrapper :header="TC.pcSidebar.lengthHeader" :input-placeholder="TC.pcSidebar.lengthPlaceholder"
                          :usage="'length'"/>
-    <MeasurementsWrapper class="pt-5 pb-8" :header="TC.pcSidebar.widthHeader"
+    <MeasurementsWrapper class="pt-5 pb-5" :header="TC.pcSidebar.widthHeader"
                          :input-placeholder="TC.pcSidebar.widthPlaceholder"
                          :usage="'width'"/>
     <span class="text-4xl font-normal">€ 150,-</span>

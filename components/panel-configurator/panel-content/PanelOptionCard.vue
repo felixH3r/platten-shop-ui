@@ -1,8 +1,8 @@
 <template>
-  <div class="flex flex-col justify-between h-48 w-32 overflow-hidden min-w-fit" :class="{'selected': isSelected}"
+  <div class="flex flex-col justify-between w-28 overflow-hidden" :class="{'selected': isSelected}"
        @click="selectProduct">
-    <img :src="mediaItemUrl" class="rotate-90 aspect-2/1 h-2/3 w-32 object-cover">
-    <span class="flex w-32 h-1/3">{{ props.product.title }}</span>
+    <img :src="mediaItemUrl" class="object-cover relative">
+    <span class="flex">{{ props.product.title }}</span>
   </div>
 </template>
 
