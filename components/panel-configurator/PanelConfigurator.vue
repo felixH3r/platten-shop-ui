@@ -1,7 +1,7 @@
 <template>
   <div class="panel-configurator-wrapper flex flex-col-reverse justify-between md:flex-row" ref="configurator">
-    <Sidebar class="md:w-1/4"/>
-    <PanelContentWrapper class="md:w-3/4"/>
+    <Sidebar class="md:w-config-sidebar"/>
+    <PanelContentWrapper class="md:w-full"/>
 
     <!--    <button @click="addToCart">add to cart</button>-->
   </div>
@@ -18,6 +18,11 @@
   const mainStore = useMainStore();
 
   const configurator = ref<HTMLDivElement | null>(null);
+
+  onMounted(() => {
+    document.querySelector("body")!.style.overflow = "hidden";
+  });
+
 
   // onMounted(() => {
   //   if (configurator.value) {

@@ -26,6 +26,12 @@ module.exports = {
         aspectRatio: {
             '2/1': '2 / 1',
         },
+        extend: {
+            width: {
+                'config-sidebar': '30rem'
+            }
+        }
+
     },
     plugins: [
         require('preline/plugin'),

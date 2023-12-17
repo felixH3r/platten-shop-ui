@@ -1,9 +1,7 @@
 <template>
-  <div class="flex justify-between items-center">
+  <div class="flex justify-between items-center gap-3 md:flex-col md:justify-start md:items-start">
     <h4>{{ header }}</h4>
-    <input-component :placeholder="props.inputPlaceholder" :onInput="getInput" ref="measurementInput"/>
-    <!--    <input :placeholder="props.inputPlaceholder" type="text" @input="getInput" ref="measurementInput"-->
-    <!--           class="py-3 px-5 block w-9/12 border-gray-200 rounded-full text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400 dark:focus:ring-gray-600">-->
+    <input-component :placeholder="props.inputPlaceholder" :onInput="getInput" ref="measurementInput" class="w-full"/>
   </div>
 
 </template>
