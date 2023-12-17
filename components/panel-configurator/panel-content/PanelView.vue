@@ -31,7 +31,6 @@
 
   for (let product of backendData.products) {
 
-    // console.log(product.metadata);
     if (product.metadata) {
       // const possibleThickness = product.metadata.thickness.trim().split(/\s*,\s*/);
       // for (let thick of possibleThickness) {
@@ -47,8 +46,6 @@
       }
     }
   }
-  console.log(panelTypes);
-  // console.log(validThickness);
 
   const panelTexture = computed(() => {
     return mainStore.selectedProduct?.thumbnail;
@@ -58,11 +55,15 @@
     return mainStore.panelConfigurator.width / mainStore.panelConfigurator.length;
   });
 
+  const downSizeFactor = computed((): number => {
+    return mainStore.getIsDesktop ? 6 : 13;
+  });
+
   const longerSide = computed(() => {
     if (mainStore.panelConfigurator.width - mainStore.panelConfigurator.length < 1) {
-      return mainStore.panelConfigurator.length / 13 + 'px';
+      return mainStore.panelConfigurator.length / downSizeFactor.value + 'px';
     }
-    return mainStore.panelConfigurator.width / 13 + 'px';
+    return mainStore.panelConfigurator.width / downSizeFactor.value + 'px';
   });
 
   const panelHeightFactor = computed(() => {

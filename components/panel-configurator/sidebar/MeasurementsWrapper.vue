@@ -12,7 +12,7 @@
   import {DEFAULT_LENGTH, DEFAULT_WIDTH, useMainStore} from "~/store/mainStore";
   import InputComponent from "~/components/utils/InputComponent.vue";
 
-  const measurementInput = ref<HTMLInputElement | null>(null);
+  const measurementInput = ref<{ inputEl: HTMLInputElement | null }>({inputEl: null});
   let timeout: NodeJS.Timeout | null = null;
   const debounce = (fnc: () => void, delayMs?: number) => {
     if (timeout) {
@@ -40,7 +40,7 @@
   });
 
   const mainStore = useMainStore();
-  const getInput = (_event: InputEvent) => {
+  const getInput = (_event: InputEvent, inputFieldValue: string) => {
     debounce(saveInput);
   };
 
@@ -49,16 +49,17 @@
       return;
     }
     if (props.usage === 'width') {
-      if (!(!measurementInput.value.value || measurementInput.value.value === '')) {
-      } else {
+      if (!measurementInput.value.inputEl || measurementInput.value.inputEl.value === '') {
         mainStore.setWidth(DEFAULT_WIDTH);
+      } else {
+        mainStore.setWidth(parseInt(measurementInput.value.inputEl.value));
       }
-      mainStore.setWidth(parseInt(measurementInput.value.value));
     } else if (props.usage === 'length') {
-      if (!measurementInput.value.value || measurementInput.value.value === '') {
+      if (!measurementInput.value.inputEl || measurementInput.value.inputEl.value === '') {
         mainStore.setWidth(DEFAULT_LENGTH);
+      } else {
+        mainStore.setLength(parseInt(measurementInput.value.inputEl.value));
       }
-      mainStore.setLength(parseInt(measurementInput.value.value));
     }
   };
 

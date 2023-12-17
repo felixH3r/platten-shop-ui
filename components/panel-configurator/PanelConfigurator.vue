@@ -1,7 +1,8 @@
 <template>
-  <div class="panel-configurator-wrapper flex flex-col justify-between" ref="configurator">
-    <PanelContentWrapper/>
-    <Sidebar/>
+  <div class="panel-configurator-wrapper flex flex-col-reverse justify-between md:flex-row" ref="configurator">
+    <Sidebar class="md:w-1/4"/>
+    <PanelContentWrapper class="md:w-3/4"/>
+
     <!--    <button @click="addToCart">add to cart</button>-->
   </div>
 </template>

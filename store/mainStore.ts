@@ -14,7 +14,8 @@ export const useMainStore = defineStore('main', {
       length: DEFAULT_LENGTH,
       width: DEFAULT_WIDTH,
     },
-    selectedProduct: null as Nullable<PricedProduct>
+    selectedProduct: null as Nullable<PricedProduct>,
+    isDesktop: false
   }),
   actions: {
     setPanelType(panelType: string) {
@@ -31,6 +32,14 @@ export const useMainStore = defineStore('main', {
     },
     setSelectProduct(selectedProduct: PricedProduct) {
       this.selectedProduct = selectedProduct;
+    },
+    setIsDesktop(isDesktop: boolean) {
+      this.isDesktop = isDesktop;
+    }
+  },
+  getters: {
+    getIsDesktop(): boolean {
+      return this.isDesktop;
     }
   }
 });
