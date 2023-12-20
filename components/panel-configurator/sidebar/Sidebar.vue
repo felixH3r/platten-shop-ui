@@ -1,6 +1,6 @@
 <template>
   <div class="w-full bg-primary px-5 py-5">
-    <h3>{{ TC.pcSidebar.header }}</h3>
+    <h3 v-if="!useMainStore().getIsMobile">{{ TC.pcSidebar.header }}</h3>
     <div class="flex gap-5 py-5">
       <select-component :values="['Sperrholz', 'Spanplatte']" class="w-2/3"/>
       <select-component :values="thicknessValues" class="w-1/3"/>
@@ -11,7 +11,7 @@
     <MeasurementsWrapper class="pt-5 pb-5" :header="TC.pcSidebar.widthHeader"
                          :input-placeholder="TC.pcSidebar.widthPlaceholder"
                          :usage="'width'"/>
-    <div v-if="useMainStore().isDesktop" class="flex flex-col gap-3">
+    <div v-if="!useMainStore().getIsMobile" class="flex flex-col gap-3">
       <h4>{{ TC.pcSidebar.descrHeader }}</h4>
       <span class="overflow-scroll">{{ TC.pcSidebar.descrContent }}</span>
     </div>

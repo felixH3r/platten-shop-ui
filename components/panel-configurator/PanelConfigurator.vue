@@ -23,6 +23,10 @@
     document.querySelector("body")!.style.overflow = "hidden";
   });
 
+  onUnmounted(() => {
+    document.querySelector("body")!.style.overflow = "scroll";
+  });
+
 
   // onMounted(() => {
   //   if (configurator.value) {

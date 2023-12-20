@@ -15,7 +15,8 @@ export const useMainStore = defineStore('main', {
       width: DEFAULT_WIDTH,
     },
     selectedProduct: null as Nullable<PricedProduct>,
-    isDesktop: false
+    isDesktop: false,
+    isMobile: false,
   }),
   actions: {
     setPanelType(panelType: string) {
@@ -35,11 +36,17 @@ export const useMainStore = defineStore('main', {
     },
     setIsDesktop(isDesktop: boolean) {
       this.isDesktop = isDesktop;
+    },
+    setIsMobile(isMobile: boolean) {
+      this.isMobile = isMobile;
     }
   },
   getters: {
     getIsDesktop(): boolean {
       return this.isDesktop;
+    },
+    getIsMobile(): boolean {
+      return this.isMobile;
     }
   }
 });
