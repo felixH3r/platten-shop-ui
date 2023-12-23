@@ -2,8 +2,7 @@
   <div class="panel-configurator-wrapper flex flex-col-reverse justify-between md:flex-row" ref="configurator">
     <Sidebar class="md:w-config-sidebar"/>
     <PanelContentWrapper class="md:w-full"/>
-
-    <!--    <button @click="addToCart">add to cart</button>-->
+    <CTAButton class="absolute right-5 bottom-5" :content="TC.pc.addToCart" :on-click="addToCart"/>
   </div>
 </template>
 
@@ -13,6 +12,7 @@
   import {useMainStore} from "~/store/mainStore";
   import {useRoute} from "vue-router";
   import {navigateTo} from "#app";
+  import CTAButton from "~/components/utils/CTAButton.vue";
 
   const backendData = useBackendDataStore();
   const mainStore = useMainStore();
@@ -41,13 +41,13 @@
   //     localStorage.setItem('cart_id', backendData.cart.id);
   //   }
   // });
-  // const addToCart = async () => {
-  //   if (mainStore.selectedProduct && mainStore.selectedProduct.variants[0].id) {
-  //     await backendData.addItemToCart(mainStore.selectedProduct.variants[0].id, 1);
-  //   }
-  //   navigateTo('/cart');
-  //   console.log(backendData.cart);
-  // };
+  const addToCart = async () => {
+    if (mainStore.selectedProduct && mainStore.selectedProduct.variants[0].id) {
+      await backendData.addItemToCart(mainStore.selectedProduct.variants[0].id, 1);
+    }
+    navigateTo('/cart');
+    console.log(backendData.cart);
+  };
 
 </script>
 

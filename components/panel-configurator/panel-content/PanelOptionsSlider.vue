@@ -28,6 +28,16 @@
   });
   onMounted(() => {
     mainStore.setSelectProduct(products.value[0]);
+    mainStore.setVariants(products.value[0].variants);
+    const options = products.value[0].options;
+    for (let option of options) {
+      if (option.title === 'Material') {
+        mainStore.setMaterials(option.values);
+      }
+      if (option.title === 'Dicke') {
+        mainStore.setThicknesses(option.values);
+      }
+    }
   });
 
 

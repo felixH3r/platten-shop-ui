@@ -18,7 +18,6 @@
   const componentKey = ref(0);
 
   const isDesktop = computed(() => {
-    debugger
     return useMainStore().getIsDesktop;
   });
 </script>

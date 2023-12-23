@@ -1,6 +1,8 @@
 import {defineStore} from 'pinia';
-import {PricedProduct} from "@medusajs/medusa/dist/types/pricing";
+import {PricedProduct, PricedVariant} from "@medusajs/medusa/dist/types/pricing";
 import {MedusaProduct} from "~/store/backendData";
+import {ProductOptionValue} from "@medusajs/medusa";
+import {UnwrapRef} from "vue";
 
 export const DEFAULT_THICKNESS = 0;
 export const DEFAULT_LENGTH = 2000;
@@ -15,6 +17,9 @@ export const useMainStore = defineStore('main', {
       width: DEFAULT_WIDTH,
     },
     selectedProduct: null as Nullable<PricedProduct>,
+    variants: null as Nullable<PricedVariant[]>,
+    materials: null as Nullable<ProductOptionValue[]>,
+    thicknesses: null as Nullable<ProductOptionValue[]>,
     isDesktop: false,
     isMobile: false,
   }),
@@ -39,6 +44,15 @@ export const useMainStore = defineStore('main', {
     },
     setIsMobile(isMobile: boolean) {
       this.isMobile = isMobile;
+    },
+    setVariants(variants: PricedVariant[]) {
+      this.variants = variants;
+    },
+    setMaterials(materials: ProductOptionValue[]) {
+      this.materials = materials;
+    },
+    setThicknesses(thicknesses: ProductOptionValue[]) {
+      this.thicknesses = thicknesses;
     }
   },
   getters: {
@@ -47,6 +61,15 @@ export const useMainStore = defineStore('main', {
     },
     getIsMobile(): boolean {
       return this.isMobile;
+    },
+    getVariants(): UnwrapRef<PricedVariant[] | null> {
+      return this.variants;
+    },
+    getMaterials(): UnwrapRef<ProductOptionValue[] | null> {
+      return this.materials;
+    },
+    getThicknesses(): UnwrapRef<ProductOptionValue[] | null> {
+      return this.thicknesses;
     }
   }
 });

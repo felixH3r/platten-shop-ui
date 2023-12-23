@@ -1,7 +1,7 @@
 <template>
   <button
       @click="props.onClick"
-      class="flex w-min rounded-full bg-cta px-10 py-4 text-white"
+      class="flex w-min rounded-full bg-cta px-10 py-3 text-white"
   >
     {{ content }}
   </button>

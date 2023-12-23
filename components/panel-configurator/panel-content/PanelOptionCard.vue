@@ -11,6 +11,7 @@
   import {useMainStore} from "~/store/mainStore";
   import {MedusaProduct} from "~/store/backendData";
   import {PricedProduct} from "@medusajs/medusa/dist/types/pricing";
+  import {main} from "@popperjs/core";
 
   const props = defineProps<{ product: PricedProduct, selected: Boolean }>();
   const mainStore = useMainStore();
@@ -22,9 +23,24 @@
     return props.product.thumbnail;
   });
 
-  function selectProduct() {
+  const selectProduct = () => {
     mainStore.setSelectProduct(props.product);
-  }
+    mainStore.setVariants(props.product.variants);
+    const options = props.product.options;
+    if (!options) {
+      return;
+    }
+    for (let option of options) {
+      if (option.title === 'Material') {
+        mainStore.setMaterials(option.values);
+      }
+      if (option.title === 'Dicke') {
+        mainStore.setThicknesses(option.values);
+      }
+    }
+    console.log(mainStore.variants, 'variants');
+    console.log(props.product.options, 'options');
+  };
 
   const isSelected = computed(() => {
     return props.product.id === mainStore.selectedProduct?.id;

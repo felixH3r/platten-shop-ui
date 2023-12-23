@@ -38,6 +38,9 @@ export const TC = {
   dimensions: {
     MM: 'mm'
   },
+  pc: {
+    addToCart: 'Warenkorb',
+  },
   pcSidebar: {
     header: 'Konfiguriere deine Platten:',
     thickness: 'Material Dicke:',
