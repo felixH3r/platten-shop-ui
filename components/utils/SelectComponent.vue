@@ -26,7 +26,9 @@
   <!-- End Select -->
   <div class="relative">
     <select
-        class="py-3 px-4 pe-9 block w-full border-gray-200 rounded-full text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400 dark:focus:ring-gray-600">
+        class="py-3 px-4 pe-9 block w-full border-gray-200 rounded-full text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400 dark:focus:ring-gray-600"
+        v-model="selected" @change="handleChange"
+    >
       <option v-for="(value, index) in values"> {{ value }}</option>
     </select>
 
@@ -43,15 +45,31 @@
 </template>
 
 <script setup lang="ts">
-  import {computed} from "#imports";
 
-  const props = defineProps({
-    values: Array<string>
+  import {PricedVariant} from "@medusajs/medusa/dist/types/pricing";
+
+  const selected = ref<string | null>(null);
+
+  const props = defineProps<{
+    values: Array<string | undefined>;
+    onSelect: (selectedVariant: string) => void;
+  }>();
+
+  const handleChange = () => {
+    if (!selected.value) {
+      return;
+    }
+    props.onSelect(selected.value);
+  };
+
+  watch(() => props.values, (newValues) => {
+    if (newValues && newValues[0]) {
+      // Always set the default value to the first item in new values
+      selected.value = newValues[0];
+    }
   });
 
-  const valuesComputed = computed(() => {
-    return props.values;
-  });
+
 </script>
 
 <style scoped lang="scss">

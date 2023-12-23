@@ -17,6 +17,7 @@ export const useMainStore = defineStore('main', {
       width: DEFAULT_WIDTH,
     },
     selectedProduct: null as Nullable<PricedProduct>,
+    selectedVariant: null as Nullable<Partial<PricedVariant>>,
     variants: null as Nullable<PricedVariant[]>,
     materials: null as Nullable<ProductOptionValue[]>,
     thicknesses: null as Nullable<ProductOptionValue[]>,
@@ -38,6 +39,9 @@ export const useMainStore = defineStore('main', {
     },
     setSelectProduct(selectedProduct: PricedProduct) {
       this.selectedProduct = selectedProduct;
+    },
+    setSelectedVariant(selectedVariant: Partial<PricedVariant>) {
+      this.selectedVariant = selectedVariant;
     },
     setIsDesktop(isDesktop: boolean) {
       this.isDesktop = isDesktop;

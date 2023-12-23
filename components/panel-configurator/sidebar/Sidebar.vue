@@ -1,7 +1,7 @@
 <template>
   <div class="w-full bg-primary px-5 py-5">
     <h3 v-if="!useMainStore().getIsMobile">{{ TC.pcSidebar.header }}</h3>
-    <select-component :values="variants" class="w-full py-5"/>
+    <select-component :values="variants" :on-select="selectVariant" class="w-full py-5"/>
     <MeasurementsWrapper :header="TC.pcSidebar.lengthHeader" :input-placeholder="TC.pcSidebar.lengthPlaceholder"
                          :usage="'length'"/>
     <MeasurementsWrapper class="pt-5 pb-5" :header="TC.pcSidebar.widthHeader"
@@ -22,10 +22,19 @@
   import SelectComponent from "~/components/utils/SelectComponent.vue";
   import {useMainStore} from "~/store/mainStore";
   import {computed} from "#imports";
+  import {PricedVariant} from "@medusajs/medusa/dist/types/pricing";
 
   const variants = computed(() => {
     return useMainStore().getVariants?.map((value) => value.title);
   });
+
+  const selectVariant = (selectedVariantTitle: string) => {
+    const selectedVariant = useMainStore().getVariants?.find((variant) => variant.title === selectedVariantTitle);
+    console.log(selectedVariant);
+    if (selectedVariant) {
+      useMainStore().setSelectedVariant(selectedVariant);
+    }
+  };
 
 
   // const options = computed((): { materials: string[], thicknesses: string[] } | null => {

@@ -20,10 +20,6 @@
   const backendData = useBackendDataStore();
 
   const products = computed(() => {
-    // if(!backendData.products){
-    //   return null;
-    // }
-    // const pro = backendData.products;
     return backendData.products;
   });
   onMounted(() => {
@@ -39,8 +35,6 @@
       }
     }
   });
-
-
   const selectedProductId = mainStore.selectedProduct?.id;
 
 
