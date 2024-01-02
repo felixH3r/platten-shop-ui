@@ -21,6 +21,9 @@
 
   onMounted(() => {
     document.querySelector("body")!.style.overflow = "hidden";
+    if (!backendData.cart) {
+      backendData.createCart();
+    }
   });
 
   onUnmounted(() => {
@@ -28,8 +31,8 @@
   });
 
   const addToCart = async () => {
-    if (mainStore.selectedProduct && mainStore.selectedProduct.variants[0].id) {
-      await backendData.addItemToCart(mainStore.selectedProduct.variants[0].id, 1);
+    if (mainStore.selectedProduct && mainStore.getSelectedVariant?.id) {
+      await backendData.addItemToCart(mainStore.getSelectedVariant?.id, 1);
     }
     navigateTo('/cart');
     console.log(backendData.cart);

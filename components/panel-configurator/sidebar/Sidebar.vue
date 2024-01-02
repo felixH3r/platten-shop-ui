@@ -30,8 +30,9 @@
 
   const selectVariant = (selectedVariantTitle: string) => {
     const selectedVariant = useMainStore().getVariants?.find((variant) => variant.title === selectedVariantTitle);
-    console.log(selectedVariant);
     if (selectedVariant) {
+      // ts-ignore because somehow the selectedVariant type does not fit perfectly but works
+      // @ts-ignore
       useMainStore().setSelectedVariant(selectedVariant);
     }
   };

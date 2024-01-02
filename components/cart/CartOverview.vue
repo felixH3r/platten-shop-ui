@@ -1,21 +1,16 @@
 <template>
-  <h1>Gib deine Lieferadresse bitte ein:</h1>
-  <form>
-    <input placeholder="company">
-    <input placeholder="first name" required>
-    <input placeholder="last name" required>
-    <input placeholder="address" required>
-    <input placeholder="city" required>
-    <input placeholder="postal code" required>
-    <input placeholder="phone">
-  </form>
-  <button type="submit" @click="addShipmentData">addShipmentData</button>
+  <CartItem v-for="cartItem in useBackendDataStore().cart?.items" :cart-item="cartItem as LineItem"/>
 </template>
 
 <script setup lang="ts">
   import {useBackendDataStore} from "~/store/backendData";
   import {useMedusaClient} from "#imports";
-  import {StoreRegionsRes} from "@medusajs/medusa";
+  import {LineItem, StoreRegionsRes} from "@medusajs/medusa";
+  import {useMainStore} from "~/store/mainStore";
+
+  onMounted(async () => {
+    await useBackendDataStore().createCart();
+  });
 
   const client = useMedusaClient();
   const backendData = useBackendDataStore();

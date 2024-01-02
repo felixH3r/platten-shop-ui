@@ -3,6 +3,7 @@ import {PricedProduct} from "@medusajs/medusa/dist/types/pricing";
 import {Cart, StoreShippingOptionsListRes} from "@medusajs/medusa";
 import {ca} from "date-fns/locale";
 import {useMedusaClient} from "#imports";
+import {Nullable} from "~/utils/types";
 
 export interface MedusaProduct {
   id: string;
@@ -55,7 +56,13 @@ export const useBackendDataStore = defineStore('backend', {
     },
     async createCart() {
       const client = useMedusaClient();
+      if (localStorage.getItem('cart_id')) {
+        const {cart} = await client.carts.retrieve(localStorage.getItem('cart_id')!);
+        this.cart = cart;
+        return;
+      }
       const {cart} = await client.carts.create();
+      localStorage.setItem('cart_id', cart.id);
       this.cart = cart;
     },
     async addItemToCart(variantId: string, quantity: number) {
@@ -68,6 +75,14 @@ export const useBackendDataStore = defineStore('backend', {
         console.log(cart.subtotal, 'subtotal');
         console.log(cart.items, 'line items');
         this.cart = cart;
+      }
+    },
+    async increaseItemQty(itemId: string, quantity: number) {
+      const client = useMedusaClient();
+      if (this.cart) {
+        const {cart} = await client.carts.lineItems.update(this.cart.id, itemId, {quantity});
+        this.cart = cart;
+        console.log(this.cart, 'updated cart');
       }
     },
     async addShipmentData(shipmentData: ShipmentData) {

@@ -3,27 +3,30 @@ import {PricedProduct, PricedVariant} from "@medusajs/medusa/dist/types/pricing"
 import {MedusaProduct} from "~/store/backendData";
 import {ProductOptionValue} from "@medusajs/medusa";
 import {UnwrapRef} from "vue";
+import {Nullable} from "~/utils/types";
 
 export const DEFAULT_THICKNESS = 0;
 export const DEFAULT_LENGTH = 2000;
 export const DEFAULT_WIDTH = 1000;
 
 export const useMainStore = defineStore('main', {
-  state: () => ({
-    panelConfigurator: {
-      panelType: '',
-      thickness: DEFAULT_THICKNESS,
-      length: DEFAULT_LENGTH,
-      width: DEFAULT_WIDTH,
-    },
-    selectedProduct: null as Nullable<PricedProduct>,
-    selectedVariant: null as Nullable<Partial<PricedVariant>>,
-    variants: null as Nullable<PricedVariant[]>,
-    materials: null as Nullable<ProductOptionValue[]>,
-    thicknesses: null as Nullable<ProductOptionValue[]>,
-    isDesktop: false,
-    isMobile: false,
-  }),
+  state: () => {
+    return {
+      panelConfigurator: {
+        panelType: '',
+        thickness: DEFAULT_THICKNESS,
+        length: DEFAULT_LENGTH,
+        width: DEFAULT_WIDTH,
+      },
+      selectedProduct: null as Nullable<PricedProduct>,
+      selectedVariant: null as Nullable<Partial<PricedVariant>>,
+      variants: null as Nullable<PricedVariant[]>,
+      materials: null as Nullable<ProductOptionValue[]>,
+      thicknesses: null as Nullable<ProductOptionValue[]>,
+      isDesktop: false,
+      isMobile: false,
+    };
+  },
   actions: {
     setPanelType(panelType: string) {
       this.panelConfigurator.panelType = panelType;
@@ -74,6 +77,9 @@ export const useMainStore = defineStore('main', {
     },
     getThicknesses(): UnwrapRef<ProductOptionValue[] | null> {
       return this.thicknesses;
+    },
+    getSelectedVariant(): UnwrapRef<Partial<PricedVariant> | null> {
+      return this.selectedVariant;
     }
   }
 });
