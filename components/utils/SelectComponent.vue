@@ -55,6 +55,13 @@
     onSelect: (selectedVariant: string) => void;
   }>();
 
+  onMounted(() => {
+    if (props.values[0]) {
+      selected.value = props.values[0];
+      handleChange();
+    }
+  });
+
   const handleChange = () => {
     if (!selected.value) {
       return;
@@ -66,6 +73,7 @@
     if (newValues && newValues[0]) {
       // Always set the default value to the first item in new values
       selected.value = newValues[0];
+      handleChange();
     }
   });
 

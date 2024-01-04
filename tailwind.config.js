@@ -18,6 +18,7 @@ module.exports = {
             'cta': '#38470B',
             'background': '#FFFFFF',
             'white': '#FFFFFF',
+            'light-grey': '#F3F3F3',
             'transparent': 'rgba(255, 255, 255, 0)'
         },
         fontFamily: {

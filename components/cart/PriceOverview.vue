@@ -12,7 +12,6 @@
       <span>{{ TC.cart.total }}:</span>
       <span>€ {{ prices.total }}</span>
     </div>
-    <CTAButton class="absolute bottom-5 right-5" :content="'Checkout'" @click="goToCheckOut"/>
   </div>
 </template>
 
@@ -48,10 +47,6 @@
 
     return prices;
   });
-
-  const goToCheckOut = (): void => {
-    navigateTo('/check-out');
-  };
 
 </script>
 

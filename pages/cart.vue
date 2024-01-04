@@ -5,14 +5,21 @@
     <CartOverview class="h-32"/>
   </div>
   <PriceOverview/>
+  <CTAButton class="absolute bottom-5 right-5" :content="'Weiter'" @click="goToCheckOut"/>
 
   <!--  <CheckoutInput/>-->
 </template>
 
 <script setup lang="ts">
   import CartOverview from "~/components/cart/CartOverview.vue";
-  import CheckoutInput from "~/components/cart/CheckoutInput.vue";
+  import CheckoutInput from "~/components/check-out/ShipmentData.vue";
   import PriceOverview from "~/components/cart/PriceOverview.vue";
+  import CTAButton from "~/components/utils/CTAButton.vue";
+  import {navigateTo} from "#app";
+
+  const goToCheckOut = (): void => {
+    navigateTo('/shipment');
+  };
 
 </script>
 
