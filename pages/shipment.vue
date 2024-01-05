@@ -2,7 +2,7 @@
   <div class="pt-16 px-5 min-h-screen bg-primary">
     <h1 class="text-3xl pb-10">Lieferadresse:</h1>
     <shipment-data/>
-    <CTAButton :content="'Zur Bezahlung'" :on-click="goToPayment" class="absolute bottom-5 right-5"/>
+    <CTAButton :content="'Zur Bezahlung'" :on-click="goToPayment" class="fixed bottom-5 right-5"/>
   </div>
 </template>
 

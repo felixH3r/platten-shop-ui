@@ -1,12 +1,12 @@
 <template>
   <div class="pt-16 pb-60 px-5 min-h-screen bg-primary">
-    <h1 class="text-3xl pb-10">Bezahlung:</h1>
+    <h1 class="text-3xl pb-5">Bezahlung:</h1>
     <PaymentOptions/>
-    <h4 class="pt-10 pb-5">Rechnungsadresse:</h4>
+    <h4 class="pt-8 pb-5">Rechnungsadresse:</h4>
     <InvoiceData class="w-full"/>
   </div>
   <PriceOverview class="bg-white shadow-lg"/>
-  <CTAButton :content="'Bezahlen'" class="absolute bottom-5 right-5"/>
+  <CTAButton :content="'Bezahlen'" class="fixed bottom-5 right-5"/>
 </template>
 
 <script setup lang="ts">

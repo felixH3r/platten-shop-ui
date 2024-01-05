@@ -5,7 +5,7 @@
     <CartOverview class="h-32"/>
   </div>
   <PriceOverview/>
-  <CTAButton class="absolute bottom-5 right-5" :content="'Weiter'" @click="goToCheckOut"/>
+  <CTAButton class="fixed bottom-5 right-5" :content="'Weiter'" @click="goToCheckOut"/>
 
   <!--  <CheckoutInput/>-->
 </template>
