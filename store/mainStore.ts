@@ -9,6 +9,12 @@ export const DEFAULT_THICKNESS = 0;
 export const DEFAULT_LENGTH = 2000;
 export const DEFAULT_WIDTH = 1000;
 
+export interface CreditCard {
+  card_no: string,
+  expire_date: string,
+  cvv: string
+}
+
 export const useMainStore = defineStore('main', {
   state: () => {
     return {
@@ -25,6 +31,7 @@ export const useMainStore = defineStore('main', {
       thicknesses: null as Nullable<ProductOptionValue[]>,
       isDesktop: false,
       isMobile: false,
+      creditCard: null as Nullable<CreditCard>,
     };
   },
   actions: {
@@ -60,6 +67,9 @@ export const useMainStore = defineStore('main', {
     },
     setThicknesses(thicknesses: ProductOptionValue[]) {
       this.thicknesses = thicknesses;
+    },
+    setCreditCard(credentials: CreditCard) {
+      this.creditCard = credentials;
     }
   },
   getters: {
@@ -80,6 +90,9 @@ export const useMainStore = defineStore('main', {
     },
     getSelectedVariant(): UnwrapRef<Partial<PricedVariant> | null> {
       return this.selectedVariant;
+    },
+    getCreditCard(): UnwrapRef<CreditCard | null> {
+      return this.creditCard;
     }
   }
 });

@@ -1,3 +1,5 @@
+import {Nullable} from "./types";
+
 export const throttle = <T extends (...args: any[]) => any>(
     func: T,
     delay = 16,

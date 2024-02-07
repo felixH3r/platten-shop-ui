@@ -37,7 +37,7 @@ export const useBackendDataStore = defineStore('backend', {
     products: [],
     variants: [],
     cart: null,
-    shipmentOptions: null
+    shipmentOptions: null,
   }),
   actions: {
     async getProducts() {

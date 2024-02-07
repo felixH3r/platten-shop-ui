@@ -14,7 +14,10 @@ export default defineNuxtConfig({
     ],
     link: [
       {rel: 'icon', type: 'image/x-icon', href: '/favicon.ico'},
-    ]
+    ],
+    script: [{
+      src: '/_nuxt/node_modules/preline/dist/preline.js', defer: true
+    }]
   },
   css: [
     "~/assets/styles/main.css"
@@ -25,10 +28,24 @@ export default defineNuxtConfig({
     "~/plugins/preline.client.ts"
   ],
 
+  tailwindcss: {
+    cssPath: '~/assets/css/tailwind.css',
+    configPath: 'tailwind.config',
+    exposeConfig: false,
+    exposeLevel: 2,
+    config: {},
+    injectPosition: 'first',
+    viewer: true,
+  },
+
   modules: [
     '@pinia/nuxt',
     '@nuxtjs/google-fonts',
     'nuxt-medusa',
+    ['nuxt3-stripe', {
+      apiKey: process.env.STRIPE_API_KEY,
+      publishableKey: process.env.STRIPE_PUBLISHABLE_KEY
+    }]
   ],
   vite: {
     css: {
@@ -52,7 +69,7 @@ export default defineNuxtConfig({
       tailwindcss: {},
       autoprefixer: {},
     },
-  }
+  },
 });
 
 

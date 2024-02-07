@@ -13,6 +13,7 @@
     </div>
     <InputComponent :placeholder="'Telefon Nr.:'" :input-type="'tel'" v-model="phone" class="w-full"/>
   </form>
+  <CTAButton :content="'Zur Bezahlung'" :on-click="addShipmentData" class="fixed bottom-5 right-5"/>
 </template>
 
 <script setup lang="ts">
@@ -20,6 +21,8 @@
   import SelectComponent from "~/components/utils/SelectComponent.vue";
   import {useMedusaClient} from "#imports";
   import {useBackendDataStore} from "~/store/backendData";
+  import CTAButton from "~/components/utils/CTAButton.vue";
+  import {navigateTo} from "#app";
 
   const client = useMedusaClient();
   const backendData = useBackendDataStore();
@@ -64,7 +67,9 @@
     if (!backendData.shipmentOptions) {
       return;
     }
+    debugger;
     await client.carts.addShippingMethod(backendData.cart.id, {option_id: backendData.shipmentOptions.shipping_options[0].id!});
+    navigateTo('/payment');
   };
 
 

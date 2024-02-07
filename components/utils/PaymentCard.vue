@@ -10,16 +10,18 @@
 </template>
 
 <script setup lang="ts">
-  const props = defineProps<{
-    paymentKey: string,
-    content: string,
-    checked: boolean,
-    selectPayment: (paymentKey: string) => void
-  }>();
+import {PAYMENT_OPTIONS} from "~/utils/types";
 
-  const onClick = () => {
-    props.selectPayment(props.paymentKey);
-  };
+const props = defineProps<{
+  paymentKey: PAYMENT_OPTIONS,
+  content: string,
+  checked: boolean,
+  selectPayment: (paymentKey: PAYMENT_OPTIONS) => void
+}>();
+
+const onClick = () => {
+  props.selectPayment(props.paymentKey);
+};
 </script>
 
 <style scoped lang="scss">
