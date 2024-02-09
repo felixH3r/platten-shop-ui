@@ -42,10 +42,6 @@ export default defineNuxtConfig({
     '@pinia/nuxt',
     '@nuxtjs/google-fonts',
     'nuxt-medusa',
-    ['nuxt3-stripe', {
-      apiKey: process.env.STRIPE_API_KEY,
-      publishableKey: process.env.STRIPE_PUBLISHABLE_KEY
-    }]
   ],
   vite: {
     css: {

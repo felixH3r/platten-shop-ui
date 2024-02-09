@@ -13,7 +13,6 @@
     "@pinia/nuxt": "^0.4.8",
     "@preline/select": "^2.0.1",
     "@stripe/stripe-js": "^2.4.0",
-    "nuxt3-stripe": "^1.1.1",
     "pinia": "^2.0.34",
     "preline": "^2.0.2"
   },
