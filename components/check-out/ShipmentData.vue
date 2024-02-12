@@ -67,7 +67,6 @@
     if (!backendData.shipmentOptions) {
       return;
     }
-    debugger;
     await client.carts.addShippingMethod(backendData.cart.id, {option_id: backendData.shipmentOptions.shipping_options[0].id!});
     navigateTo('/payment');
   };
