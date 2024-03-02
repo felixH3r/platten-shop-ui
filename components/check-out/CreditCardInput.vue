@@ -35,6 +35,7 @@
       console.warn('no cart therefore no payment possible');
       return;
     }
+    const thirdCart = await client.carts.update(backendData.cart.id, {email: 'felix.hermanutz@gmx.at'});
     const newCart = await client.carts.createPaymentSessions(backendData.cart.id);
     const isStripeAvailable = newCart.cart.payment_sessions?.some(
         (session) => (
@@ -44,7 +45,7 @@
     if (!isStripeAvailable) {
       return;
     }
-    const secondCart = await client.carts.setPaymentSession(newCart.cart.id, {
+    var secondCart = await client.carts.setPaymentSession(newCart.cart.id, {
       provider_id: "stripe"
     });
     clientSecret.value = secondCart.cart.payment_session?.data.client_secret as string;
@@ -56,8 +57,10 @@
     paymentElement.value.mount('#payment-element');
 
     // just add a sample customer REFACTOR NEEDED!!
-    await client.carts.update(backendData.cart.id, {email: 'f.hermanutz@icloud.com'});
+    console.log(thirdCart, 'cart when init');
   };
+
+  console.log(useBackendDataStore().cart, 'cart before stripe');
 
   const processPayment = async () => {
     const {error, paymentIntent} = await stripe.value.confirmCardPayment(clientSecret.value, {
@@ -87,8 +90,10 @@
     if (!backendData.cart) {
       return;
     }
+    console.log(backendData.cart, 'cart');
+    const completeResponse = await client.carts.complete(backendData.cart.id);
+    console.log(completeResponse, 'response of cart complete');
 
-    await client.carts.complete(backendData.cart.id);
     console.log('payment done');
   };
 

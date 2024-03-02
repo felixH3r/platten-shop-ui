@@ -13,7 +13,8 @@
     </div>
     <InputComponent :placeholder="'Telefon Nr.:'" :input-type="'tel'" v-model="phone" class="w-full"/>
   </form>
-  <CTAButton :content="'Zur Bezahlung'" :on-click="addShipmentData" class="fixed bottom-5 right-5"/>
+  <CTAButton :content="'Zur Bezahlung'" :on-click="addShipmentData" class="fixed bottom-5 right-5"
+             :is-loading="isLoading"/>
 </template>
 
 <script setup lang="ts">
@@ -34,6 +35,9 @@
   const postal_code = ref('');
   const phone = ref('');
 
+  const isLoading = ref(false);
+
+
   const handleCountryChange = (selectedValue: string): void => {
     if (selectedValue === 'Österreich') {
       country_code.value = 'at';
@@ -43,7 +47,13 @@
     }
   };
 
+
   const addShipmentData = async () => {
+    // if (!shipmentForm.value || !shipmentForm.value.checkValidity()) {
+    //   return;
+    // }
+
+    isLoading.value = true;
     const regions = await client.regions.list();
     console.log(regions, 'regions');
     if (!backendData.cart) {
@@ -68,6 +78,7 @@
       return;
     }
     await client.carts.addShippingMethod(backendData.cart.id, {option_id: backendData.shipmentOptions.shipping_options[0].id!});
+    isLoading.value = false;
     navigateTo('/payment');
   };
 

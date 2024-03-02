@@ -1,17 +1,16 @@
 <template>
   <div class="w-full bg-primary px-5 py-5">
     <h3 v-if="!useMainStore().getIsMobile">{{ TC.pcSidebar.header }}</h3>
-    <select-component :values="variants" :on-select="selectVariant" class="w-full py-5"/>
+    <select-component :values="variants" :on-select="selectVariant" class="w-full mb-5"/>
     <MeasurementsWrapper :header="TC.pcSidebar.lengthHeader" :input-placeholder="TC.pcSidebar.lengthPlaceholder"
                          :usage="'length'"/>
-    <MeasurementsWrapper class="pt-5 pb-5" :header="TC.pcSidebar.widthHeader"
+    <MeasurementsWrapper class="pt-5 pb-8" :header="TC.pcSidebar.widthHeader"
                          :input-placeholder="TC.pcSidebar.widthPlaceholder"
                          :usage="'width'"/>
     <div v-if="!useMainStore().getIsMobile" class="flex flex-col gap-3">
       <h4>{{ TC.pcSidebar.descrHeader }}</h4>
       <span class="overflow-scroll">{{ TC.pcSidebar.descrContent }}</span>
     </div>
-
     <span class="text-4xl font-normal md:absolute md:left-5 md:bottom-5">€ 150,-</span>
   </div>
 </template>

@@ -4,12 +4,15 @@
 </template>
 
 <script setup lang="ts">
+
   const props = defineProps({
     placeholder: String,
     onInput: Function,
     inputType: String,
   });
+
   const inputEl = ref<HTMLInputElement | null>(null);
+
 
   defineExpose({
     inputEl: inputEl
@@ -17,4 +20,11 @@
 </script>
 
 <style scoped lang="scss">
+  //.valid input {
+  //  border: 1px solid green;
+  //}
+  //
+  //.error input {
+  //  border: 1px solid red;
+  //}
 </style>
