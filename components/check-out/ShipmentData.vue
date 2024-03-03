@@ -1,17 +1,25 @@
 <template>
   <form class="flex flex-col gap-5">
     <!--    <InputComponent :placeholder="'company'" v-model="company" class="w-full"/>-->
-    <InputComponent :placeholder="'Vorname'" v-model="first_name" class="w-full"/>
-    <InputComponent :placeholder="'Nachname'" v-model="last_name" class="w-full"/>
+    <InputComponent :identifier="'first_name'" :placeholder="'Vorname'" v-model="first_name" class="w-full"
+                    ref="first_name"
+                    :is-required="true"/>
+    <InputComponent :identifier="'second_name'" :placeholder="'Nachname'" v-model="last_name" class="w-full"
+                    ref="last_name"
+                    :is-required="true"/>
 
-    <InputComponent :placeholder="'E-Mail'" :input-type="'email'" v-model="address_1" class="w-full"/>
-    <SelectComponent :values="['Österreich', 'Deutschland']" :on-select="handleCountryChange"/>
-    <InputComponent :placeholder="'Straße und Hausnummer'" v-model="city" class="w-full"/>
+    <InputComponent :identifier="'email'" :placeholder="'E-Mail'" :input-type="'email'" class="w-full" ref="email"
+                    :is-required="true"/>
+    <SelectComponent :identifier="'country_code'" :values="['Österreich', 'Deutschland']"
+                     :on-select="handleCountryChange"/>
+    <InputComponent :identifier="'address'" :placeholder="'Straße und Hausnummer'" class="w-full" ref="address_1"
+                    :is-required="true"/>
     <div class="flex gap-5">
-      <InputComponent :placeholder="'Stadt'" v-model="city" class="w-2/3"/>
-      <InputComponent :placeholder="'PLZ'" v-model="postal_code" class="w-1/3"/>
+      <InputComponent :identifier="'city'" :placeholder="'Stadt'" class="w-2/3" ref="city" :is-required="true"/>
+      <InputComponent :identifier="'postal_code'" :placeholder="'PLZ'" class="w-1/3" ref="postal_code"
+                      :is-required="true"/>
     </div>
-    <InputComponent :placeholder="'Telefon Nr.:'" :input-type="'tel'" v-model="phone" class="w-full"/>
+    <InputComponent :identifier="'phone'" :placeholder="'Telefon Nr.:'" :input-type="'tel'" class="w-full" ref="phone"/>
   </form>
   <CTAButton :content="'Zur Bezahlung'" :on-click="addShipmentData" class="fixed bottom-5 right-5"
              :is-loading="isLoading"/>
@@ -27,16 +35,39 @@
 
   const client = useMedusaClient();
   const backendData = useBackendDataStore();
-  const country_code = ref('');
-  const first_name = ref('');
-  const last_name = ref('');
-  const address_1 = ref('');
-  const city = ref('');
-  const postal_code = ref('');
-  const phone = ref('');
+
+  const country_code = ref('at');
+  const first_name = ref<InstanceType<typeof InputComponent> | null>(null);
+  const last_name = ref<InstanceType<typeof InputComponent> | null>(null);
+  const email = ref<InstanceType<typeof InputComponent> | null>(null);
+  const address_1 = ref<InstanceType<typeof InputComponent> | null>(null);
+  const city = ref<InstanceType<typeof InputComponent> | null>(null);
+  const postal_code = ref<InstanceType<typeof InputComponent> | null>(null);
+  const phone = ref<InstanceType<typeof InputComponent> | null>(null);
 
   const isLoading = ref(false);
 
+  const wrapRefs = () => {
+    return [
+      first_name,
+      last_name,
+      email,
+      address_1,
+      city,
+      postal_code,
+      phone
+    ];
+  };
+
+  const validateFields = (): boolean => {
+    let valid = true;
+    wrapRefs().forEach((inputField) => {
+      if (!inputField.value || !inputField.value.validate()) {
+        valid = false;
+      }
+    });
+    return valid;
+  };
 
   const handleCountryChange = (selectedValue: string): void => {
     if (selectedValue === 'Österreich') {
@@ -53,6 +84,15 @@
     //   return;
     // }
 
+
+    if (!validateFields()) {
+      return;
+    }
+
+    // if (!first_name.value || !first_name.value.validate()) {
+    //   return;
+    // }
+
     isLoading.value = true;
     const regions = await client.regions.list();
     console.log(regions, 'regions');
@@ -62,15 +102,15 @@
     await client.carts.update(backendData.cart.id, {region_id: regions.regions[0].id});
     await backendData.addShipmentData({
       company: '',
-      first_name: first_name.value,
-      last_name: last_name.value,
-      address_1: address_1.value,
+      first_name: first_name.value.inputVal,
+      last_name: last_name.value.inputVal,
+      address_1: address_1.value.inputVal,
       address_2: '',
-      city: city.value,
+      city: city.value.inputVal,
       country_code: country_code.value,
       province: '',
-      postal_code: postal_code.value,
-      phone: phone.value,
+      postal_code: postal_code.value.inputVal,
+      phone: phone.value.inputVal,
     });
     console.log('added');
     console.log(await backendData.listShipmentOptions(), 'shipment options');

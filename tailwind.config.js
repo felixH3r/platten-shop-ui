@@ -20,7 +20,8 @@ module.exports = {
             'white': '#FFFFFF',
             'gray': '#8492a6',
             'gray-light': '#d3dce6',
-            'transparent': 'rgba(255, 255, 255, 0)'
+            'transparent': 'rgba(255, 255, 255, 0)',
+            'red': 'red'
         },
         fontFamily: {
             sans: ['Montserrat', 'sans'],
