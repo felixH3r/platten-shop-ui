@@ -80,25 +80,17 @@
 
 
   const addShipmentData = async () => {
-    // if (!shipmentForm.value || !shipmentForm.value.checkValidity()) {
-    //   return;
-    // }
-
-
     if (!validateFields()) {
       return;
     }
 
-    // if (!first_name.value || !first_name.value.validate()) {
-    //   return;
-    // }
 
     isLoading.value = true;
     const regions = await client.regions.list();
-    console.log(regions, 'regions');
     if (!backendData.cart) {
       return;
     }
+    // ATTENTION!! Hardcoded because only one region for this shop
     await client.carts.update(backendData.cart.id, {region_id: regions.regions[0].id});
     await backendData.addShipmentData({
       company: '',

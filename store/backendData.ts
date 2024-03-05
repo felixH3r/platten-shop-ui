@@ -16,6 +16,7 @@ export interface BackendState {
   variants: any;
   cart: Nullable<Cart>;
   shipmentOptions: Nullable<StoreShippingOptionsListRes>;
+  shipmentData: any;
 }
 
 export interface ShipmentData {
@@ -36,6 +37,7 @@ export const useBackendDataStore = defineStore('backend', {
   state: (): BackendState => ({
     products: [],
     variants: [],
+    shipmentData: null,
     cart: null,
     shipmentOptions: null,
   }),
@@ -89,8 +91,8 @@ export const useBackendDataStore = defineStore('backend', {
       const client = useMedusaClient();
       if (this.cart) {
         await client.carts.update(this.cart.id, {shipping_address: shipmentData});
-        console.log(this.cart);
       }
+      this.shipmentData = shipmentData;
     },
     async changeCartRegionId(region_id: string) {
       const client = useMedusaClient();

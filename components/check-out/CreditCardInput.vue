@@ -1,19 +1,18 @@
 <template>
   <div id="payment-element"></div>
+  <!--  <div id="link-authentication-element"/>-->
   <button @click="processPayment">test bezahlung</button>
 </template>
 
 <script setup lang="ts">
-
-
   import Stripe, {loadStripe, StripePaymentElement} from "@stripe/stripe-js";
   import {useMedusaClient} from "#imports";
   import {useBackendDataStore} from "~/store/backendData";
 
-
   const stripe = ref(null as any);
   const paymentElement = ref(null as Nullable<StripePaymentElement>);
   const clientSecret = ref('');
+  let elements: any;
 
 
   onMounted(async () => {
@@ -21,9 +20,6 @@
   });
 
   const setUpStripe = async () => {
-    // if (!process.env.STRIPE_PUBLISHABLE_KEY) {
-    //   return;
-    // }
     stripe.value = await loadStripe('pk_test_51NltREG1wFSpgvXF803jhE8TXCC01jJVIHIUx1WFnlcKXhcMMsprdAzC8l9BY71r5AG0eakWRBECVKnzfz6DPOss00kfY4nBgy');
     if (!stripe) {
       return;
@@ -49,40 +45,44 @@
       provider_id: "stripe"
     });
     clientSecret.value = secondCart.cart.payment_session?.data.client_secret as string;
-    const elements = stripe.value.elements({clientSecret: clientSecret.value});
-    paymentElement.value = elements.create('card');
+    elements = stripe.value.elements({clientSecret: clientSecret.value});
+    paymentElement.value = elements.create('payment');
     if (!paymentElement.value) {
       return;
     }
     paymentElement.value.mount('#payment-element');
 
-    // just add a sample customer REFACTOR NEEDED!!
     console.log(thirdCart, 'cart when init');
   };
 
   console.log(useBackendDataStore().cart, 'cart before stripe');
 
   const processPayment = async () => {
-    const {error, paymentIntent} = await stripe.value.confirmCardPayment(clientSecret.value, {
-      payment_method: {
-        card: paymentElement.value,
-        billing_details: {
-          name: 'felix hermanutz',
-          email: 'f.hermanutz@icloud.com',
-          phone: '',
-          address: {
-            city: 'st georgen',
-            country: 'at',
-            line1: 'dr greilstrasse 11',
-            line2: '',
-            postal_code: '4880'
-          }
-        }
-      }
+    // Trigger form validation and wallet collection
+    const {error: submitError} = await elements.submit();
+    if (submitError) {
+      alert('submitError');
+      return;
+    }
+    const {error} = await stripe.value.confirmPayment({
+      elements,
+      clientSecret: clientSecret.value,
+      confirmParams: {
+        return_url: 'https://localhost:3000',
+      },
+      redirect: "if_required"
     });
+    if (error) {
+      alert('there is some stripe error');
+    }
+    // if (error.type === "card_error" || error.type === "validation_error") {
+    //   alert(error);
+    // } else {
+    //   alert("An unexpected error occured.");
+    // }
 
     console.log(error, 'there is some stripe error');
-    console.log(paymentIntent, 'this is the stripe payment ident');
+    // console.log(paymentIntent, 'this is the stripe payment ident');
 
     const client = useMedusaClient();
     const backendData = useBackendDataStore();
@@ -91,9 +91,8 @@
       return;
     }
     console.log(backendData.cart, 'cart');
-    const completeResponse = await client.carts.complete(backendData.cart.id);
-    console.log(completeResponse, 'response of cart complete');
-
+    // await client.carts.complete(backendData.cart.id);
+    localStorage.removeItem('cart_id');
     console.log('payment done');
   };
 
