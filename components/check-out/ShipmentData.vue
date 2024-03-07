@@ -84,14 +84,14 @@
       return;
     }
 
-
     isLoading.value = true;
     const regions = await client.regions.list();
     if (!backendData.cart) {
       return;
     }
     // ATTENTION!! Hardcoded because only one region for this shop
-    await client.carts.update(backendData.cart.id, {region_id: regions.regions[0].id});
+    // await client.carts.update(backendData.cart.id, {region_id: regions.regions[0].id});
+    await backendData.changeCartRegionId(regions.regions[0].id);
     await backendData.addShipmentData({
       company: '',
       first_name: first_name.value.inputVal,
@@ -104,12 +104,19 @@
       postal_code: postal_code.value.inputVal,
       phone: phone.value.inputVal,
     });
-    console.log('added');
-    console.log(await backendData.listShipmentOptions(), 'shipment options');
+    await backendData.loadShipmentOptions();
     if (!backendData.shipmentOptions) {
+      console.warn('no shipment options available');
       return;
     }
-    await client.carts.addShippingMethod(backendData.cart.id, {option_id: backendData.shipmentOptions.shipping_options[0].id!});
+    // ATTENTION!! Hardcoded because only one region for this shop
+    await backendData.addShipmentMethod(backendData.shipmentOptions.shipping_options[0].id!);
+    if (!email.value) {
+      console.warn('no email in input field');
+      return;
+    }
+    await backendData.addGuestUser(email.value.inputVal);
+
     isLoading.value = false;
     navigateTo('/payment');
   };

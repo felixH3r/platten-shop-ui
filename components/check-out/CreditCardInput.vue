@@ -1,6 +1,5 @@
 <template>
   <div id="payment-element"></div>
-  <!--  <div id="link-authentication-element"/>-->
   <button @click="processPayment">test bezahlung</button>
 </template>
 
@@ -68,7 +67,7 @@
       elements,
       clientSecret: clientSecret.value,
       confirmParams: {
-        return_url: 'https://localhost:3000',
+        return_url: 'https://meine-holzplatte.at',
       },
       redirect: "if_required"
     });

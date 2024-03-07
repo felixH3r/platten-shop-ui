@@ -43,7 +43,6 @@
       phone: phone.value,
     });
     console.log('added');
-    console.log(await backendData.listShipmentOptions(), 'shipment options');
     if (!backendData.shipmentOptions) {
       return;
     }

@@ -90,29 +90,36 @@ export const useBackendDataStore = defineStore('backend', {
     async addShipmentData(shipmentData: ShipmentData) {
       const client = useMedusaClient();
       if (this.cart) {
-        await client.carts.update(this.cart.id, {shipping_address: shipmentData});
+        const {cart} = await client.carts.update(this.cart.id, {shipping_address: shipmentData});
+        this.cart = cart;
       }
       this.shipmentData = shipmentData;
     },
     async changeCartRegionId(region_id: string) {
       const client = useMedusaClient();
       if (this.cart) {
-        await client.carts.update(this.cart.id, {region_id});
+        const {cart} = await client.carts.update(this.cart.id, {region_id});
+        this.cart = cart;
       }
     },
-    async listShipmentOptions(): Promise<typeof this.shipmentOptions | undefined> {
-      const client = useMedusaClient();
+    async addShipmentMethod(option_id: string) {
+      if (this.cart && this.shipmentOptions) {
+        const {cart} = await useMedusaClient().carts.addShippingMethod(this.cart.id, {option_id: option_id});
+        this.cart = cart;
+      }
+    },
+    async addGuestUser(userEmail: string) {
+      if (this.cart) {
+        const {cart} = await useMedusaClient().carts.update(this.cart.id, {email: userEmail});
+        this.cart = cart;
+      }
+    },
+    async loadShipmentOptions() {
       if (!this.cart) {
         return;
       }
-      this.shipmentOptions = await client.shippingOptions.listCartOptions(this.cart.id);
-      return this.shipmentOptions;
+      this.shipmentOptions = await useMedusaClient().shippingOptions.listCartOptions(this.cart.id);
     },
-
-    // async getPanelTypes(): Promise<string[]> {
-    //   const client = useMedusaClient();
-    //   client
-    // }
   },
   getters: {}
 });
