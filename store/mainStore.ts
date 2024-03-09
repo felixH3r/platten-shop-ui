@@ -3,7 +3,7 @@ import {PricedProduct, PricedVariant} from "@medusajs/medusa/dist/types/pricing"
 import {MedusaProduct} from "~/store/backendData";
 import {ProductOptionValue} from "@medusajs/medusa";
 import {UnwrapRef} from "vue";
-import {Nullable} from "~/utils/types";
+import {Nullable, PAYMENT_OPTIONS} from "~/utils/types";
 
 export const DEFAULT_THICKNESS = 0;
 export const DEFAULT_LENGTH = 2000;
@@ -31,7 +31,7 @@ export const useMainStore = defineStore('main', {
       thicknesses: null as Nullable<ProductOptionValue[]>,
       isDesktop: false,
       isMobile: false,
-      creditCard: null as Nullable<CreditCard>,
+      selectedPaymentOption: null as Nullable<PAYMENT_OPTIONS>
     };
   },
   actions: {
@@ -68,8 +68,8 @@ export const useMainStore = defineStore('main', {
     setThicknesses(thicknesses: ProductOptionValue[]) {
       this.thicknesses = thicknesses;
     },
-    setCreditCard(credentials: CreditCard) {
-      this.creditCard = credentials;
+    setPaymentOption(paymentOption: PAYMENT_OPTIONS) {
+      this.selectedPaymentOption = paymentOption;
     }
   },
   getters: {
@@ -91,8 +91,8 @@ export const useMainStore = defineStore('main', {
     getSelectedVariant(): UnwrapRef<Partial<PricedVariant> | null> {
       return this.selectedVariant;
     },
-    getCreditCard(): UnwrapRef<CreditCard | null> {
-      return this.creditCard;
+    getSelectedPaymentOption(): PAYMENT_OPTIONS | null {
+      return this.selectedPaymentOption;
     }
   }
 });

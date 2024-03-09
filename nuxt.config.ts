@@ -66,6 +66,11 @@ export default defineNuxtConfig({
       autoprefixer: {},
     },
   },
+  runtimeConfig: {
+    public: {
+      stripe_publishable_key: process.env.STRIPE_PUBLISHABLE_KEY,
+    }
+  }
 });
 
 

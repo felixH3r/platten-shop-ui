@@ -19,7 +19,6 @@
                    class="w-1/2">
         <PayPalSVG/>
       </PaymentCard>
-      <div id="stripe_container"></div>
     </div>
   </div>
 </template>
@@ -29,18 +28,18 @@
   import CreditCardsSVG from "~/components/icons/CreditCardsSVG.vue";
   import PayPalSVG from "~/components/icons/PayPalSVG.vue";
   import {PAYMENT_OPTIONS} from "~/utils/types";
+  import {useMainStore} from "~/store/mainStore";
 
   const activePayment = ref(PAYMENT_OPTIONS.INVOICE);
 
+  onMounted(() => {
+    useMainStore().setPaymentOption(PAYMENT_OPTIONS.INVOICE);
+  });
+
   const setActivePayment = (paymentKey: PAYMENT_OPTIONS): void => {
     activePayment.value = paymentKey;
+    useMainStore().setPaymentOption(paymentKey);
   };
-
-  // onMounted(() => {
-  //   const stripe = useClientStripe();
-  //   const card = stripe.elements.create('card');
-  //   card.mount('#stripe_container');
-  // });
 
 
 </script>

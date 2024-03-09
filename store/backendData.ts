@@ -120,7 +120,27 @@ export const useBackendDataStore = defineStore('backend', {
       }
       this.shipmentOptions = await useMedusaClient().shippingOptions.listCartOptions(this.cart.id);
     },
+    async createPaymentSession() {
+      if (!this.cart) {
+        return;
+      }
+      const {cart} = await useMedusaClient().carts.createPaymentSessions(this.cart.id);
+      this.cart = cart;
+    },
+    async setPaymentSession(provider_id: string) {
+      if (!this.cart) {
+        return;
+      }
+      const {cart} = await useMedusaClient().carts.setPaymentSession(this.cart.id, {
+        provider_id
+      });
+      this.cart = cart;
+    }
   },
-  getters: {}
+  getters: {
+    getCart(): any {
+      return this.cart;
+    }
+  }
 });
 
