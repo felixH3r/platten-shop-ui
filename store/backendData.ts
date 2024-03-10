@@ -42,14 +42,14 @@ export const useBackendDataStore = defineStore('backend', {
     shipmentOptions: null,
   }),
   actions: {
-    async getProducts() {
+    async fetchProducts() {
       const client = useMedusaClient();
       if (client) {
         const {products} = await client.products.list();
         this.products = products;
       }
     },
-    async getVariants() {
+    async fetchVariants() {
       const client = useMedusaClient();
       if (client) {
         const {variants} = await client.products.variants.list();
@@ -67,10 +67,10 @@ export const useBackendDataStore = defineStore('backend', {
       localStorage.setItem('cart_id', cart.id);
       this.cart = cart;
     },
-    async addItemToCart(variantId: string, quantity: number) {
+    async addPanelToCart(variantId: string, quantity: number, width: number, length: number) {
       const client = useMedusaClient();
       if (this.cart) {
-        const metadata = {length: 900, width: 200};
+        const metadata = {length: length, width: width};
         const {cart} = await client.carts.lineItems.create(this.cart.id, {variant_id: variantId, quantity, metadata});
         // client.carts.lineItems.update(this.cart.id, {})
         cart.metadata = {length: 100, width: 200};
@@ -140,6 +140,12 @@ export const useBackendDataStore = defineStore('backend', {
   getters: {
     getCart(): any {
       return this.cart;
+    },
+    getProducts(): any {
+      return this.products;
+    },
+    getVariants(): any {
+      return this.variants;
     }
   }
 });

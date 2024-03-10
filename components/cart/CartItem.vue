@@ -14,8 +14,17 @@
     <button class="text-xl">X</button>
   </div>
   <div class="flex justify-between mt-3">
-    <span>measurments</span>
-    <span>€ {{ (cartItem.total / 10).toFixed(2) }}</span>
+    <div class="flex gap-5">
+      <div class="flex flex-col md:flex-row">
+        <span class="pr-2">{{ TC.cart.length }}:</span>
+        <span>{{ cartItem.metadata.length }}mm</span>
+      </div>
+      <div class="flex flex-col md:flex-row">
+        <span class="pr-2">{{ TC.cart.width }}:</span>
+        <span>{{ cartItem.metadata.width }}mm</span>
+      </div>
+    </div>
+    <span class="self-end">€ {{ (cartItem.total / 10).toFixed(2) }}</span>
   </div>
   <hr class="h-px my-4 border-0 bg-primary-variant">
 </template>

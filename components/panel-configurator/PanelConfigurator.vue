@@ -10,7 +10,7 @@
 <script lang="ts" setup>
   import Sidebar from "~/components/panel-configurator/sidebar/Sidebar.vue";
   import {useBackendDataStore} from "~/store/backendData";
-  import {useMainStore} from "~/store/mainStore";
+  import {DEFAULT_LENGTH, DEFAULT_WIDTH, useMainStore} from "~/store/mainStore";
   import {useRoute} from "vue-router";
   import {navigateTo} from "#app";
   import CTAButton from "~/components/utils/CTAButton.vue";
@@ -35,11 +35,12 @@
   const addToCart = async () => {
     if (mainStore.selectedProduct && mainStore.getSelectedVariant?.id) {
       isLoading.value = true;
-      await backendData.addItemToCart(mainStore.getSelectedVariant?.id, 1);
+      await backendData.addPanelToCart(mainStore.getSelectedVariant?.id, 1, mainStore.getPanelWidth, mainStore.getPanelLength);
+      mainStore.setLength(DEFAULT_LENGTH);
+      mainStore.setWidth(DEFAULT_WIDTH);
       isLoading.value = false;
     }
     navigateTo('/cart');
-    console.log(backendData.cart);
   };
 
 </script>

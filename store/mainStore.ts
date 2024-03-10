@@ -26,7 +26,7 @@ export const useMainStore = defineStore('main', {
       },
       selectedProduct: null as Nullable<PricedProduct>,
       selectedVariant: null as Nullable<Partial<PricedVariant>>,
-      variants: null as Nullable<PricedVariant[]>,
+      variantsSelectedProduct: null as Nullable<PricedVariant[]>,
       materials: null as Nullable<ProductOptionValue[]>,
       thicknesses: null as Nullable<ProductOptionValue[]>,
       isDesktop: false,
@@ -59,8 +59,8 @@ export const useMainStore = defineStore('main', {
     setIsMobile(isMobile: boolean) {
       this.isMobile = isMobile;
     },
-    setVariants(variants: PricedVariant[]) {
-      this.variants = variants;
+    setVariantsSelectedProduct(variantsSelectedProduct: PricedVariant[]) {
+      this.variantsSelectedProduct = variantsSelectedProduct;
     },
     setMaterials(materials: ProductOptionValue[]) {
       this.materials = materials;
@@ -80,7 +80,7 @@ export const useMainStore = defineStore('main', {
       return this.isMobile;
     },
     getVariants(): UnwrapRef<PricedVariant[] | null> {
-      return this.variants;
+      return this.variantsSelectedProduct;
     },
     getMaterials(): UnwrapRef<ProductOptionValue[] | null> {
       return this.materials;
@@ -93,6 +93,12 @@ export const useMainStore = defineStore('main', {
     },
     getSelectedPaymentOption(): PAYMENT_OPTIONS | null {
       return this.selectedPaymentOption;
+    },
+    getPanelWidth(): number {
+      return this.panelConfigurator.width;
+    },
+    getPanelLength(): number {
+      return this.panelConfigurator.length;
     }
   }
 });

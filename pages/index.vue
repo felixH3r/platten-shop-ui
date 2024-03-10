@@ -16,9 +16,13 @@
   import CustomerSection from "~/components/homepage/CustomerSection.vue";
   import PanelOptionSection from "~/components/homepage/PanelOptionSection.vue";
 
-
   const backendStore = useBackendDataStore();
-  await backendStore.getProducts();
+  await useBackendDataStore().fetchProducts();
+
+  // beforeCreate(async () => {
+  //   await backendStore.fetchProducts();
+  // });
+
   const products = computed(() => {
     return backendStore.products ? backendStore.products : {};
   });

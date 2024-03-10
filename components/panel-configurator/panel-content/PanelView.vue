@@ -18,9 +18,7 @@
   const backendData = useBackendDataStore();
   const panelViewWrapper = ref<HTMLDivElement | null>(null);
 
-  await backendData.getProducts();
-  await backendData.getVariants();
-
+  // await backendData.fetchProducts();
   console.log(backendData.products, 'products');
 
   console.log(backendData.variants, 'variants');

@@ -25,7 +25,7 @@
 
   const selectProduct = () => {
     mainStore.setSelectProduct(props.product);
-    mainStore.setVariants(props.product.variants);
+    mainStore.setVariantsSelectedProduct(props.product.variants);
     const options = props.product.options;
     if (!options) {
       return;

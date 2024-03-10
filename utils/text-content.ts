@@ -54,6 +54,8 @@ export const TC = {
   cart: {
     subtotal: 'Zwischensumme',
     tax: 'Ust',
-    total: 'Gesamt'
+    total: 'Gesamt',
+    length: 'Länge',
+    width: 'Breite',
   }
 };

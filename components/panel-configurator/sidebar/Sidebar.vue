@@ -37,38 +37,6 @@
   };
 
 
-  // const options = computed((): { materials: string[], thicknesses: string[] } | null => {
-  //   debugger;
-  //   const variants = useMainStore().getVariants;
-  //   const materialOptions = useMainStore().getMaterials;
-  //   const thicknessOptions = useMainStore().getThicknesses;
-  //   let options: MaterialOptions[];
-  //   const materials: string[] = [];
-  //   const thicknesses: string[] = [];
-  //
-  //   if (!variants || !materialOptions) {
-  //     return null;
-  //   }
-  //   for (let material of materialOptions) {
-  //     options;
-  //   }
-  //
-  //
-  //   for (let variant of variants) {
-  //     const material = variant.options!.find((option) => option.value === 'Material');
-  //     const thickness = variant.options!.find((option) => option.value === 'Dicke');
-  //     if (material && !materials.includes(material.value)) {
-  //       materials.push(material.value);
-  //     }
-  //     if (thickness && !thicknesses.includes(thickness.value)) {
-  //       thicknesses.push(thickness.value);
-  //     }
-  //
-  //
-  //   }
-  //   return {materials, thicknesses};
-  // });
-
 </script>
 
 <style scoped lang="scss">
