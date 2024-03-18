@@ -31,7 +31,11 @@ export const useMainStore = defineStore('main', {
       thicknesses: null as Nullable<ProductOptionValue[]>,
       isDesktop: false,
       isMobile: false,
-      selectedPaymentOption: null as Nullable<PAYMENT_OPTIONS>
+      selectedPaymentOption: null as Nullable<PAYMENT_OPTIONS>,
+      formValidation: {
+        validateInput: false,
+        errorOccurred: false,
+      }
     };
   },
   actions: {
@@ -70,6 +74,12 @@ export const useMainStore = defineStore('main', {
     },
     setPaymentOption(paymentOption: PAYMENT_OPTIONS) {
       this.selectedPaymentOption = paymentOption;
+    },
+    setValidateInput(validateInput: boolean) {
+      this.formValidation.validateInput = validateInput;
+    },
+    setErrorOccurred(errorOccured: boolean) {
+      this.formValidation.errorOccurred = errorOccured;
     }
   },
   getters: {
@@ -99,6 +109,12 @@ export const useMainStore = defineStore('main', {
     },
     getPanelLength(): number {
       return this.panelConfigurator.length;
+    },
+    getValidateInput(): boolean {
+      return this.formValidation.validateInput;
+    },
+    getErrorOccurred(): boolean {
+      return this.formValidation.errorOccurred;
     }
   }
 });

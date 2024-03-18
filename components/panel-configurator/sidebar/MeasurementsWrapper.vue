@@ -1,16 +1,20 @@
 <template>
   <div class="flex justify-between items-center gap-3 md:flex-col md:justify-start md:items-start">
     <h4>{{ header }}</h4>
-    <input-component :placeholder="props.inputPlaceholder" :onInput="getInput" ref="measurementInput" class="w-full"/>
+    <input-component :input-type="'Number'" :placeholder="props.inputPlaceholder" :onInput="getInput"
+                     :custom-validate="validateInput" :is-required="true"
+                     ref="measurementInput" class="w-full"/>
   </div>
-
 </template>
 
 <script lang="ts" setup>
   import {DEFAULT_LENGTH, DEFAULT_WIDTH, useMainStore} from "~/store/mainStore";
   import InputComponent from "~/components/utils/InputComponent.vue";
 
-  const measurementInput = ref<{ inputEl: HTMLInputElement | null }>({inputEl: null});
+  const measurementInput = ref<{ inputEl: HTMLInputElement | null, validate: () => boolean }>({
+    inputEl: null,
+    validate: () => false
+  });
   let timeout: NodeJS.Timeout | null = null;
   const debounce = (fnc: () => void, delayMs?: number) => {
     if (timeout) {
@@ -21,17 +25,12 @@
     }, delayMs || 500);
   };
 
-  const props = defineProps({
-    header: String,
-    inputPlaceholder: String,
-    usage: {
-      type: String,
-      required: true,
-      validator(value: string) {
-        return ['length', 'width'].includes(value);
-      }
-    }
-  });
+  const props = defineProps<{
+    header: string,
+    inputPlaceholder: string,
+    usage: 'length' | 'width'
+    maxValue: number
+  }>();
 
   onMounted(() => {
     measurementInput.value;
@@ -60,6 +59,21 @@
       }
     }
   };
+
+  const validateInput = (): boolean => {
+    // if (!measurementInput.value.inputEl || parseInt(measurementInput.value.inputEl.value) > props.maxValue) {
+    //   return false;
+    // }
+    // return true;
+    if (measurementInput.value.validate()) {
+      return true;
+    }
+    return false;
+  };
+
+  defineExpose({
+    validateInput
+  });
 
 </script>
 

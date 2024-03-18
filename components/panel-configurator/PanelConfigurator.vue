@@ -1,6 +1,6 @@
 <template>
   <div class="panel-configurator-wrapper flex flex-col-reverse justify-between md:flex-row" ref="configurator">
-    <Sidebar class="md:w-config-sidebar"/>
+    <Sidebar class="md:w-config-sidebar" ref="sidebar"/>
     <PanelContentWrapper class="md:w-full"/>
     <CTAButton class="absolute right-5 bottom-5" :content="TC.pc.addToCart" :on-click="addToCart"
                :is-loading="isLoading"/>
@@ -20,6 +20,7 @@
 
   const configurator = ref<HTMLDivElement | null>(null);
   const isLoading = ref(false);
+  const sidebar = ref({validateInputs: () => false});
 
   onMounted(() => {
     document.querySelector("body")!.style.overflow = "hidden";
@@ -33,6 +34,14 @@
   });
 
   const addToCart = async () => {
+    // useMainStore().setValidateInput(true);
+    // if (useMainStore().formValidation.errorOccurred) {
+    //   useMainStore().setValidateInput(false);
+    //   return;
+    // }
+    if (!sidebar.value.validateInputs()) {
+      return;
+    }
     if (mainStore.selectedProduct && mainStore.getSelectedVariant?.id) {
       isLoading.value = true;
       await backendData.addPanelToCart(mainStore.getSelectedVariant?.id, 1, mainStore.getPanelWidth, mainStore.getPanelLength);
