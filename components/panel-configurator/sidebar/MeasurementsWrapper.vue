@@ -2,16 +2,22 @@
   <div class="flex justify-between items-center gap-3 md:flex-col md:justify-start md:items-start">
     <h4>{{ header }}</h4>
     <input-component :input-type="'Number'" :placeholder="props.inputPlaceholder" :onInput="getInput"
-                     :custom-validate="validateInput" :is-required="true"
-                     ref="measurementInput" class="w-full"/>
+                     :is-required="true"
+                     ref="measurementInput" class="w-full">
+      <span class="absolute right-12 pt-3 text-sm">{{ TC.dimensions.MM }}</span>
+    </input-component>
   </div>
 </template>
 
 <script lang="ts" setup>
   import {DEFAULT_LENGTH, DEFAULT_WIDTH, useMainStore} from "~/store/mainStore";
   import InputComponent from "~/components/utils/InputComponent.vue";
+  import {boolean} from "@oclif/parser/lib/flags";
 
-  const measurementInput = ref<{ inputEl: HTMLInputElement | null, validate: () => boolean }>({
+  const measurementInput = ref<{
+    inputEl: HTMLInputElement | null,
+    validate: (customErrMsg?: string, customValidate?: (input: string) => boolean) => boolean
+  }>({
     inputEl: null,
     validate: () => false
   });
@@ -60,12 +66,8 @@
     }
   };
 
-  const validateInput = (): boolean => {
-    // if (!measurementInput.value.inputEl || parseInt(measurementInput.value.inputEl.value) > props.maxValue) {
-    //   return false;
-    // }
-    // return true;
-    if (measurementInput.value.validate()) {
+  const validateInput = (customErrMsg: string, customValidate: (input: string) => boolean): boolean => {
+    if (measurementInput.value.validate(customErrMsg, customValidate)) {
       return true;
     }
     return false;

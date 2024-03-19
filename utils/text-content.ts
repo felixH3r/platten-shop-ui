@@ -57,5 +57,10 @@ export const TC = {
     total: 'Gesamt',
     length: 'Länge',
     width: 'Breite',
+  },
+  errorMsg: {
+    required: 'Pflichtfeld!',
+    maxLength: 'Maximale Länge: ',
+    maxWidth: 'Maximale Breite: '
   }
 };

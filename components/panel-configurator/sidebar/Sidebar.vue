@@ -2,10 +2,10 @@
   <div class="w-full bg-primary px-5 py-5">
     <h3 v-if="!useMainStore().getIsMobile">{{ TC.pcSidebar.header }}</h3>
     <select-component :values="variants" :on-select="selectVariant" class="w-full mb-5"/>
-    <MeasurementsWrapper :header="TC.pcSidebar.lengthHeader" :input-placeholder="TC.pcSidebar.lengthPlaceholder"
+    <MeasurementsWrapper :header="TC.pcSidebar.lengthHeader" :input-placeholder="DEFAULT_LENGTH+''"
                          :usage="'length'" :max-value="2700" ref="measurementInput_1"/>
     <MeasurementsWrapper class="pt-5 pb-8" :header="TC.pcSidebar.widthHeader"
-                         :input-placeholder="TC.pcSidebar.widthPlaceholder"
+                         :input-placeholder="DEFAULT_WIDTH+''"
                          :usage="'width'" :max-value="2000" ref="measurementInput_2"/>
     <div v-if="!useMainStore().getIsMobile" class="flex flex-col gap-3">
       <h4>{{ TC.pcSidebar.descrHeader }}</h4>
@@ -19,12 +19,13 @@
   import {TC} from "../../../utils/text-content";
   import MeasurementsWrapper from "~/components/panel-configurator/sidebar/MeasurementsWrapper.vue";
   import SelectComponent from "~/components/utils/SelectComponent.vue";
-  import {useMainStore} from "~/store/mainStore";
+  import {DEFAULT_LENGTH, DEFAULT_WIDTH, MAX_LENGTH, MAX_WIDTH, useMainStore} from "~/store/mainStore";
   import {computed} from "#imports";
   import {PricedVariant} from "@medusajs/medusa/dist/types/pricing";
+  import {boolean} from "@oclif/parser/lib/flags";
 
-  const measurementInput_1 = ref({validateInput: () => false});
-  const measurementInput_2 = ref({validateInput: () => false});
+  const measurementInput_1 = ref({validateInput: (customErrMsg?: string, customValidate?: (input: string) => boolean) => false});
+  const measurementInput_2 = ref({validateInput: (customErrMsg?: string, customValidate?: (input: string) => boolean) => false});
 
   const variants = computed(() => {
     return useMainStore().getVariants?.map((value) => value.title);
@@ -41,8 +42,8 @@
 
   const validateInputs = (): boolean => {
     let validated = false;
-    validated = measurementInput_1.value.validateInput();
-    validated = measurementInput_2.value.validateInput();
+    validated = measurementInput_1.value.validateInput(TC.errorMsg.maxLength + MAX_LENGTH, (input: string) => parseInt(input) <= MAX_LENGTH);
+    validated = measurementInput_2.value.validateInput(TC.errorMsg.maxWidth + MAX_WIDTH, (input: string) => parseInt(input) <= MAX_WIDTH);
     return validated;
 
   };

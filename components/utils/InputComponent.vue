@@ -6,6 +6,8 @@
            class=" w-full py-3 px-5 block w-9/12 border-gray-200 rounded-full text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400 dark:focus:ring-gray-600"
            :class="{'error': showError}"
     >
+    <slot class="absolute"></slot>
+    <span v-if="showError" class="absolute text-sm text-red right-20 pt-7">{{ errorMsg }}</span>
     <span v-if="isRequired" class="absolute right-10 pt-1 text-cta">*</span>
   </div>
 </template>
@@ -27,25 +29,24 @@
 
   const inputEl = ref<HTMLInputElement | null>(null);
   const showError = ref(false);
+  const errorMsg = ref('');
 
-  const validate = (): boolean => {
+  const validate = (customErrMsg = '', customValidate?: (input: string) => boolean): boolean => {
     if (!props.isRequired || !inputEl.value) {
       return true;
     }
     if (!inputEl.value.value) {
       showError.value = true;
-      useMainStore().formValidation.errorOccurred = true;
+      errorMsg.value = TC.errorMsg.required;
       return false;
     }
-    // if (props.customValidate !== undefined && !props.customValidate()) {
-    //   useMainStore().formValidation.errorOccurred = true;
-    //   return false;
-    // }
+    if (customValidate !== undefined && !customValidate(inputEl.value.value)) {
+      errorMsg.value = customErrMsg;
+      showError.value = true;
+      return false;
+    }
     return true;
   };
-
-  // watch(() => useMainStore().getValidateInput, validate);
-
 
   defineExpose({
     inputEl: inputEl,
@@ -54,10 +55,6 @@
 </script>
 
 <style scoped lang="scss">
-  //.valid input {
-  //  border: 1px solid green;
-  //}
-  //
   .error {
     border: 1px solid red;
   }

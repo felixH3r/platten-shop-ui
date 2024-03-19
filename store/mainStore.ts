@@ -8,6 +8,8 @@ import {Nullable, PAYMENT_OPTIONS} from "~/utils/types";
 export const DEFAULT_THICKNESS = 0;
 export const DEFAULT_LENGTH = 2000;
 export const DEFAULT_WIDTH = 1000;
+export const MAX_LENGTH = 2700;
+export const MAX_WIDTH = 2000;
 
 export interface CreditCard {
   card_no: string,
@@ -32,10 +34,6 @@ export const useMainStore = defineStore('main', {
       isDesktop: false,
       isMobile: false,
       selectedPaymentOption: null as Nullable<PAYMENT_OPTIONS>,
-      formValidation: {
-        validateInput: false,
-        errorOccurred: false,
-      }
     };
   },
   actions: {
@@ -75,12 +73,6 @@ export const useMainStore = defineStore('main', {
     setPaymentOption(paymentOption: PAYMENT_OPTIONS) {
       this.selectedPaymentOption = paymentOption;
     },
-    setValidateInput(validateInput: boolean) {
-      this.formValidation.validateInput = validateInput;
-    },
-    setErrorOccurred(errorOccured: boolean) {
-      this.formValidation.errorOccurred = errorOccured;
-    }
   },
   getters: {
     getIsDesktop(): boolean {
@@ -110,11 +102,5 @@ export const useMainStore = defineStore('main', {
     getPanelLength(): number {
       return this.panelConfigurator.length;
     },
-    getValidateInput(): boolean {
-      return this.formValidation.validateInput;
-    },
-    getErrorOccurred(): boolean {
-      return this.formValidation.errorOccurred;
-    }
   }
 });
