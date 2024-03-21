@@ -4,7 +4,7 @@
     <select-component :values="variants" :on-select="selectVariant" class="w-full mb-5"/>
     <MeasurementsWrapper :header="TC.pcSidebar.lengthHeader" :input-placeholder="DEFAULT_LENGTH+''"
                          :usage="'length'" :max-value="2700" ref="measurementInput_1"/>
-    <MeasurementsWrapper class="pt-5 pb-8" :header="TC.pcSidebar.widthHeader"
+    <MeasurementsWrapper class="pb-8 mt-4" :header="TC.pcSidebar.widthHeader"
                          :input-placeholder="DEFAULT_WIDTH+''"
                          :usage="'width'" :max-value="2000" ref="measurementInput_2"/>
     <div v-if="!useMainStore().getIsMobile" class="flex flex-col gap-3">
@@ -41,11 +41,9 @@
   };
 
   const validateInputs = (): boolean => {
-    let validated = false;
-    validated = measurementInput_1.value.validateInput(TC.errorMsg.maxLength + MAX_LENGTH, (input: string) => parseInt(input) <= MAX_LENGTH);
-    validated = measurementInput_2.value.validateInput(TC.errorMsg.maxWidth + MAX_WIDTH, (input: string) => parseInt(input) <= MAX_WIDTH);
-    return validated;
-
+    const valid_1 = measurementInput_1.value.validateInput(TC.errorMsg.maxLength + MAX_LENGTH, (input: string) => parseInt(input) <= MAX_LENGTH);
+    const valid_2 = measurementInput_2.value.validateInput(TC.errorMsg.maxWidth + MAX_WIDTH, (input: string) => parseInt(input) <= MAX_WIDTH);
+    return valid_1 && valid_2;
   };
 
   defineExpose({

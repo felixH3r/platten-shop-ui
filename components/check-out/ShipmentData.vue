@@ -1,5 +1,5 @@
 <template>
-  <form class="flex flex-col gap-5">
+  <form class="flex flex-col gap-4">
     <!--    <InputComponent :placeholder="'company'" v-model="company" class="w-full"/>-->
     <InputComponent :identifier="'first_name'" :placeholder="'Vorname'" v-model="first_name" class="w-full"
                     ref="first_name"
@@ -11,7 +11,9 @@
     <InputComponent :identifier="'email'" :placeholder="'E-Mail'" :input-type="'email'" class="w-full" ref="email"
                     :is-required="true"/>
     <SelectComponent :identifier="'country_code'" :values="['Österreich', 'Deutschland']"
-                     :on-select="handleCountryChange"/>
+                     :on-select="handleCountryChange"
+                     class="mt-1 mb-1"
+    />
     <InputComponent :identifier="'address'" :placeholder="'Straße und Hausnummer'" class="w-full" ref="address_1"
                     :is-required="true"/>
     <div class="flex gap-5">

@@ -4,7 +4,7 @@
       <PanelOptionCard v-for="product in backendData.products" :product="product"
                        :selected="product.id === selectedProductId"/>
     </div>
-    <div class="w-20 h-48 bg-gradient-to-r from-transparent via-white via-70% white to-white absolute right-0">
+    <div class="w-20 h-32 bg-gradient-to-r from-transparent via-white via-70% white to-white absolute right-0">
 
     </div>
   </div>

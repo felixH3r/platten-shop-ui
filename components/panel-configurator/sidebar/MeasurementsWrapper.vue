@@ -4,7 +4,7 @@
     <input-component :input-type="'Number'" :placeholder="props.inputPlaceholder" :onInput="getInput"
                      :is-required="true"
                      ref="measurementInput" class="w-full">
-      <span class="absolute right-12 pt-3 text-sm">{{ TC.dimensions.MM }}</span>
+      <span class="">{{ TC.dimensions.MM }}</span>
     </input-component>
   </div>
 </template>
