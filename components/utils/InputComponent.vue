@@ -7,6 +7,7 @@
       <input :id="identifier" :placeholder="props.placeholder" :type="inputType || 'text'"
              @input="props.onInput"
              ref="inputEl"
+             v-model="inputVal"
              class="w-full outline-none selection:transparent"
       >
       <div>
@@ -36,6 +37,8 @@
   const inputEl = ref<HTMLInputElement | null>(null);
   const showError = ref(false);
   const errorMsg = ref('');
+  // needed for components outside - DO NOT delete!!
+  const inputVal = ref('');
 
   const validate = (customErrMsg = '', customValidate?: (input: string) => boolean): boolean => {
     showError.value = false;
@@ -58,6 +61,7 @@
 
   defineExpose({
     inputEl: inputEl,
+    inputVal: inputVal,
     validate
   });
 </script>
