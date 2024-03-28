@@ -92,7 +92,7 @@
     if (error) {
       console.log('there is some stripe error');
     }
-    await useMedusaClient().carts.complete(useBackendDataStore().cart!.id);
+    useBackendDataStore().completeCart();
     localStorage.removeItem('cart_id');
     console.log('payment done');
     isLoading.value = false;

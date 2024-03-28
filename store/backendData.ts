@@ -135,6 +135,13 @@ export const useBackendDataStore = defineStore('backend', {
         provider_id
       });
       this.cart = cart;
+    },
+    async completeCart() {
+      if (!this.cart) {
+        return;
+      }
+      await useMedusaClient().carts.complete(this.cart.id);
+      useBackendDataStore().$reset();
     }
   },
   getters: {
