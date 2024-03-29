@@ -8,15 +8,19 @@
         <h1>{{ TC.headerSection.header }}</h1>
         <h2 class="font-normal text-2xl">{{ TC.headerSection.subHeader }}</h2>
       </div>
-      <CTAButton :content="TC.headerSection.ctaButton"/>
+      <CTAButton :content="TC.headerSection.ctaButton" :on-click="openConfigurator"/>
     </div>
   </section>
 </template>
 
 <script setup lang="ts">
-
   import {TC} from "../../utils/text-content";
   import CTAButton from "~/components/utils/CTAButton.vue";
+  import {navigateTo} from "#app";
+
+  const openConfigurator = (): void => {
+    navigateTo('/shop-app');
+  };
 </script>
 
 <style scoped lang="scss">
