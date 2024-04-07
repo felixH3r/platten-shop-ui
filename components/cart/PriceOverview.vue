@@ -36,13 +36,13 @@
     }
 
     if (backendData.cart.subtotal) {
-      prices.subtotal = (backendData.cart.subtotal / 10).toFixed(2);
+      prices.subtotal = (backendData.cart.subtotal / 100).toFixed(2);
     }
     if (backendData.cart.tax_total) {
-      prices.tax = (backendData.cart.tax_total / 10).toFixed(2);
+      prices.tax = (backendData.cart.tax_total / 100).toFixed(2);
     }
     if (backendData.cart.total) {
-      prices.total = (backendData.cart.total / 10).toFixed(2);
+      prices.total = (backendData.cart.total / 100).toFixed(2);
     }
 
     return prices;

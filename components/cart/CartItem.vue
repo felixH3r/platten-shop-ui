@@ -24,7 +24,7 @@
         <span>{{ cartItem.metadata.width }}mm</span>
       </div>
     </div>
-    <span class="self-end">€ {{ (cartItem.total / 10).toFixed(2) }}</span>
+    <span class="self-end">€ {{ (cartItem.total / 100).toFixed(2) }}</span>
   </div>
   <hr class="h-px my-4 border-0 bg-primary-variant">
 </template>
