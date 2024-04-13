@@ -1,8 +1,8 @@
 <template>
-  <div class="flex flex-col justify-between w-28 overflow-hidden" :class="{'selected': isSelected}"
+  <div class="flex flex-col items-center overflow-ellipsis h-36 w-28 p-1 gap-1" :class="{'selected': isSelected}"
        @click="selectProduct">
-    <img :src="mediaItemUrl" class="object-cover relative">
-    <span class="flex">{{ props.product.title }}</span>
+    <img :src="mediaItemUrl" class="object-cover rounded-full w-20 h-20 drop-shadow-lg">
+    <span class="flex text-center">{{ props.product.title }}</span>
   </div>
 </template>
 

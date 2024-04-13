@@ -1,12 +1,12 @@
 <template>
-  <div class="flex h-32">
-    <div class="flex w-full overflow-scroll gap-5">
+  <div class="flex h-56 overflow-scroll">
+    <div class="flex gap-2">
       <PanelOptionCard v-for="product in backendData.products" :product="product"
                        :selected="product.id === selectedProductId"/>
     </div>
-    <div class="w-20 h-32 bg-gradient-to-r from-transparent via-white via-70% white to-white absolute right-0">
+    <!--    <div class="w-20 h-32 bg-gradient-to-r from-transparent via-white via-70% white to-white absolute right-0">-->
 
-    </div>
+    <!--    </div>-->
   </div>
 
 </template>
