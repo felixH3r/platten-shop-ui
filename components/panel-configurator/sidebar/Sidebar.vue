@@ -2,11 +2,14 @@
   <div class="w-full bg-primary px-5 py-5">
     <h3 v-if="!useMainStore().getIsMobile">{{ TC.pcSidebar.header }}</h3>
     <select-component :values="variants" :on-select="selectVariant" class="w-full mb-5"/>
-    <MeasurementsWrapper :header="TC.pcSidebar.lengthHeader" :input-placeholder="DEFAULT_LENGTH+''"
-                         :usage="'length'" :max-value="2700" ref="measurementInput_1"/>
-    <MeasurementsWrapper class="pb-8 mt-4" :header="TC.pcSidebar.widthHeader"
-                         :input-placeholder="DEFAULT_WIDTH+''"
-                         :usage="'width'" :max-value="2000" ref="measurementInput_2"/>
+    <div class="flex items-center justify-center gap-3 mb-5">
+      <MeasurementsWrapper :header="TC.pcSidebar.lengthHeader" :input-placeholder="DEFAULT_LENGTH+''"
+                           :usage="'length'" :max-value="2700" ref="measurementInput_1"/>
+      <MeasurementsWrapper class="" :header="TC.pcSidebar.widthHeader"
+                           :input-placeholder="DEFAULT_WIDTH+''"
+                           :usage="'width'" :max-value="2000" ref="measurementInput_2"/>
+    </div>
+
     <div v-if="!useMainStore().getIsMobile" class="flex flex-col gap-3">
       <h4>{{ TC.pcSidebar.descrHeader }}</h4>
       <span class="overflow-scroll">{{ TC.pcSidebar.descrContent }}</span>

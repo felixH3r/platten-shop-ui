@@ -1,5 +1,5 @@
 <template>
-  <div class="flex h-56 overflow-scroll">
+  <div class="flex h-48 overflow-scroll">
     <div class="flex gap-2">
       <PanelOptionCard v-for="product in backendData.products" :product="product"
                        :selected="product.id === selectedProductId"/>

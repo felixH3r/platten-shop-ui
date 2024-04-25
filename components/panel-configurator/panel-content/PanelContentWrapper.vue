@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col justify-between h-full gap-5 pb-10">
+  <div class="flex flex-col justify-between h-full gap-5">
     <PanelView/>
     <PanelOptionsSlider class="px-5"/>
   </div>
