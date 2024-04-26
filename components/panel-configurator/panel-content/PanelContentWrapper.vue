@@ -1,7 +1,7 @@
 <template>
-  <div class="flex flex-col justify-between h-full gap-5">
+  <div class="flex flex-col justify-between h-full w-full">
     <PanelView/>
-    <PanelOptionsSlider class="px-5"/>
+    <PanelOptionsSlider class="px-5 md:mb-16"/>
   </div>
 </template>
 

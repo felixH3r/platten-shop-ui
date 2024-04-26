@@ -1,8 +1,8 @@
 <template>
   <div class="w-full bg-primary px-5 py-5">
-    <h3 v-if="!useMainStore().getIsMobile">{{ TC.pcSidebar.header }}</h3>
-    <select-component :values="variants" :on-select="selectVariant" class="w-full mb-5"/>
-    <div class="flex items-center justify-center gap-3 mb-5">
+    <h3 v-if="!useMainStore().getIsMobile" class="mb-5">{{ TC.pcSidebar.header }}</h3>
+    <select-component :values="variants" :on-select="selectVariant" class="w-full mb-3"/>
+    <div class="flex items-center justify-center gap-3 mb-6 md:flex-col md:w-full">
       <MeasurementsWrapper :header="TC.pcSidebar.lengthHeader" :input-placeholder="DEFAULT_LENGTH+''"
                            :usage="'length'" :max-value="2700" ref="measurementInput_1"/>
       <MeasurementsWrapper class="" :header="TC.pcSidebar.widthHeader"

@@ -1,7 +1,7 @@
 <template>
   <div class="panel-configurator-wrapper flex flex-col-reverse justify-between md:flex-row" ref="configurator">
-    <Sidebar class="md:w-config-sidebar" ref="sidebar"/>
-    <PanelContentWrapper class="md:w-full"/>
+    <Sidebar class="md:w-1/3" ref="sidebar"/>
+    <PanelContentWrapper class="md:w-2/3"/>
     <CTAButton class="absolute right-5 bottom-5" :content="TC.pc.addToCart" :on-click="addToCart"
                :is-loading="isLoading"/>
   </div>

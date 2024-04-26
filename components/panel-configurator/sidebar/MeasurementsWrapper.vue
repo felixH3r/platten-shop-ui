@@ -1,12 +1,12 @@
 <template>
-  <!--  <div class="flex justify-between items-center md:flex-col md:justify-start md:items-start">-->
-  <!--    <h4>{{ header }}</h4>-->
-  <input-component :input-type="'Number'" :placeholder="props.inputPlaceholder" :onInput="getInput"
-                   :is-required="true"
-                   ref="measurementInput" class="w-full">
-    <span class="">{{ TC.dimensions.MM }}</span>
-  </input-component>
-  <!--  </div>-->
+  <div class="flex justify-between flex-col md:justify-start md:items-start md:w-full">
+    <h4 class="text-xs text-cta text-opacity-90 md:text-lg md:text-black">{{ header }}</h4>
+    <input-component :input-type="'Number'" :placeholder="props.inputPlaceholder" :onInput="getInput"
+                     :is-required="true"
+                     ref="measurementInput" class="w-full">
+      <span class="">{{ TC.dimensions.MM }}</span>
+    </input-component>
+  </div>
 </template>
 
 <script lang="ts" setup>

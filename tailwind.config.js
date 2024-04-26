@@ -21,7 +21,8 @@ module.exports = {
             'gray': '#8492a6',
             'gray-light': '#d3dce6',
             'transparent': 'rgba(255, 255, 255, 0)',
-            'red': 'red'
+            'red': 'red',
+            'black': 'black'
         },
         fontFamily: {
             sans: ['Montserrat', 'sans'],
@@ -31,7 +32,10 @@ module.exports = {
         },
         extend: {
             width: {
-                'config-sidebar': '30rem'
+                'config-sidebar': '25rem',
+            },
+            minWidth: {
+                'config-sidebar': '25rem'
             }
         }
 
