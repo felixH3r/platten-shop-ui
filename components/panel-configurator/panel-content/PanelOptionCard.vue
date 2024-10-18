@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col items-center overflow-ellipsis h-28 w-24 p-1 gap-1 md:h-36 md:w-28"
+  <div class="flex flex-col items-center overflow-ellipsis h-28 w-24 p-1 gap-1 md:h-36 md:w-28 cursor-pointer"
        :class="{'selected': isSelected}"
        @click="selectProduct">
     <img :src="mediaItemUrl" class="object-cover rounded-full w-16 h-16 drop-shadow-lg md:w-20 md:h-20">
