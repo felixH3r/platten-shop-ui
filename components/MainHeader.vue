@@ -2,7 +2,7 @@
   <div class="flex gap-5 font-sans">
     <NuxtLink to="shop-app" v-if="showToConfigurator">{{ routingTo }}</NuxtLink>
     <NuxtLink to="/" v-else>Home</NuxtLink>
-    <div>Warenkorb</div>
+    <NuxtLink to="cart">Warenkorb</NuxtLink>
   </div>
 </template>
 
