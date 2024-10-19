@@ -1,5 +1,5 @@
 <template>
-  <div id="content-card" class="flex flex-col lg:flex-row gap-16 bg-primary p-12 rounded-3xl">
+  <div id="content-card" class="flex flex-col lg:flex-row gap-16 bg-primary p-5 md:p-10 rounded-3xl">
     <div class="flex flex-col gap-16 lg:w-8/12">
       <h3>{{ title }}</h3>
       <span>{{ content }}</span>

@@ -7,6 +7,7 @@
 
 <script setup lang="ts">
 
+  import PanelOptionsSlider from "~/components/panel-configurator/panel-content/PanelOptionsSlider.vue";
 </script>
 
 <style scoped lang="scss">

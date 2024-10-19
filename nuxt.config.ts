@@ -20,6 +20,9 @@ export default defineNuxtConfig({
     }]
   },
 
+  // @ts-ignore
+  isr: true,
+
   css: [
     "~/assets/styles/main.css"
   ],
