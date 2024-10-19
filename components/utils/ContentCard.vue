@@ -6,6 +6,7 @@
     </div>
     <div class="flex flex-col gap-16 justify-between items-end lg:w-4/12">
       <NuxtImg src="https://plattenshop-uploads.s3.eu-central-1.amazonaws.com/tisch_sample.jpeg"
+               format="webp"
                class="rounded-2xl object-cover w-full md:h-96 lg:h-60"/>
       <CTAButton :content="ctaButton"/>
     </div>
