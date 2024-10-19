@@ -1,8 +1,8 @@
 <template>
   <div class="flex justify-between items-start">
     <div class="flex gap-5">
-      <img :src="cartItem.thumbnail"
-           class="w-32 h-24 shadow-lg">
+      <NuxtImg :src="cartItem.thumbnail"
+               class="w-32 h-24 shadow-lg"/>
       <div class="flex flex-col justify-between">
         <div>
           <h5>{{ cartItem.title }}</h5>

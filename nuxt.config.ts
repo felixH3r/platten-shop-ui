@@ -19,9 +19,11 @@ export default defineNuxtConfig({
       src: '/_nuxt/node_modules/preline/dist/preline.js', defer: true
     }]
   },
+
   css: [
     "~/assets/styles/main.css"
   ],
+
   buildModules: ['nuxt-graphql-request'],
 
   plugins: [
@@ -38,11 +40,8 @@ export default defineNuxtConfig({
     viewer: true,
   },
 
-  modules: [
-    '@pinia/nuxt',
-    '@nuxtjs/google-fonts',
-    'nuxt-medusa',
-  ],
+  modules: ['@pinia/nuxt', '@nuxtjs/google-fonts', 'nuxt-medusa', '@nuxt/image'],
+
   vite: {
     css: {
       preprocessorOptions: {
@@ -52,26 +51,29 @@ export default defineNuxtConfig({
       },
     },
   },
+
   pinia: {
     autoImports: ['defineStore', 'acceptHMRUpdate'],
   },
+
   googleFonts: {
     families: {
       Montserrat: [100, 300, 400, 500, 700],
     }
   },
+
   postcss: {
     plugins: {
       tailwindcss: {},
       autoprefixer: {},
     },
   },
+
   runtimeConfig: {
     public: {
       stripe_publishable_key: process.env.STRIPE_PUBLISHABLE_KEY,
     }
-  }
+  },
+
+  compatibilityDate: '2024-10-18'
 });
-
-
-

@@ -3,7 +3,7 @@
     <div class="human-and-panel-wrapper">
       <HumanSVG class="human-svg"/>
       <div class="panel-img-wrapper">
-        <img :src="panelTexture" class="panel-img drop-shadow-xl"/>
+        <NuxtImg :src="panelTexture" class="panel-img drop-shadow-xl"/>
       </div>
     </div>
   </div>

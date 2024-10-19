@@ -14,6 +14,7 @@
   import {useRoute} from "vue-router";
   import {navigateTo} from "#app";
   import CTAButton from "~/components/utils/CTAButton.vue";
+  import PanelContentWrapper from "~/components/panel-configurator/panel-content/PanelContentWrapper.vue";
 
   const backendData = useBackendDataStore();
   const mainStore = useMainStore();

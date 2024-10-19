@@ -18,6 +18,7 @@
   import {useMainStore} from "~/store/mainStore";
   import {useBackendDataStore} from "~/store/backendData";
   import RightArrowSVG from "~/components/icons/RightArrowSVG.vue";
+  import PanelOptionCard from "~/components/panel-configurator/panel-content/PanelOptionCard.vue";
 
   const scrollContainer = ref<HTMLElement | null>(null);
   const isScrolledToEnd = ref(false);
