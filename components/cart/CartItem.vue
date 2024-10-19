@@ -1,7 +1,7 @@
 <template>
   <div class="flex justify-between items-start">
     <div class="flex gap-5">
-      <NuxtImg :src="cartItem.thumbnail" format="webp"
+      <NuxtImg :src="cartItem.thumbnail" format="webp" loading="lazy"
                class="w-32 h-24 shadow-lg"/>
       <div class="flex flex-col justify-between">
         <div>
