@@ -4,6 +4,7 @@ import {Cart, StoreShippingOptionsListRes} from "@medusajs/medusa";
 import {ca} from "date-fns/locale";
 import {useMedusaClient} from "#imports";
 import {Nullable} from "~/utils/types";
+import {useMainStore} from "~/store/mainStore";
 
 export interface MedusaProduct {
   id: string;
@@ -54,6 +55,16 @@ export const useBackendDataStore = defineStore('backend', {
       if (client) {
         const {variants} = await client.products.variants.list();
         this.variants = variants;
+      }
+    },
+    async loadProductsAndVariants() {
+      if (this.products.length < 1) {
+        await useBackendDataStore().fetchProducts();
+        useMainStore().setSelectProduct(useBackendDataStore().products[0]);
+      }
+      if (this.variants.length < 1) {
+        await useBackendDataStore().fetchVariants();
+        useMainStore().setVariantsSelectedProduct(useBackendDataStore().products[0].variants);
       }
     },
     async createCart() {

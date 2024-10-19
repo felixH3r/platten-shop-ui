@@ -1,6 +1,9 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 
+import {undefined} from "zod";
+
 export default defineNuxtConfig({
+  alias: undefined,
   head: {
     title: 'platten-shop-ui',
     htmlAttrs: {
@@ -22,6 +25,7 @@ export default defineNuxtConfig({
 
   // @ts-ignore
   isr: true,
+  
 
   css: [
     "~/assets/styles/main.css"

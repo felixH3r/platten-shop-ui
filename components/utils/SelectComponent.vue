@@ -56,7 +56,7 @@
   }>();
 
   onMounted(() => {
-    if (props.values[0]) {
+    if (props.values && props.values[0]) {
       selected.value = props.values[0];
       handleChange();
     }

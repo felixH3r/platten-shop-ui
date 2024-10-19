@@ -15,9 +15,9 @@
   import ContentCardSection from "~/components/homepage/ContentCardSection.vue";
   import CustomerSection from "~/components/homepage/CustomerSection.vue";
   import PanelOptionSection from "~/components/homepage/PanelOptionSection.vue";
+  import {useMainStore} from "~/store/mainStore";
 
   const backendStore = useBackendDataStore();
-  await useBackendDataStore().fetchProducts();
 
   // beforeCreate(async () => {
   //   await backendStore.fetchProducts();
@@ -25,6 +25,12 @@
 
   const products = computed(() => {
     return backendStore.products ? backendStore.products : {};
+  });
+
+  onMounted(async () => {
+    const backendStore = useBackendDataStore();
+    await backendStore.loadProductsAndVariants();
+
   });
 
 

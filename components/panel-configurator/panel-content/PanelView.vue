@@ -19,10 +19,10 @@
   const panelViewWrapper = ref<HTMLDivElement | null>(null);
 
   // await backendData.fetchProducts();
-  console.log(backendData.products, 'products');
-
-  console.log(backendData.variants, 'variants');
-  console.log(backendData.variants[0].options, 'options');
+  // console.log(backendData.products, 'products');
+  //
+  // console.log(backendData.variants, 'variants');
+  // console.log(backendData.variants[0].options, 'options');
 
   let panelTypes: string[] = [];
   // let validThickness: number[] = [];

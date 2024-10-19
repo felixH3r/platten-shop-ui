@@ -25,13 +25,6 @@
     setViewMode();
     window.addEventListener('resize', throttle(setViewMode));
   });
-
-  onMounted(async () => {
-    await useBackendDataStore().fetchProducts();
-    await useBackendDataStore().fetchVariants();
-    useMainStore().setSelectProduct(useBackendDataStore().products[0]);
-    useMainStore().setVariantsSelectedProduct(useBackendDataStore().products[0].variants);
-  });
 </script>
 
 
