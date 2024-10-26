@@ -19,7 +19,7 @@ export const usePanelConfiguratorStore = defineStore('panelInput', () => {
   });
   const selectedPanel = ref<Nullable<PricedProduct>>(null);
   const selectedVariant = ref<Nullable<PricedVariant>>(null);
-  const calculatedPrice = ref(0);
+  const calculatedPrice = ref<number>(0);
 
   const $resetPanelInputForm = () => {
     panelInputForm.width = DEFAULT_WIDTH;
@@ -34,6 +34,25 @@ export const usePanelConfiguratorStore = defineStore('panelInput', () => {
     selectedVariant.value = variant;
   };
 
+  const calculatePrice = async () => {
+    if (!selectedVariant.value) {
+      return;
+    }
+    const data = await $fetch('/api/panelPrice', {
+      method: 'POST',
+      body: {
+        width: panelInputForm.width,
+        length: panelInputForm.length,
+        unitPrice: selectedVariant.value.calculated_price,
+      }
+    });
+    if (!data.calcPrice) {
+      return;
+    }
+    calculatedPrice.value = data.calcPrice;
+  };
+
+
   return {
     panelInputForm,
     selectedPanel,
@@ -42,5 +61,6 @@ export const usePanelConfiguratorStore = defineStore('panelInput', () => {
     setSelectedVariant,
     setSelectPanel,
     calculatedPrice,
+    calculatePrice,
   };
 });

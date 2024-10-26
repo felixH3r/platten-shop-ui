@@ -58,6 +58,7 @@
       // ts-ignore because somehow the variants in product are not correctly typed
       // @ts-ignore
       panelConfiguratorStore.setSelectedVariant(selectedVariant);
+      panelConfiguratorStore.calculatePrice();
     }
   };
 
@@ -80,30 +81,6 @@
       return formatPrice(panelConfiguratorStore.calculatedPrice);
     }
     return '';
-  });
-
-  const calcPrice = () => {
-    const selectedVariant = panelConfiguratorStore.selectedVariant;
-    console.log(selectedVariant, 'selected variant price');
-    if (!selectedVariant || !selectedVariant.calculated_price) {
-      return '';
-    }
-    // const calcPrice = await useFetch('/api/panelPrice', {
-    //   method: 'post',
-    //   body: {
-    //     width: 500,
-    //     length: 1000,
-    //     unitPrice: selectedVariant.calculated_price
-    //   }
-    // });
-    // if (!calcPrice.data.value) {
-    //   return '';
-    // }
-    price.value = formatPrice(panelConfiguratorStore.calculatedPrice);
-  };
-
-  onMounted(async () => {
-    await calcPrice();
   });
 
 </script>
