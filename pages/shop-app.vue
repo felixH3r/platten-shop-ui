@@ -4,14 +4,8 @@
 </template>
 
 <script lang="ts" setup>
-  // document.querySelector('body')!.style.overflow = 'hidden';
-  //
-  // onBeforeUnmount(() => {
-  //   document.querySelector('body')!.style.overflow = 'scroll';
-  // });
-
+  import PanelConfigurator from "~/components/panel-configurator/PanelConfigurator";
   import {useBackendDataStore} from "~/store/backendData";
-  import {useMainStore} from "~/store/mainStore";
 
   onMounted(async () => {
     await useBackendDataStore().loadProductsAndVariants();

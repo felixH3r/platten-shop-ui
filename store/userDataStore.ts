@@ -1,9 +1,6 @@
 import {defineStore} from "pinia";
-import {PricedProduct} from "@medusajs/medusa/dist/types/pricing";
-import {Cart, StoreShippingOptionsListRes} from "@medusajs/medusa";
-import {ca} from "date-fns/locale";
 import {useMedusaClient} from "#imports";
-import {Nullable} from "~/utils/types";
+import {type Nullable} from "~/utils/types";
 
 export interface UserDataState {
   shipmentData: Nullable<UserData>;

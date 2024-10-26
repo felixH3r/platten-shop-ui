@@ -1,8 +1,7 @@
 <template>
   <div class="flex h-48 overflow-scroll md:h-56" ref="scrollContainer" @scroll="checkIfScrolledToEnd">
     <div class="flex gap-2">
-      <PanelOptionCard v-for="product in backendData.products" :product="product"
-                       :selected="product.id === selectedProductId"/>
+      <PanelOptionCard v-for="product in backendData.products" :product="product"/>
     </div>
     <div @click="scrollRight" v-if="!isScrolledToEnd"
          class=" flex items-center justify-end w-32 h-32 bg-gradient-to-r from-transparent via-white via-70% white to-white absolute right-0">
@@ -15,19 +14,26 @@
 </template>
 
 <script lang="ts" setup>
-  import {useMainStore} from "~/store/mainStore";
   import {useBackendDataStore} from "~/store/backendData";
   import RightArrowSVG from "~/components/icons/RightArrowSVG.vue";
   import PanelOptionCard from "~/components/panel-configurator/panel-content/PanelOptionCard.vue";
+  import {usePanelConfiguratorStore} from "~/store/panelConfiguratorStore";
 
   const scrollContainer = ref<HTMLElement | null>(null);
   const isScrolledToEnd = ref(false);
 
-  const mainStore = useMainStore();
+  const panelConfiguratorStore = usePanelConfiguratorStore();
   const backendData = useBackendDataStore();
 
   const products = computed(() => {
     return backendData.getProducts;
+  });
+
+  onMounted(async () => {
+    if (!backendData.products || !backendData.products[0]) {
+      return;
+    }
+    panelConfiguratorStore.setSelectPanel(backendData.products[0]);
   });
 
   const scrollRight = () => {
@@ -36,7 +42,6 @@
         left: 200, // Change this value to adjust how much it scrolls
         behavior: 'smooth'
       });
-      // handleScroll(); // Call to update arrow visibility after the scroll
     }
   };
 
@@ -46,25 +51,6 @@
     // Check if the scroll position is at or near the end of the scrollable content
     isScrolledToEnd.value = container.scrollWidth - container.clientWidth <= container.scrollLeft + 1; // Add tolerance
   };
-
-  onMounted(async () => {
-    // await backendData.fetchProducts();
-    if (!backendData.products || !backendData.products[0]) {
-      return;
-    }
-    mainStore.setSelectProduct(backendData.products[0]);
-    mainStore.setVariantsSelectedProduct(backendData.products[0].variants);
-    const options = backendData.products[0].options;
-    for (let option of options) {
-      if (option.title === 'Material') {
-        mainStore.setMaterials(option.values);
-      }
-      if (option.title === 'Dicke') {
-        mainStore.setThicknesses(option.values);
-      }
-    }
-  });
-  const selectedProductId = mainStore.selectedProduct?.id;
 
 
 </script>

@@ -1,4 +1,13 @@
-import {Nullable} from "./types";
+import {type Nullable} from "./types";
+
+export const debounce = (timeout: NodeJS.Timeout | null, fnc: () => void, delayMs?: number) => {
+  if (timeout) {
+    clearTimeout(timeout);
+  }
+  timeout = setTimeout(() => {
+    fnc();
+  }, delayMs || 500);
+};
 
 export const throttle = <T extends (...args: any[]) => any>(
     func: T,
@@ -30,4 +39,8 @@ export const throttle = <T extends (...args: any[]) => any>(
       }, delay);
     }
   };
+};
+
+export const formatPrice = (price: number): string => {
+  return (Math.floor(price) / 100).toFixed(2).toString().replace('.', ',');
 };

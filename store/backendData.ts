@@ -1,10 +1,9 @@
 import {defineStore} from "pinia";
-import {PricedProduct} from "@medusajs/medusa/dist/types/pricing";
-import {Cart, StoreShippingOptionsListRes} from "@medusajs/medusa";
-import {ca} from "date-fns/locale";
+import {Cart, type StoreShippingOptionsListRes} from "@medusajs/medusa";
 import {useMedusaClient} from "#imports";
-import {Nullable} from "~/utils/types";
+import {type Nullable} from "~/utils/types";
 import {useMainStore} from "~/store/mainStore";
+import {usePanelConfiguratorStore} from "~/store/panelConfiguratorStore";
 
 export interface MedusaProduct {
   id: string;
@@ -45,8 +44,15 @@ export const useBackendDataStore = defineStore('backend', {
   actions: {
     async fetchProducts() {
       const client = useMedusaClient();
-      if (client) {
-        const {products} = await client.products.list();
+      if (!this.cart) {
+        await this.createCart();
+      }
+      if (client && this.cart) {
+        const {products} = await client.products.list({
+          cart_id: this.cart.id,
+          region_id: this.cart.region_id,
+          currency_code: 'eur'
+        });
         this.products = products;
       }
     },
@@ -59,24 +65,31 @@ export const useBackendDataStore = defineStore('backend', {
     },
     async loadProductsAndVariants() {
       if (this.products.length < 1) {
-        await useBackendDataStore().fetchProducts();
-        useMainStore().setSelectProduct(useBackendDataStore().products[0]);
+        await this.fetchProducts();
+        usePanelConfiguratorStore().setSelectPanel(this.products[0]);
       }
-      if (this.variants.length < 1) {
-        await useBackendDataStore().fetchVariants();
-        useMainStore().setVariantsSelectedProduct(useBackendDataStore().products[0].variants);
-      }
+      // if (this.variants.length < 1) {
+      //   await this.fetchVariants();
+      //   usePanelConfiguratorStore().setVariantsSelectedProduct(this.products[0].variants);
+      // }
     },
     async createCart() {
       const client = useMedusaClient();
-      if (localStorage.getItem('cart_id')) {
-        const {cart} = await client.carts.retrieve(localStorage.getItem('cart_id')!);
+      const cart_id = localStorage.getItem('cart_id');
+      if (cart_id) {
+        try {
+          const {cart} = await client.carts.retrieve(cart_id);
+          this.cart = cart;
+        } catch (error) {
+          localStorage.removeItem('cart_id');
+          this.createCart();
+        }
+      } else {
+        const {regions} = await client.regions.list();
+        const {cart} = await client.carts.create({region_id: regions[0].id});
         this.cart = cart;
-        return;
+        localStorage.setItem('cart_id', cart.id);
       }
-      const {cart} = await client.carts.create();
-      localStorage.setItem('cart_id', cart.id);
-      this.cart = cart;
     },
     async addPanelToCart(variantId: string, quantity: number, width: number, length: number) {
       const client = useMedusaClient();

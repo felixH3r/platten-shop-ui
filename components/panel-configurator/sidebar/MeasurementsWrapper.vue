@@ -10,26 +10,10 @@
 </template>
 
 <script lang="ts" setup>
-  import {DEFAULT_LENGTH, DEFAULT_WIDTH, useMainStore} from "~/store/mainStore";
   import InputComponent from "~/components/utils/InputComponent.vue";
   import {boolean} from "@oclif/parser/lib/flags";
-
-  const measurementInput = ref<{
-    inputEl: HTMLInputElement | null,
-    validate: (customErrMsg?: string, customValidate?: (input: string) => boolean) => boolean
-  }>({
-    inputEl: null,
-    validate: () => false
-  });
-  let timeout: NodeJS.Timeout | null = null;
-  const debounce = (fnc: () => void, delayMs?: number) => {
-    if (timeout) {
-      clearTimeout(timeout);
-    }
-    timeout = setTimeout(() => {
-      fnc();
-    }, delayMs || 500);
-  };
+  import {DEFAULT_LENGTH, DEFAULT_WIDTH, usePanelConfiguratorStore} from "~/store/panelConfiguratorStore";
+  import {debounce} from "~/utils/helper";
 
   const props = defineProps<{
     header: string,
@@ -38,13 +22,23 @@
     maxValue: number
   }>();
 
+  const panelConfiguratorStore = usePanelConfiguratorStore();
+  let timeout: NodeJS.Timeout | null = null;
+
+  const measurementInput = ref<{
+    inputEl: HTMLInputElement | null,
+    validate: (customErrMsg?: string, customValidate?: (input: string) => boolean) => boolean
+  }>({
+    inputEl: null,
+    validate: () => false
+  });
+
   onMounted(() => {
     measurementInput.value;
   });
-
-  const mainStore = useMainStore();
+  
   const getInput = (_event: InputEvent, inputFieldValue: string) => {
-    debounce(saveInput);
+    debounce(timeout, saveInput, 500);
   };
 
   const saveInput = () => {
@@ -53,15 +47,15 @@
     }
     if (props.usage === 'width') {
       if (!measurementInput.value.inputEl || measurementInput.value.inputEl.value === '') {
-        mainStore.setWidth(DEFAULT_WIDTH);
+        panelConfiguratorStore.panelInputForm.width = DEFAULT_WIDTH;
       } else {
-        mainStore.setWidth(parseInt(measurementInput.value.inputEl.value));
+        panelConfiguratorStore.panelInputForm.width = (parseInt(measurementInput.value.inputEl.value));
       }
     } else if (props.usage === 'length') {
       if (!measurementInput.value.inputEl || measurementInput.value.inputEl.value === '') {
-        mainStore.setWidth(DEFAULT_LENGTH);
+        panelConfiguratorStore.panelInputForm.length = DEFAULT_LENGTH;
       } else {
-        mainStore.setLength(parseInt(measurementInput.value.inputEl.value));
+        panelConfiguratorStore.panelInputForm.length = (parseInt(measurementInput.value.inputEl.value));
       }
     }
   };

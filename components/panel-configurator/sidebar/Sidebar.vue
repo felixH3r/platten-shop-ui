@@ -14,32 +14,50 @@
       <h4>{{ TC.pcSidebar.descrHeader }}</h4>
       <span class="overflow-scroll">{{ TC.pcSidebar.descrContent }}</span>
     </div>
-    <span class="text-4xl font-normal md:absolute md:left-5 md:bottom-5">€ 150,-</span>
+    <span class="text-4xl font-normal md:absolute md:left-5 md:bottom-5">€ {{ getPrice }}</span>
   </div>
 </template>
 
 <script lang="ts" setup>
-  import {TC} from "../../../utils/text-content";
+  import {TC} from "~/utils/text-content";
   import MeasurementsWrapper from "~/components/panel-configurator/sidebar/MeasurementsWrapper.vue";
   import SelectComponent from "~/components/utils/SelectComponent.vue";
-  import {DEFAULT_LENGTH, DEFAULT_WIDTH, MAX_LENGTH, MAX_WIDTH, useMainStore} from "~/store/mainStore";
+  import {useMainStore} from "~/store/mainStore";
   import {computed} from "#imports";
   import {PricedVariant} from "@medusajs/medusa/dist/types/pricing";
   import {boolean} from "@oclif/parser/lib/flags";
+  import {formatPrice} from "~/utils/helper";
+  import {
+    DEFAULT_LENGTH,
+    DEFAULT_WIDTH,
+    MAX_WIDTH,
+    MAX_LENGTH,
+    usePanelConfiguratorStore
+  } from "~/store/panelConfiguratorStore";
+
+  const panelConfiguratorStore = usePanelConfiguratorStore();
 
   const measurementInput_1 = ref({validateInput: (customErrMsg?: string, customValidate?: (input: string) => boolean) => false});
   const measurementInput_2 = ref({validateInput: (customErrMsg?: string, customValidate?: (input: string) => boolean) => false});
 
-  const variants = computed(() => {
-    return useMainStore().getVariants?.map((value) => value.title);
+  const price = ref('');
+
+  const variants = computed((): (string | undefined)[] => {
+    if (!panelConfiguratorStore.selectedPanel || !panelConfiguratorStore.selectedPanel.variants) {
+      return [];
+    }
+    return panelConfiguratorStore.selectedPanel.variants.map((value) => value.title);
   });
 
   const selectVariant = (selectedVariantTitle: string) => {
-    const selectedVariant = useMainStore().getVariants?.find((variant) => variant.title === selectedVariantTitle);
+    if (!panelConfiguratorStore.selectedPanel || !panelConfiguratorStore.selectedPanel.variants) {
+      return;
+    }
+    const selectedVariant = panelConfiguratorStore.selectedPanel.variants.find((variant) => variant.title === selectedVariantTitle);
     if (selectedVariant) {
-      // ts-ignore because somehow the selectedVariant type does not fit perfectly but works
+      // ts-ignore because somehow the variants in product are not correctly typed
       // @ts-ignore
-      useMainStore().setSelectedVariant(selectedVariant);
+      panelConfiguratorStore.setSelectedVariant(selectedVariant);
     }
   };
 
@@ -53,6 +71,40 @@
     validateInputs
   });
 
+  const getPrice = computed((): string => {
+    if (price.value) {
+      return price.value;
+    }
+    const selectedVariant = panelConfiguratorStore.selectedVariant;
+    if (selectedVariant && selectedVariant.calculated_price) {
+      return formatPrice(selectedVariant.calculated_price);
+    }
+    return '';
+  });
+
+  const calcPrice = async () => {
+    const selectedVariant = panelConfiguratorStore.selectedVariant;
+    console.log(selectedVariant, 'selected variant price');
+    if (!selectedVariant || !selectedVariant.calculated_price) {
+      return '';
+    }
+    const calcPrice = await useFetch('/api/panelPrice', {
+      method: 'post',
+      body: {
+        width: 500,
+        length: 1000,
+        unitPrice: selectedVariant.calculated_price
+      }
+    });
+    if (!calcPrice.data.value) {
+      return '';
+    }
+    price.value = formatPrice(calcPrice.data.value.calcPrice);
+  };
+
+  onMounted(async () => {
+    await calcPrice();
+  });
 
 </script>
 

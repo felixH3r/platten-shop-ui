@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col items-center overflow-ellipsis h-28 w-24 p-1 gap-1 md:h-36 md:w-28 cursor-pointer"
        :class="{'selected': isSelected}"
-       @click="selectProduct">
+       @click="selectPanel">
     <NuxtImg :src="mediaItemUrl" format="webp" loading="lazy"
              class="object-cover rounded-full w-16 h-16 drop-shadow-lg md:w-20 md:h-20"/>
     <span class="flex text-center text-sm">{{ props.product.title }}</span>
@@ -14,9 +14,10 @@
   import {MedusaProduct} from "~/store/backendData";
   import {PricedProduct} from "@medusajs/medusa/dist/types/pricing";
   import {main} from "@popperjs/core";
+  import {usePanelConfiguratorStore} from "~/store/panelConfiguratorStore";
 
-  const props = defineProps<{ product: PricedProduct, selected: Boolean }>();
-  const mainStore = useMainStore();
+  const props = defineProps<{ product: PricedProduct }>();
+  const panelConfiguratorStore = usePanelConfiguratorStore();
 
   const mediaItemUrl = computed((): string => {
     if (!props.product.thumbnail) {
@@ -25,27 +26,12 @@
     return props.product.thumbnail;
   });
 
-  const selectProduct = () => {
-    mainStore.setSelectProduct(props.product);
-    mainStore.setVariantsSelectedProduct(props.product.variants);
-    const options = props.product.options;
-    if (!options) {
-      return;
-    }
-    for (let option of options) {
-      if (option.title === 'Material') {
-        mainStore.setMaterials(option.values);
-      }
-      if (option.title === 'Dicke') {
-        mainStore.setThicknesses(option.values);
-      }
-    }
-    console.log(mainStore.variants, 'variants');
-    console.log(props.product.options, 'options');
+  const selectPanel = () => {
+    panelConfiguratorStore.setSelectPanel(props.product);
   };
 
   const isSelected = computed(() => {
-    return props.product.id === mainStore.selectedProduct?.id;
+    return props.product.id === panelConfiguratorStore.selectedPanel?.id;
   });
 </script>
 

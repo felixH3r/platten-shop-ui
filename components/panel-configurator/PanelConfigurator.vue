@@ -10,24 +10,23 @@
 <script lang="ts" setup>
   import Sidebar from "~/components/panel-configurator/sidebar/Sidebar.vue";
   import {useBackendDataStore} from "~/store/backendData";
-  import {DEFAULT_LENGTH, DEFAULT_WIDTH, useMainStore} from "~/store/mainStore";
   import {useRoute} from "vue-router";
   import {navigateTo} from "#app";
   import CTAButton from "~/components/utils/CTAButton.vue";
   import PanelContentWrapper from "~/components/panel-configurator/panel-content/PanelContentWrapper.vue";
+  import {usePanelConfiguratorStore} from "~/store/panelConfiguratorStore";
 
   const backendData = useBackendDataStore();
-  const mainStore = useMainStore();
+  // const mainStore = useMainStore();
+  const panelConfiguratorStore = usePanelConfiguratorStore();
 
   const configurator = ref<HTMLDivElement | null>(null);
   const isLoading = ref(false);
   const sidebar = ref({validateInputs: () => false});
 
-  onMounted(() => {
+  onMounted(async () => {
     document.querySelector("body")!.style.overflow = "hidden";
-    if (!backendData.cart) {
-      backendData.createCart();
-    }
+    // await backendData.createCart();
   });
 
   onUnmounted(() => {
@@ -35,19 +34,13 @@
   });
 
   const addToCart = async () => {
-    // useMainStore().setValidateInput(true);
-    // if (useMainStore().formValidation.errorOccurred) {
-    //   useMainStore().setValidateInput(false);
-    //   return;
-    // }
     if (!sidebar.value.validateInputs()) {
       return;
     }
-    if (mainStore.selectedProduct && mainStore.getSelectedVariant?.id) {
+    if (panelConfiguratorStore.selectedPanel && panelConfiguratorStore.selectedVariant?.id) {
       isLoading.value = true;
-      await backendData.addPanelToCart(mainStore.getSelectedVariant?.id, 1, mainStore.getPanelWidth, mainStore.getPanelLength);
-      mainStore.setLength(DEFAULT_LENGTH);
-      mainStore.setWidth(DEFAULT_WIDTH);
+      await backendData.addPanelToCart(panelConfiguratorStore.selectedVariant?.id, 1, panelConfiguratorStore.panelInputForm.width, panelConfiguratorStore.panelInputForm.length);
+      panelConfiguratorStore.$resetPanelInputForm();
       isLoading.value = false;
     }
     navigateTo('/cart');

@@ -11,46 +11,21 @@
 
 <script lang="ts" setup>
   import HumanSVG from "~/components/icons/HumanSVG.vue";
-  import {useMainStore} from "~/store/mainStore";
   import {useBackendDataStore} from "~/store/backendData";
+  import {usePanelConfiguratorStore} from "~/store/panelConfiguratorStore";
+  import {useMainStore} from "~/store/mainStore";
 
   const mainStore = useMainStore();
+  const panelConfiguratorStore = usePanelConfiguratorStore();
   const backendData = useBackendDataStore();
   const panelViewWrapper = ref<HTMLDivElement | null>(null);
 
-  // await backendData.fetchProducts();
-  // console.log(backendData.products, 'products');
-  //
-  // console.log(backendData.variants, 'variants');
-  // console.log(backendData.variants[0].options, 'options');
-
-  let panelTypes: string[] = [];
-  // let validThickness: number[] = [];
-
-  for (let product of backendData.products) {
-
-    if (product.metadata) {
-      // const possibleThickness = product.metadata.thickness.trim().split(/\s*,\s*/);
-      // for (let thick of possibleThickness) {
-      //   if (!validThickness.includes(thick)) {
-      //     validThickness.push(thick);
-      //   }
-      // }
-      const possibleTypes = product.metadata.validMaterials.trim().split(/\s*,\s*/);
-      for (let pType of possibleTypes) {
-        if (!panelTypes.includes(pType)) {
-          panelTypes.push(pType);
-        }
-      }
-    }
-  }
-
   const panelTexture = computed(() => {
-    return mainStore.selectedProduct?.thumbnail;
+    return panelConfiguratorStore.selectedPanel?.thumbnail;
   });
 
   const panelMeasureFactor = computed(() => {
-    return mainStore.panelConfigurator.width / mainStore.panelConfigurator.length;
+    return panelConfiguratorStore.panelInputForm.width / panelConfiguratorStore.panelInputForm.length;
   });
 
   const downSizeFactor = computed((): number => {
@@ -58,10 +33,10 @@
   });
 
   const longerSide = computed(() => {
-    if (mainStore.panelConfigurator.width - mainStore.panelConfigurator.length < 1) {
-      return mainStore.panelConfigurator.length / downSizeFactor.value + 'px';
+    if (panelConfiguratorStore.panelInputForm.width - panelConfiguratorStore.panelInputForm.length < 1) {
+      return panelConfiguratorStore.panelInputForm.length / downSizeFactor.value + 'px';
     }
-    return mainStore.panelConfigurator.width / downSizeFactor.value + 'px';
+    return panelConfiguratorStore.panelInputForm.width / downSizeFactor.value + 'px';
   });
 
   const panelHeightFactor = computed(() => {
@@ -75,7 +50,7 @@
     if (panelMeasureFactor.value <= 1) {
       return '100%';
     }
-    return mainStore.panelConfigurator.length / mainStore.panelConfigurator.width * 100 + '%';
+    return panelConfiguratorStore.panelInputForm.length / panelConfiguratorStore.panelInputForm.width * 100 + '%';
   });
 </script>
 
