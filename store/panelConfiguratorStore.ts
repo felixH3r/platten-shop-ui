@@ -19,6 +19,7 @@ export const usePanelConfiguratorStore = defineStore('panelInput', () => {
   });
   const selectedPanel = ref<Nullable<PricedProduct>>(null);
   const selectedVariant = ref<Nullable<PricedVariant>>(null);
+  const calculatedPrice = ref(0);
 
   const $resetPanelInputForm = () => {
     panelInputForm.width = DEFAULT_WIDTH;
@@ -40,5 +41,6 @@ export const usePanelConfiguratorStore = defineStore('panelInput', () => {
     $resetPanelInputForm,
     setSelectedVariant,
     setSelectPanel,
+    calculatedPrice,
   };
 });

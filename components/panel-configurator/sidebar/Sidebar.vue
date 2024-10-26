@@ -77,29 +77,29 @@
     }
     const selectedVariant = panelConfiguratorStore.selectedVariant;
     if (selectedVariant && selectedVariant.calculated_price) {
-      return formatPrice(selectedVariant.calculated_price);
+      return formatPrice(panelConfiguratorStore.calculatedPrice);
     }
     return '';
   });
 
-  const calcPrice = async () => {
+  const calcPrice = () => {
     const selectedVariant = panelConfiguratorStore.selectedVariant;
     console.log(selectedVariant, 'selected variant price');
     if (!selectedVariant || !selectedVariant.calculated_price) {
       return '';
     }
-    const calcPrice = await useFetch('/api/panelPrice', {
-      method: 'post',
-      body: {
-        width: 500,
-        length: 1000,
-        unitPrice: selectedVariant.calculated_price
-      }
-    });
-    if (!calcPrice.data.value) {
-      return '';
-    }
-    price.value = formatPrice(calcPrice.data.value.calcPrice);
+    // const calcPrice = await useFetch('/api/panelPrice', {
+    //   method: 'post',
+    //   body: {
+    //     width: 500,
+    //     length: 1000,
+    //     unitPrice: selectedVariant.calculated_price
+    //   }
+    // });
+    // if (!calcPrice.data.value) {
+    //   return '';
+    // }
+    price.value = formatPrice(panelConfiguratorStore.calculatedPrice);
   };
 
   onMounted(async () => {

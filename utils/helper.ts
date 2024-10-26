@@ -1,11 +1,11 @@
 import {type Nullable} from "./types";
 
-export const debounce = (timeout: NodeJS.Timeout | null, fnc: () => void, delayMs?: number) => {
+export const debounce = async (timeout: NodeJS.Timeout | null, fnc: () => Promise<void>, delayMs?: number) => {
   if (timeout) {
     clearTimeout(timeout);
   }
-  timeout = setTimeout(() => {
-    fnc();
+  timeout = setTimeout(async () => {
+    await fnc();
   }, delayMs || 500);
 };
 
