@@ -34,20 +34,11 @@
     validate: () => false
   });
 
-  onMounted(async () => {
-    // measurementInput.value;
-    if (!panelConfiguratorStore.selectedVariant) {
-      panelConfiguratorStore.setSelectedVariant(panelConfiguratorStore.selectedPanel.variants[0]);
-    }
-    await saveInput();
-  });
-
   const getInput = (_event: InputEvent, inputFieldValue: string) => {
     debounce(timeout, saveInput, 500);
   };
 
   const saveInput = async (): Promise<void> => {
-    console.log(measurementInput.value, 'saveInput');
     if (!measurementInput.value) {
       return;
     }
@@ -64,9 +55,6 @@
         panelConfiguratorStore.panelInputForm.length = (parseInt(measurementInput.value.inputEl.value));
       }
     }
-    console.log(panelConfiguratorStore.panelInputForm, 'panelInputForm');
-    console.log(panelConfiguratorStore.selectedVariant, 'selectedVariant');
-    
     await panelConfiguratorStore.calculatePrice();
   };
 
