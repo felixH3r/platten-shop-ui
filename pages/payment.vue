@@ -42,7 +42,7 @@
       console.log('no stripe key!!');
       return;
     }
-    stripe = await loadStripe(config.stripe_publishable_key);
+    stripe = await loadStripe(config.public.stripe_publishable_key);
     if (!stripe) {
       console.warn('stripe is not available');
       return;
