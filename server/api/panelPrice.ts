@@ -18,6 +18,6 @@ export default defineEventHandler(async (event) => {
   const mLength = length / 1000;
 
   return {
-    calcPrice: mWidth * mLength * unitPrice,
+    calcPrice: mWidth * mLength * unitPrice * 1.2,
   };
 });

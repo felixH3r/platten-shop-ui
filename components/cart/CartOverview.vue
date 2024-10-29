@@ -1,5 +1,5 @@
 <template>
-  <CartItem v-for="cartItem in useBackendDataStore().cart?.items" :cart-item="cartItem as LineItem"/>
+  <CartItem :key="cartItem.id" v-for="cartItem in useBackendDataStore().cart?.items" :cart-item="cartItem as LineItem"/>
 </template>
 
 <script setup lang="ts">

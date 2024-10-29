@@ -24,8 +24,6 @@
   import SelectComponent from "~/components/utils/SelectComponent.vue";
   import {useMainStore} from "~/store/mainStore";
   import {computed} from "#imports";
-  import {PricedVariant} from "@medusajs/medusa/dist/types/pricing";
-  import {boolean} from "@oclif/parser/lib/flags";
   import {formatPrice} from "~/utils/helper";
   import {
     DEFAULT_LENGTH,

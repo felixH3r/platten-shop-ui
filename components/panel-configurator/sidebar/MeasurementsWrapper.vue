@@ -14,7 +14,6 @@
   import {boolean} from "@oclif/parser/lib/flags";
   import {DEFAULT_LENGTH, DEFAULT_WIDTH, usePanelConfiguratorStore} from "~/store/panelConfiguratorStore";
   import {debounce} from "~/utils/helper";
-  import {$fetch} from "ofetch";
 
   const props = defineProps<{
     header: string,
