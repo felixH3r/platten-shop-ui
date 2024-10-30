@@ -31,13 +31,13 @@
   let stripe: any;
   let elements: any;
   const isLoading = ref(false);
+  const config = useRuntimeConfig();
 
   onMounted(async () => {
     await setUpStripe();
   });
 
   const setUpStripe = async () => {
-    const config = useRuntimeConfig();
     if (!config.public.stripe_publishable_key) {
       console.log('no stripe key!!');
       return;
@@ -81,11 +81,12 @@
       console.log('submitError');
       return;
     }
+    const redirectUrl = config.public.redirect_url || 'https://meine-holzplatte.at';
     const {error} = await stripe.confirmPayment({
       elements,
       clientSecret: clientSecret.value,
       confirmParams: {
-        return_url: 'https://meine-holzplatte.at',
+        return_url: `${redirectUrl}/thank-you/${useBackendDataStore().getCart.id}`,
       },
       redirect: "if_required"
     });

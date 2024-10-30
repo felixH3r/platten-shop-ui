@@ -78,6 +78,7 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       stripe_publishable_key: process.env.STRIPE_PUBLISHABLE_KEY,
+      redirect_url: process.env.REDIRECT_URL
     }
   },
 
