@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col gap-0 h-12 mt-1">
     <div
-        class="flex justify-between w-full bg-white py-3 px-5 block w-9/12 border-gray-200 rounded-full text-sm disabled:opacity-50 disabled:pointer-events-none"
+        class="flex justify-between w-full bg-white py-3 px-5 block w-9/12 border-gray-200 rounded-full text-m disabled:opacity-50 disabled:pointer-events-none"
         :class="{'error': showError}"
     >
       <input :id="identifier" :placeholder="props.placeholder" :type="inputType || 'text'"
