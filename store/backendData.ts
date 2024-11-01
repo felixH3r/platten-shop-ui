@@ -68,10 +68,6 @@ export const useBackendDataStore = defineStore('backend', {
         await this.fetchProducts();
         usePanelConfiguratorStore().setSelectPanel(this.products[0]);
       }
-      // if (this.variants.length < 1) {
-      //   await this.fetchVariants();
-      //   usePanelConfiguratorStore().setVariantsSelectedProduct(this.products[0].variants);
-      // }
     },
     async createCart() {
       const client = useMedusaClient();
@@ -113,39 +109,70 @@ export const useBackendDataStore = defineStore('backend', {
     },
     async addShipmentData(shipmentData: ShipmentData) {
       const client = useMedusaClient();
-      if (this.cart) {
-        const {cart} = await client.carts.update(this.cart.id, {shipping_address: shipmentData});
-        this.cart = cart;
+      if (!this.cart) {
+        await this.createCart();
       }
+      if (!this.cart) {
+        console.warn('no cart');
+        return;
+      }
+      const {cart} = await client.carts.update(this.cart.id, {shipping_address: shipmentData});
+      this.cart = cart;
+
       this.shipmentData = shipmentData;
     },
     async changeCartRegionId(region_id: string) {
       const client = useMedusaClient();
-      if (this.cart) {
-        const {cart} = await client.carts.update(this.cart.id, {region_id});
-        this.cart = cart;
+      if (!this.cart) {
+        await this.createCart();
       }
+      if (!this.cart) {
+        console.warn('no cart');
+        return;
+      }
+      const {cart} = await client.carts.update(this.cart.id, {region_id});
+      this.cart = cart;
     },
     async addShipmentMethod(option_id: string) {
-      if (this.cart && this.shipmentOptions) {
-        const {cart} = await useMedusaClient().carts.addShippingMethod(this.cart.id, {option_id: option_id});
-        this.cart = cart;
+      if (!this.cart) {
+        await this.createCart();
       }
+      if (!this.cart) {
+        console.warn('no cart');
+        return;
+      }
+      const {cart} = await useMedusaClient().carts.addShippingMethod(this.cart.id, {option_id: option_id});
+      this.cart = cart;
+
     },
     async addGuestUser(userEmail: string) {
-      if (this.cart) {
-        const {cart} = await useMedusaClient().carts.update(this.cart.id, {email: userEmail});
-        this.cart = cart;
+      if (!this.cart) {
+        await this.createCart();
       }
+      if (!this.cart) {
+        console.warn('no cart');
+        return;
+      }
+      const {cart} = await useMedusaClient().carts.update(this.cart.id, {email: userEmail});
+      this.cart = cart;
+
     },
     async loadShipmentOptions() {
       if (!this.cart) {
+        await this.createCart();
+      }
+      if (!this.cart) {
+        console.warn('no cart');
         return;
       }
       this.shipmentOptions = await useMedusaClient().shippingOptions.listCartOptions(this.cart.id);
     },
     async createPaymentSession() {
       if (!this.cart) {
+        await this.createCart();
+      }
+      if (!this.cart) {
+        console.warn('no cart');
         return;
       }
       const {cart} = await useMedusaClient().carts.createPaymentSessions(this.cart.id);
@@ -153,6 +180,10 @@ export const useBackendDataStore = defineStore('backend', {
     },
     async setPaymentSession(provider_id: string) {
       if (!this.cart) {
+        await this.createCart();
+      }
+      if (!this.cart) {
+        console.warn('no cart');
         return;
       }
       const {cart} = await useMedusaClient().carts.setPaymentSession(this.cart.id, {
@@ -162,6 +193,10 @@ export const useBackendDataStore = defineStore('backend', {
     },
     async completeCart() {
       if (!this.cart) {
+        await this.createCart();
+      }
+      if (!this.cart) {
+        console.warn('no cart');
         return;
       }
       await useMedusaClient().carts.complete(this.cart.id);

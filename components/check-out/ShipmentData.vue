@@ -88,9 +88,9 @@
 
     isLoading.value = true;
     const regions = await client.regions.list();
-    if (!backendData.cart) {
-      return;
-    }
+    // if (!backendData.cart) {
+    //   return;
+    // }
     // ATTENTION!! Hardcoded because only one region for this shop
     // await client.carts.update(backendData.cart.id, {region_id: regions.regions[0].id});
     await backendData.changeCartRegionId(regions.regions[0].id);
