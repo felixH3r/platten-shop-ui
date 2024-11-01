@@ -52,8 +52,8 @@
       return false;
     }
     if (customValidate !== undefined && !customValidate(inputEl.value.value)) {
-      errorMsg.value = customErrMsg;
       showError.value = true;
+      errorMsg.value = customErrMsg;
       return false;
     }
     return true;

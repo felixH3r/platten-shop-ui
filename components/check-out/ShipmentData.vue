@@ -53,7 +53,6 @@
     return [
       first_name,
       last_name,
-      email,
       address_1,
       city,
       postal_code,
@@ -61,8 +60,18 @@
     ];
   };
 
+  const checkEmail = (input: string): boolean => {
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailPattern.test(input) && input.length > 0;
+  };
+
   const validateFields = (): boolean => {
     let valid = true;
+    if (!email.value.validate('Bitte geben Sie eine gültige E-Mail-Adresse an.', checkEmail)) {
+      console.log('Email is invalid');
+      valid = false;
+    }
+    ;
     wrapRefs().forEach((inputField) => {
       if (!inputField.value || !inputField.value.validate()) {
         valid = false;
