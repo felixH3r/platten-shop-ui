@@ -11,22 +11,21 @@
   "dependencies": {
     "@medusajs/medusa-js": "6.0.3",
     "@pinia/nuxt": "^0.5.2",
-    "@preline/select": "^2.0.1",
     "@stripe/stripe-js": "^2.4.0",
-    "pinia": "^2.2.0",
-    "preline": "^2.0.2"
+    "pinia": "^2.2.0"
   },
   "devDependencies": {
     "@nuxt/image": "^1.8.1",
     "@nuxtjs/google-fonts": "3.0.0-1",
+    "@nuxtjs/tailwindcss": "^6.12.1",
     "autoprefixer": "^10.4.16",
+    "daisyui": "^4.12.14",
     "graphql": "^16.6.0",
     "nuxt": "^3.12.3",
     "nuxt-medusa": "^0.4.0",
     "postcss": "^8.4.30",
     "sass": "^1.62.0",
-    "sass-loader": "^10.4.1",
-    "@nuxtjs/tailwindcss": "^6.12.1"
+    "sass-loader": "^10.4.1"
   },
   "overrides": {
     "vue": "latest"

@@ -2,14 +2,15 @@
   <div class="flex items-center">
     <button
         @click="props.onClick"
-        class="flex items-center rounded-full bg-cta px-10 py-3 text-white"
+        class="btn btn-primary px-7"
         type="submit"
+        :class="{'pl-3' : isLoading}"
     >
-      <div
+      <span
           v-if="isLoading"
-          class="absolute right-1 animate-spin inline-block border-[3px] border-current border-t-transparent text-gray rounded-full h-5 w-5 mr-2"
+          class="loading loading-spinner"
           role="status" aria-label="loading">
-      </div>
+      </span>
       {{ content }}
     </button>
   </div>

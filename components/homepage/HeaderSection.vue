@@ -1,6 +1,6 @@
 <template>
   <section class="
-            h-screen bg-primary w-screen
+            h-screen bg-base-200 w-screen
             flex items-center justify-start"
   >
     <div class="flex items-end justify-between w-full lg:flex-row flex-col">

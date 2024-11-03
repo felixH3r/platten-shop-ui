@@ -1,4 +1,6 @@
 /** @type {import('tailwindcss').Config} */
+import daisyui from "daisyui"
+
 const plugin = require('tailwindcss/plugin')
 const colors = require("tailwindcss/colors");
 module.exports = {
@@ -7,8 +9,7 @@ module.exports = {
         "./layouts/**/*.vue",
         "./pages/**/*.vue",
         "./plugins/**/*.{js,ts}",
-        "./app.vue",
-        './node_modules/preline/preline/preline.js',
+        "./app.vue"
     ],
     theme: {
         colors: {
@@ -41,7 +42,22 @@ module.exports = {
 
     },
     plugins: [
-        require('preline/plugin'),
+        daisyui,
     ],
+    daisyui: {
+        themes: [
+            {
+                mytheme: {
+                    "primary": "#38470B",
+                    "secondary": "#A0855B",
+                    "accent": "#37cdbe",
+                    "neutral": "#F1D6AB",
+                    "base-100": "#ffffff",
+                    "base-200": "#F9F6F2",
+                    "--rounded-btn": "999px",
+                },
+            },
+        ],
+    },
 }
 

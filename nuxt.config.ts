@@ -19,10 +19,7 @@ export default defineNuxtConfig({
         {rel: 'icon', type: 'image/x-icon', href: '/favicon.ico'},
       ],
       // Move script to public directory instead of _nuxt
-      script: [{
-        src: '/preline/preline.js',
-        defer: true
-      }]
+      script: [{}]
     }
   },
 
@@ -48,9 +45,7 @@ export default defineNuxtConfig({
     '@nuxtjs/tailwindcss'
   ],
 
-  plugins: [
-    "~/plugins/preline.client.ts"
-  ],
+  plugins: [],
 
   vite: {
     css: {

@@ -1,5 +1,5 @@
 <template>
-  <div class="fixed flex flex-col gap-3 w-full h-56 bg-primary bottom-0 p-5 text-xl">
+  <div class="fixed flex flex-col gap-3 w-full h-56 bg-base-200 bottom-0 p-5 text-xl">
     <div class="flex justify-between">
       <span>{{ TC.cart.subtotal }}:</span>
       <span>€ {{ prices.subtotal }}</span>

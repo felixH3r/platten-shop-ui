@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full bg-primary px-5 py-5">
+  <div class="w-full bg-base-200 px-5 py-5">
     <h3 v-if="!useMainStore().getIsMobile" class="mb-5">{{ TC.pcSidebar.header }}</h3>
     <select-component :values="variants" :on-select="selectVariant" class="w-full mb-3"/>
     <div class="flex items-center justify-center gap-3 mb-6 md:flex-col md:w-full">
