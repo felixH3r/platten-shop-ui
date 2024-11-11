@@ -1,6 +1,6 @@
 <template>
-  <div class="layout-wrapper">
-    <main-header :show-to-configurator="onHome" class="main-header"/>
+  <div class=" layout-wrapper">
+    <main-header :show-to-configurator="onHome"/>
     <NuxtPage/>
   </div>
 </template>

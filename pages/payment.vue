@@ -1,5 +1,5 @@
 <template>
-  <div class="pt-16 pb-60 px-5 min-h-screen bg-base-200">
+  <div class="pt-28 pb-60 px-5 min-h-screen bg-base-200">
     <h1 class="text-3xl pb-5">Bezahlung:</h1>
     <!--    <PaymentOptions/>-->
     <!--    stripe payment element-->

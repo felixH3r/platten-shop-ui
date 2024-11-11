@@ -55,8 +55,10 @@ export const TC = {
     subtotal: 'Zwischensumme',
     tax: 'Ust',
     total: 'Gesamt',
+    sum: 'Summe',
     length: 'Länge',
     width: 'Breite',
+    items: 'Artikel',
   },
   errorMsg: {
     required: 'Pflichtfeld!',

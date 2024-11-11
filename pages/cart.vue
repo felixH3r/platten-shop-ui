@@ -1,6 +1,6 @@
 <template>
   <!--  pb-56 because the price overflow has h-56 -->
-  <div class="pt-16 px-5 pb-56 overflow-scroll">
+  <div class="pt-28 px-5 pb-56 overflow-scroll">
     <h1 class="text-3xl pb-10">Warenkorb</h1>
     <CartOverview class="h-32"/>
   </div>

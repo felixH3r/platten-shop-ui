@@ -1,5 +1,5 @@
 <template>
-  <div class="pt-16 px-5 min-h-screen bg-base-200">
+  <div class="pt-32 px-5 min-h-screen bg-base-200">
     <h1 class="text-3xl pb-10">Lieferadresse:</h1>
     <shipment-data/>
     <!--    <CTAButton :content="'Zur Bezahlung'" :on-click="goToPayment" class="fixed bottom-5 right-5"/>-->
