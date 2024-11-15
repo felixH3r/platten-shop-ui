@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-screen overflow-hidden">
+  <div class="overflow-hidden">
     <HeaderSection/>
     <CardsSection/>
     <ContentCardSection/>
