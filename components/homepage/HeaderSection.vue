@@ -1,6 +1,6 @@
 <template>
   <section class="
-            h-[75dvh] md:h-screen w-screen
+            h-[75vh] md:h-screen w-screen
             mb-32
             flex items-end justify-center
             md:pb-20
