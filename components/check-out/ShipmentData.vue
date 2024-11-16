@@ -67,7 +67,7 @@
 
   const validateFields = (): boolean => {
     let valid = true;
-    if (!email.value.validate('Bitte geben Sie eine gültige E-Mail-Adresse an.', checkEmail)) {
+    if (email.value && !email.value.validate('Bitte geben Sie eine gültige E-Mail-Adresse an.', checkEmail)) {
       console.log('Email is invalid');
       valid = false;
     }
@@ -92,6 +92,10 @@
 
   const addShipmentData = async () => {
     if (!validateFields()) {
+      return;
+    }
+
+    if (!first_name.value || !last_name.value || !address_1.value || !city.value || !postal_code.value || !phone.value) {
       return;
     }
 

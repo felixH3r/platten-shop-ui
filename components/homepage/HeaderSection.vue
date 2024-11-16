@@ -1,7 +1,7 @@
 <template>
   <section class="
-            h-1/2 md:h-screen w-screen
-            mb-64
+            h-[75dvh] md:h-screen w-screen
+            mb-32
             flex items-end justify-center
             md:pb-20
             pt-48
@@ -16,9 +16,13 @@
     <!--        loading="lazy"-->
     <!--    >-->
     <!--    </NuxtImg>-->
-    <div class="flex flex-col w-full min-h-48 max-w-screen-xl bg-white rounded-2xl p-6 -mb-48 md:mb-0 shadow-xl">
-      <h1>{{ TC.headerSection.header }}</h1>
-      <h2 class="">{{ TC.headerSection.subHeader }}</h2>
+    <div class="
+      flex flex-col w-full min-h-48 max-w-screen-xl bg-white rounded-2xl 
+      p-6 md:p-10 -mb-32 md:mb-0
+      shadow-xl
+    ">
+      <h1 class="md:pb-5">{{ TC.headerSection.header }}</h1>
+      <h2 class="font-light">{{ TC.headerSection.subHeader }}</h2>
 
       <div class="flex flex-col md:flex-row justify-between mb-6 mt-10">
         <div class="flex items-center gap-2">
