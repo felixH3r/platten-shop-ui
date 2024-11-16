@@ -4,8 +4,11 @@ export const TC = {
     configurator: 'Konfigurator',
   },
   headerSection: {
-    header: 'Holzplatte individuell online',
-    subHeader: 'Bei uns kannst du ganz einfach Holzplatten auf dein Wunschformat zuschneiden lassen und online bestellen',
+    header: 'Möbelfronten nach Maß',
+    subHeader: 'Werte deine bestehenden Möbel mit hochwertigen Designfronten auf und erschaffe deinen eigenen Style!',
+    usp_1: 'Aus Standard wird Design',
+    usp_2: 'Edle Materialien, dein Style',
+    usp_3: 'Einfach online gestalten',
     ctaButton: 'Konfigurator',
   },
   cardsSection: {

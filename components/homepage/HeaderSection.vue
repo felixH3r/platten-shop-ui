@@ -21,21 +21,21 @@
       p-6 md:p-10 -mb-32 md:mb-0
       shadow-xl
     ">
-      <h1 class="md:pb-5">{{ TC.headerSection.header }}</h1>
+      <h1 class="pb-2 md:pb-5">{{ TC.headerSection.header }}</h1>
       <h2 class="font-light">{{ TC.headerSection.subHeader }}</h2>
 
-      <div class="flex flex-col md:flex-row justify-between mb-6 mt-10">
-        <div class="flex items-center gap-2">
-          <LargeSelectionSVG class="w-10 h-10 md:w-20 md:h-20"/>
-          <span>Große Auswahl</span>
+      <div class="flex flex-col gap-3 md:flex-row justify-between mb-6 mt-6 md:mt-10">
+        <div class="flex items-center gap-2 md:gap-4">
+          <StarsSVG class="w-7 h-7 md:w-12 md:h-12"/>
+          <span>{{ TC.headerSection.usp_1 }}</span>
         </div>
-        <div class="flex items-center gap-2">
-          <LargeSelectionSVG class="w-10 h-10 md:w-20 md:h-20"/>
-          <span>Große Auswahl</span>
+        <div class="flex items-center gap-2 md:gap-4">
+          <TumbUpSVG class="w-7 h-7 md:w-12 md:h-12"/>
+          <span>{{ TC.headerSection.usp_2 }}</span>
         </div>
-        <div class="flex items-center gap-2">
-          <LargeSelectionSVG class="w-10 h-10 md:w-20 md:h-20"/>
-          <span>Große Auswahl</span>
+        <div class="flex items-center gap-2 md:gap-4">
+          <RocketSVG class="w-7 h-7 md:w-12 md:h-12"/>
+          <span>{{ TC.headerSection.usp_3 }}</span>
         </div>
 
       </div>
@@ -60,6 +60,9 @@
   import CTAButton from "~/components/utils/CTAButton.vue";
   import {navigateTo} from "#app";
   import LargeSelectionSVG from "~/components/icons/LargeSelectionSVG.vue";
+  import StarsSVG from "~/components/icons/StarsSVG.vue";
+  import RocketSVG from "~/components/icons/RocketSVG.vue";
+  import TumbUpSVG from "~/components/icons/TumbUpSVG.vue";
 
   const openConfigurator = (): void => {
     navigateTo('/shop-app');
