@@ -4,12 +4,37 @@ export const TC = {
     configurator: 'Konfigurator',
   },
   headerSection: {
-    header: 'Möbelfronten nach Maß',
+    header: 'Möbelteile auf Maß, die begeistern!',
     subHeader: 'Werte deine bestehenden Möbel mit hochwertigen Designfronten auf und erschaffe deinen eigenen Style!',
     usp_1: 'Aus Standard wird Design',
     usp_2: 'Edle Materialien, dein Style',
     usp_3: 'Einfach online gestalten',
     ctaButton: 'Konfigurator',
+  },
+  featuredSection: {
+    header: 'Platten auf Maß, die begeistern!',
+    subHeader: 'Werte deine bestehenden Möbel mit hochwertigen Designfronten auf und erschaffe deinen eigenen Style!',
+    ctaButton: "Sieh's dir an!",
+    card_1: {
+      title: 'Holzzuschnitte auf Maß, Oberflächen die begeistern!',
+      content: 'Einzigartige Holzzuschnitte auf Maß, millimetergenau zugeschnitten in Tischlerqualität blitzschnell geliefert',
+      ctaButton: 'Mehr erfahren'
+    },
+    card_2: {
+      title: 'Tischplatten auf Maß, die begeistern!',
+      content: 'Verwandle deinen Schreibtisch in ein Meisterwerk.',
+      ctaButton: 'Mehr erfahren'
+    },
+    card_3: {
+      title: 'Einzigartige Fronten die Standart zu Design machen.',
+      content: 'Coming soon',
+      ctaButton: 'Mehr erfahren'
+    },
+    card_4: {
+      title: 'Hochwertige Holzschubladen auf Maß',
+      content: 'Coming soon',
+      ctaButton: 'Mehr erfahren'
+    },
   },
   cardsSection: {
     header: 'Was uns ausmacht!',

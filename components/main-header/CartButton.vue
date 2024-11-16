@@ -1,5 +1,5 @@
 <template>
-  <div class="dropdown dropdown-end">
+  <div class="dropdown dropdown-end z-10">
     <div tabindex="0" role="button" class="btn btn-ghost btn-circle">
       <div class="indicator">
         <svg
@@ -19,8 +19,8 @@
     </div>
     <div
         tabindex="0"
-        class="card card-compact dropdown-content bg-base-100 z-[1] mt-3 w-52 shadow">
-      <div class="card-body">
+        class="card card-compact dropdown-content bg-base-100 z-10 mt-3 w-52 shadow">
+      <div class="card-body z-10">
         <span class="text-lg font-bold">{{ itemsQty }} {{ TC.cart.items }}</span>
         <span class="">{{ TC.cart.sum }}: {{ total }}</span>
         <div class="card-actions">

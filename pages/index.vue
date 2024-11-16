@@ -1,6 +1,7 @@
 <template>
   <div class="overflow-hidden">
     <HeaderSection/>
+    <FeaturedSection/>
     <CardsSection/>
     <ContentCardSection/>
     <CustomerSection/>
@@ -16,6 +17,7 @@
   import CustomerSection from "~/components/homepage/CustomerSection.vue";
   import PanelOptionSection from "~/components/homepage/PanelOptionSection.vue";
   import {useMainStore} from "~/store/mainStore";
+  import FeaturedSection from "~/components/homepage/featured-section/FeaturedSection.vue";
 
   const backendStore = useBackendDataStore();
 

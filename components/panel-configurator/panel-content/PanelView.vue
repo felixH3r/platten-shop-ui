@@ -1,8 +1,8 @@
 <template>
-  <div class="panel-view-wrapper h-full" ref="panelViewWrapper">
+  <div class="panel-view-wrapper h-full " ref="panelViewWrapper">
     <div class="human-and-panel-wrapper">
       <HumanSVG class="human-svg"/>
-      <div class="panel-img-wrapper">
+      <div class="panel-img-wrapper z-[-1]">
         <NuxtImg :src="panelTexture" format="webp" loading="lazy" class="panel-img drop-shadow-xl"/>
       </div>
     </div>

@@ -17,9 +17,18 @@ export default defineNuxtConfig({
       ],
       link: [
         {rel: 'icon', type: 'image/x-icon', href: '/favicon.ico'},
+        {
+          rel: 'stylesheet',
+          href: 'https://cdn.jsdelivr.net/npm/pagedone@1.2.2/src/css/pagedone.css'
+        }
       ],
       // Move script to public directory instead of _nuxt
-      script: [{}]
+      script: [
+        {
+          src: 'https://cdn.jsdelivr.net/npm/pagedone@1.2.2/src/js/pagedone.js',
+          defer: true
+        }
+      ]
     }
   },
 

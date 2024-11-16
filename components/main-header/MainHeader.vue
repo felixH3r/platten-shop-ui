@@ -1,10 +1,10 @@
 <template>
   <div :class="[
-      'flex justify-between navbar bg-base-100 fixed top-5 w-[94vw] md:w-[98%] rounded-2xl shadow-lg left-1/2 -translate-x-1/2 transition-transform duration-500 ease-in-out',
+      'flex justify-between navbar bg-base-100 fixed z-10 top-5 w-[94vw] md:w-[98%] rounded-2xl shadow-lg left-1/2 -translate-x-1/2 transition-transform duration-500 ease-in-out',
       isHidden || isConfigurator ? '-translate-y-16 opacity-0' : 'translate-y-0 opacity-100'
     ]">
     <div class="">
-      <div class="dropdown">
+      <div class="dropdown z-10">
         <button tabindex="0" role="button" class="btn btn-ghost lg:hidden">
           <svg
               xmlns="http://www.w3.org/2000/svg"

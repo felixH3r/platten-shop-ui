@@ -1,7 +1,7 @@
 <template>
   <section class="
             h-[70vh] md:h-screen w-screen
-            mb-32
+            mb-32 md:mb-12
             flex items-end justify-center
             md:pb-20
             pt-40
