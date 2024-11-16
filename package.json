@@ -12,12 +12,15 @@
     "@medusajs/medusa-js": "6.0.3",
     "@pinia/nuxt": "^0.5.2",
     "@stripe/stripe-js": "^2.4.0",
+    "@vueuse/components": "^11.2.0",
     "pinia": "^2.2.0"
   },
   "devDependencies": {
     "@nuxt/image": "^1.8.1",
     "@nuxtjs/google-fonts": "3.0.0-1",
     "@nuxtjs/tailwindcss": "^6.12.1",
+    "@vueuse/core": "^11.2.0",
+    "@vueuse/nuxt": "^11.2.0",
     "autoprefixer": "^10.4.16",
     "daisyui": "^4.12.14",
     "graphql": "^16.6.0",

@@ -21,7 +21,9 @@
         </button>
         <ul
             tabindex="0"
-            class="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow">
+            class="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow"
+            v-on-click-outside="closeDropdown"
+        >
           <li><a>Item 1</a></li>
           <li>
             <a>Parent</a>
@@ -86,6 +88,7 @@
   import {TC} from "~/utils/text-content";
   import {useMainStore} from "~/store/mainStore";
   import CartButton from "~/components/main-header/CartButton.vue";
+  import {vOnClickOutside} from '@vueuse/components';
 
   const props = defineProps({
     showToConfigurator: Boolean,
@@ -116,6 +119,13 @@
   const isConfigurator = computed((): boolean => {
     return useRoute().path === '/shop-app';
   });
+
+  const closeDropdown = () => {
+    const dropdowns = document.querySelectorAll('.menu-link-item details[open]');
+    dropdowns.forEach((dropdown) => {
+      dropdown.removeAttribute('open');
+    });
+  };
 
 
   // Lifecycle hooks to add and remove the scroll event listener

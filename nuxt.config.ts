@@ -42,7 +42,9 @@ export default defineNuxtConfig({
     '@nuxtjs/google-fonts',
     'nuxt-medusa',
     '@nuxt/image',
-    '@nuxtjs/tailwindcss'
+    '@nuxtjs/tailwindcss',
+    '@vueuse/nuxt',
+
   ],
 
   plugins: [],
