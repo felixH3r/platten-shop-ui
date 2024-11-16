@@ -1,10 +1,10 @@
 <template>
   <section class="
-            h-[75vh] md:h-screen w-screen
+            h-[70vh] md:h-screen w-screen
             mb-32
             flex items-end justify-center
             md:pb-20
-            pt-48
+            pt-40
             bg-[url('https://plattenshop-uploads.s3.eu-central-1.amazonaws.com/tisch_sample.jpeg')]
             bg-cover bg-center bg-black bg-opacity-25
             bg-blend-overlay
