@@ -36,6 +36,25 @@ export const TC = {
       ctaButton: 'Mehr erfahren'
     },
   },
+  valuesSliderSection: {
+    title: 'Standard zu Design, einfach und schnell',
+    subtitle: 'Platten auf Maß, die begeistern!',
+    slide_1: {
+      title: 'Holzzuschnitte auf Maß, Oberflächen die begeistern!',
+      subtitle: 'Schneller als neu!',
+      content: 'Einzigartige Holzzuschnitte auf Maß, millimetergenau zugeschnitten in Tischlerqualität blitzschnell geliefert',
+    },
+    slide_2: {
+      title: 'Tischplatten auf Maß, die begeistern!',
+      subtitle: 'Schneller als neu!',
+      content: 'Verwandle deinen Schreibtisch in ein Meisterwerk.',
+    },
+    slide_3: {
+      title: 'Einzigartige Fronten die Standart zu Design machen.',
+      subtitle: 'Schneller als neu!',
+      content: 'Coming soon',
+    },
+  },
   cardsSection: {
     header: 'Was uns ausmacht!',
     title_1: '',

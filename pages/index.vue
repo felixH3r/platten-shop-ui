@@ -2,6 +2,7 @@
   <div class="overflow-hidden">
     <HeaderSection/>
     <FeaturedSection/>
+    <ValuesSliderSection/>
     <CardsSection/>
     <ContentCardSection/>
     <CustomerSection/>
@@ -18,6 +19,7 @@
   import PanelOptionSection from "~/components/homepage/PanelOptionSection.vue";
   import {useMainStore} from "~/store/mainStore";
   import FeaturedSection from "~/components/homepage/featured-section/FeaturedSection.vue";
+  import ValuesSliderSection from "~/components/homepage/values-slider-section/ValuesSliderSection.vue";
 
   const backendStore = useBackendDataStore();
 

@@ -35,6 +35,7 @@
 
     span {
         @apply text-sm md:text-base;
+        @apply text-gray;
     }
 
     html {

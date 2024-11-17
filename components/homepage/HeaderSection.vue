@@ -22,16 +22,16 @@
       shadow-xl
     ">
       <h1 class="pb-2 md:pb-5">{{ TC.headerSection.header }}</h1>
-      <h2 class="font-light">{{ TC.headerSection.subHeader }}</h2>
+      <h2 class="font-light text-gray">{{ TC.headerSection.subHeader }}</h2>
 
       <div class="flex flex-col gap-3 md:flex-row justify-between mb-6 mt-6 md:mt-10">
         <div class="flex items-center gap-2 md:gap-4">
           <StarsSVG class="w-7 h-7 md:w-12 md:h-12"/>
-          <span>{{ TC.headerSection.usp_1 }}</span>
+          <span class="">{{ TC.headerSection.usp_1 }}</span>
         </div>
         <div class="flex items-center gap-2 md:gap-4">
           <TumbUpSVG class="w-7 h-7 md:w-12 md:h-12"/>
-          <span>{{ TC.headerSection.usp_2 }}</span>
+          <span class="">{{ TC.headerSection.usp_2 }}</span>
         </div>
         <div class="flex items-center gap-2 md:gap-4">
           <RocketSVG class="w-7 h-7 md:w-12 md:h-12"/>

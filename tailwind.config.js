@@ -19,7 +19,7 @@ module.exports = {
             'cta': '#38470B',
             'background': '#FFFFFF',
             'white': '#FFFFFF',
-            'gray': '#8492a6',
+            'gray': '#6B7280',
             'gray-light': '#d3dce6',
             'transparent': 'rgba(255, 255, 255, 0)',
             'red': 'red',

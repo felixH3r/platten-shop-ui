@@ -1,9 +1,9 @@
 <template>
-  <section class="py-12 ">
+  <section class="pt-12 pb-24">
     <div class="mx-auto max-w-screen-xl">
       <!--      Header -->
       <div class="mb-14 text-center">
-        <h2 class="text-4xl text-center font-bold leading-[3.25rem] mb-6 max-w-max lg:max-w-3xl lg:mx-auto">
+        <h2 class="text-2xl md:text-4xl text-center font-bold leading-[2.5rem] md:leading-[3.25rem] mb-6 max-w-max lg:max-w-3xl lg:mx-auto">
           {{ TC.featuredSection.header }}
         </h2>
         <p class="text-base font-normal text-gray-500 lg:max-w-2xl lg:mx-auto mb-8">
@@ -22,7 +22,7 @@
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-lg mx-auto md:max-w-2xl lg:max-w-full">
 
         <IconCard :title="TC.featuredSection.card_1.title" :subtitle="TC.featuredSection.card_1.content"
-                  :image-url="'https://pagedone.io/asset/uploads/1695028873.png'"
+                  :image-url="'https://plattenshop-uploads.s3.eu-central-1.amazonaws.com/Holzzuschnitte.jpg'"
                   :cta-button="TC.featuredSection.card_1.ctaButton"/>
         <IconCard :title="TC.featuredSection.card_2.title" :subtitle="TC.featuredSection.card_2.content"
                   :cta-button="TC.featuredSection.card_2.ctaButton" :image-url="undefined"/>
