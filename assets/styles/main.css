@@ -38,6 +38,11 @@
         @apply text-gray;
     }
 
+    p {
+        @apply text-sm md:text-base;
+        @apply text-gray;
+    }
+
     html {
         scroll-behavior: smooth;
     }

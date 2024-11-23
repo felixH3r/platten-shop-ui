@@ -16,6 +16,7 @@
     var swiper = new Swiper(".mySwiper", {
       slidesPerView: 1,
       spaceBetween: 34,
+      allowTouchMove: false,
       loop: true,
       centeredSlides: true,
       pagination: {

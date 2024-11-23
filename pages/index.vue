@@ -3,9 +3,9 @@
     <HeaderSection/>
     <FeaturedSection/>
     <ValuesSliderSection/>
-    <CardsSection/>
-    <ContentCardSection/>
     <CustomerSection/>
+    <ContentCardSection/>
+
     <PanelOptionSection/>
   </div>
 </template>

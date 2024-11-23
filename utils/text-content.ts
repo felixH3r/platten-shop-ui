@@ -67,11 +67,16 @@ export const TC = {
   contentCardSection: {
     header: 'Einfach und schnell bestellt!',
     title: 'Handarbeit aus Österreich und Deutschland',
-    content: 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.',
+    content: 'Unsere maßgefertigten Möbelteile werden mit höchster Präzision und Qualität in Österreich und Deutschland hergestellt – und das in Rekordzeit! Dank unserer optimierten Prozesse liefern wir deine individuellen Möbelteile schnell und zuverlässig direkt zu dir nach Hause.\n' +
+        '\n' +
+        'Ob Tischplatten, Möbelfronten oder andere Designkomponenten: Jedes Teil wird genau nach deinen Vorgaben gefertigt, um deinem Zuhause den perfekten Look zu verleihen. Überzeuge dich selbst von unserer Kombination aus Schnelligkeit, Zuverlässigkeit und handwerklicher Perfektion.\n' +
+        '\n' +
+        'Jetzt loslegen: Gestalte deine Möbelteile auf Maß im Konfigurator und erhalte sie in kürzester Zeit!',
     ctaButton: 'Konfigurator',
   },
   customerSection: {
     header: 'Das sagen unsere Kunden!',
+    subHeader: 'Maßgefertigte Möbelteile für kreative Lösungen und beeindruckende Ergebnisse.',
     name_1: 'Max Mustermann',
     content_1: '“Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, “',
     name_2: 'Anna Musterfrau',
