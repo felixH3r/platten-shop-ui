@@ -6,7 +6,7 @@
           <span class="w-full text-center text-gray-500 text-base font-normal leading-relaxed">{{
               TC.valuesSliderSection.subtitle
             }}</span>
-          <h2 class="w-full text-center text-4xl font-bold leading-normal">
+          <h2 class="w-full text-center text-2xl md:text-4xl font-bold leading-normal">
             {{ TC.valuesSliderSection.title }}</h2>
         </div>
         <div class="w-full justify-start lg:items-end items-center lg:gap-16 gap-8 flex lg:flex-row flex-col">

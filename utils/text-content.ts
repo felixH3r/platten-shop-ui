@@ -3,6 +3,17 @@ export const TC = {
     home: 'Home',
     configurator: 'Konfigurator',
   },
+  footer: {
+    menuItems: {
+      about: 'Über uns',
+      contact: 'Kontakt',
+      shipping: 'Versand',
+      payment: 'Zahlung',
+      terms: 'AGB',
+      privacy: 'Datenschutz',
+      support: 'Support',
+    },
+  },
   headerSection: {
     header: 'Möbelteile auf Maß, die begeistern!',
     subHeader: 'Werte deine bestehenden Möbel mit hochwertigen Designfronten auf und erschaffe deinen eigenen Style!',

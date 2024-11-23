@@ -1,7 +1,7 @@
 <template>
   <section class="flex flex-col items-center justify-center py-12 md:py-24">
     <div class="w-full flex-col justify-start items-center gap-3 flex text-center">
-      <h2 class="text-4xl font-bold">{{ TC.customerSection.header }}</h2>
+      <h2 class="text-2xl md:text-4xl font-bold">{{ TC.customerSection.header }}</h2>
       <p class="text-base font-normal text-gray-500 lg:max-w-2xl lg:mx-auto mb-8">
         {{ TC.customerSection.subHeader }} </p>
     </div>

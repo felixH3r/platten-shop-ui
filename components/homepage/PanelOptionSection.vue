@@ -1,7 +1,7 @@
 <template>
   <section class="flex justify-center w-full py-12 md:pb-20 md:pt-24">
     <div class="max-w-screen-xl text-center w-full ">
-      <h2 class="text-4xl font-bold pb-3">{{ TC.panelOptionSection.header }}</h2>
+      <h2 class="text-2xl md:text-4xl font-bold pb-3">{{ TC.panelOptionSection.header }}</h2>
       <p class="pb-14"> Platten auf Maß, die begeistern!</p>
       <PanelOptionsSlider/>
     </div>

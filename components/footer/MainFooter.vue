@@ -5,19 +5,40 @@
         <NuxtLink to="/" class="flex justify-center text-2xl font-bold">FurnTune</NuxtLink>
         <ul class="text-lg flex items-center justify-center flex-col gap-7 md:flex-row md:gap-12 transition-all duration-500 py-10 mb-10 border-b border-gray-200">
           <li>
-            <a href="javascript:;" class="text-gray-800 hover:text-gray-900">Pagedone</a>
+            <NuxtLink class="text-gray-800 hover:text-gray-900">{{
+                TC.footer.menuItems.about
+              }}
+            </NuxtLink>
           </li>
           <li>
-            <a href="javascript:;" class=" text-gray-800 hover:text-gray-900">Products</a>
+            <NuxtLink class=" text-gray-800 hover:text-gray-900">{{
+                TC.footer.menuItems.contact
+              }}
+            </NuxtLink>
           </li>
           <li>
-            <a href="javascript:;" class=" text-gray-800 hover:text-gray-900">Resources</a>
+            <NuxtLink class=" text-gray-800 hover:text-gray-900">{{
+                TC.footer.menuItems.shipping
+              }}
+            </NuxtLink>
           </li>
           <li>
-            <a href="javascript:;" class=" text-gray-800 hover:text-gray-900">Blogs</a>
+            <NuxtLink class=" text-gray-800 hover:text-gray-900">{{
+                TC.footer.menuItems.payment
+              }}
+            </NuxtLink>
           </li>
           <li>
-            <a href="javascript:;" class=" text-gray-800 hover:text-gray-900">Support</a>
+            <NuxtLink class=" text-gray-800 hover:text-gray-900">{{
+                TC.footer.menuItems.terms
+              }}
+            </NuxtLink>
+          </li>
+          <li>
+            <NuxtLink class=" text-gray-800 hover:text-gray-900">{{
+                TC.footer.menuItems.privacy
+              }}
+            </NuxtLink>
           </li>
         </ul>
         <div class="flex space-x-10 justify-center items-center mb-10">
