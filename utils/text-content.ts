@@ -11,6 +11,7 @@ export const TC = {
       payment: 'Zahlung',
       terms: 'AGB',
       privacy: 'Datenschutz',
+      impressum: 'Impressum',
       support: 'Support',
     },
   },

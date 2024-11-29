@@ -4,38 +4,44 @@
       <div class="max-w-3xl mx-auto">
         <NuxtLink to="/" class="flex justify-center text-2xl font-bold">FurnTune</NuxtLink>
         <ul class="text-lg flex items-center justify-center flex-col gap-7 md:flex-row md:gap-12 transition-all duration-500 py-10 mb-10 border-b border-gray-200">
+          <!--          <li>-->
+          <!--            <NuxtLink class="text-gray-800 hover:text-gray-900">{{-->
+          <!--                TC.footer.menuItems.about-->
+          <!--              }}-->
+          <!--            </NuxtLink>-->
+          <!--          </li>-->
+          <!--          <li>-->
+          <!--            <NuxtLink class=" text-gray-800 hover:text-gray-900">{{-->
+          <!--                TC.footer.menuItems.contact-->
+          <!--              }}-->
+          <!--            </NuxtLink>-->
+          <!--          </li>-->
+          <!--          <li>-->
+          <!--            <NuxtLink class=" text-gray-800 hover:text-gray-900">{{-->
+          <!--                TC.footer.menuItems.shipping-->
+          <!--              }}-->
+          <!--            </NuxtLink>-->
+          <!--          </li>-->
+          <!--          <li>-->
+          <!--            <NuxtLink class=" text-gray-800 hover:text-gray-900">{{-->
+          <!--                TC.footer.menuItems.payment-->
+          <!--              }}-->
+          <!--            </NuxtLink>-->
+          <!--          </li>-->
           <li>
-            <NuxtLink class="text-gray-800 hover:text-gray-900">{{
-                TC.footer.menuItems.about
+            <NuxtLink to="/impressum" class=" text-gray-800 hover:text-gray-900">{{
+                TC.footer.menuItems.impressum
               }}
             </NuxtLink>
           </li>
           <li>
-            <NuxtLink class=" text-gray-800 hover:text-gray-900">{{
-                TC.footer.menuItems.contact
-              }}
-            </NuxtLink>
-          </li>
-          <li>
-            <NuxtLink class=" text-gray-800 hover:text-gray-900">{{
-                TC.footer.menuItems.shipping
-              }}
-            </NuxtLink>
-          </li>
-          <li>
-            <NuxtLink class=" text-gray-800 hover:text-gray-900">{{
-                TC.footer.menuItems.payment
-              }}
-            </NuxtLink>
-          </li>
-          <li>
-            <NuxtLink class=" text-gray-800 hover:text-gray-900">{{
+            <NuxtLink to="/agb" class=" text-gray-800 hover:text-gray-900">{{
                 TC.footer.menuItems.terms
               }}
             </NuxtLink>
           </li>
           <li>
-            <NuxtLink class=" text-gray-800 hover:text-gray-900">{{
+            <NuxtLink to="/datenschutz" class=" text-gray-800 hover:text-gray-900">{{
                 TC.footer.menuItems.privacy
               }}
             </NuxtLink>
