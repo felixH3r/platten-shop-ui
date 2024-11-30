@@ -2,7 +2,7 @@
   <div class="
     pr-3 my-5 gap-10 w-full md:w-80
     flex flex-col items-center justify-between">
-    <NuxtImg alt="customer-image" :src="imageSrc" format="webp" loading="lazy"
+    <NuxtImg :alt="altText" :src="imageSrc" format="webp" loading="lazy"
              class="w-36 h-36 object-cover object-top rounded-full block"/>
     <div>
       <h3>{{ name }}</h3>
@@ -16,6 +16,7 @@
 
   const props = defineProps({
     imageSrc: String,
+    altText: String,
     name: String,
     content: String,
   });

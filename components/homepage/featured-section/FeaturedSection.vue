@@ -23,6 +23,7 @@
 
         <IconCard :title="TC.featuredSection.card_1.title" :subtitle="TC.featuredSection.card_1.content"
                   :image-url="'https://plattenshop-uploads.s3.eu-central-1.amazonaws.com/Holzzuschnitte.jpg'"
+                  :image-alt="'Möbelteile auf Maß Bespiele übereinander gelegt.'"
                   :cta-button="TC.featuredSection.card_1.ctaButton"/>
         <IconCard :title="TC.featuredSection.card_2.title" :subtitle="TC.featuredSection.card_2.content"
                   :cta-button="TC.featuredSection.card_2.ctaButton" :image-url="undefined"/>

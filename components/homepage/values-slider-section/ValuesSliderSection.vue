@@ -12,7 +12,7 @@
         <div class="w-full justify-start lg:items-end items-center lg:gap-16 gap-8 flex lg:flex-row flex-col">
           <NuxtImg class="object-cover w-96 h-96 rounded-2xl"
                    src="https://plattenshop-uploads.s3.eu-central-1.amazonaws.com/mc_Esstisch_Skrakant_Render+2.jpg"
-                   alt="How It Works image"/>
+                   alt="Beispiel wie ein Möbelteil auf Maß bei einem Tisch aussehen kann."/>
           <SliderComponent>
             <SliderCard :title="TC.valuesSliderSection.slide_1.title"
                         :subtitle="TC.valuesSliderSection.slide_1.subtitle"

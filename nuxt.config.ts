@@ -5,15 +5,19 @@ export default defineNuxtConfig({
   // Replace head with app.head for Nuxt 3
   app: {
     head: {
-      title: 'platten-shop-ui',
+      title: 'FurnTune - Aus Standard wird Design',
       htmlAttrs: {
-        lang: 'en'
+        lang: 'de'
       },
       meta: [
         {charset: 'utf-8'},
         {name: 'viewport', content: 'width=device-width, initial-scale=1'},
         {hid: 'description', name: 'description', content: ''},
-        {name: 'format-detection', content: 'telephone=no'}
+        {name: 'format-detection', content: 'telephone=no'},
+        {
+          name: 'description',
+          content: 'Entdecke maßgefertigte Möbelteile wie Möbelfronten und Tischplatten bei Furntune. Verwandle Standardmöbel schnell und einfach in einzigartige Designobjekte!'
+        }
       ],
       link: [
         {rel: 'icon', type: 'image/x-icon', href: '/favicon.ico'},

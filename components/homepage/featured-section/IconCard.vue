@@ -23,7 +23,7 @@
       </div>
 
       <div v-if="imageUrl" class="relative hidden h-auto md:w-1/2 md:block">
-        <NuxtImg :src="imageUrl" alt="Header tailwind Section"
+        <NuxtImg :src="imageUrl" :alt="imageAlt"
                  class="h-full ml-auto object-cover rounded-br-xl rounded-tr-xl"></NuxtImg>
       </div>
     </div>
@@ -36,6 +36,7 @@
     title: string,
     subtitle: string,
     imageUrl: string | undefined,
+    imageAlt: string | undefined,
     ctaButton: string,
   }>();
 

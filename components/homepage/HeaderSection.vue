@@ -6,10 +6,14 @@
             md:pb-20
             pt-40
             bg-[url('https://plattenshop-uploads.s3.eu-central-1.amazonaws.com/tisch_sample.jpeg')]
+
             bg-cover bg-center bg-black bg-opacity-25
             bg-blend-overlay
 "
   >
+    <img src="https://plattenshop-uploads.s3.eu-central-1.amazonaws.com/tisch_sample.jpeg"
+         alt="Hochwertige Holzplatte als Tischbeispiel in modernem Design"
+         class="hidden"/>
     <!--    <NuxtImg-->
     <!--        src="https://plattenshop-uploads.s3.eu-central-1.amazonaws.com/tisch_sample.jpeg"-->
     <!--        format="webp"-->
