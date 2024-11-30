@@ -3,7 +3,7 @@
 
   <main class="max-w-screen-xl mt-32 mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <h1 class="text-3xl font-bold mb-4">Allgemeine Geschäftsbedingungen (AGB)</h1>
-    <NuxtLink class="btn w-1/3" target="_blank"
+    <NuxtLink class="btn md:w-1/3" target="_blank"
               to="https://plattenshop-uploads.s3.eu-central-1.amazonaws.com/General+Terms+and+Conditions.pdf">AGB in PDF
       zum Download
     </NuxtLink>

@@ -1,12 +1,12 @@
 <template>
-  <div class="pt-32 pb-60 px-24 max-w-screen-xl flex flex-col gap-5 mx-auto">
+  <div class="pt-32 pb-60 px-5 md:px-24 w-full md:max-w-screen-xl flex flex-col gap-5 mx-auto overflow-hidden">
     <h1>Datenschutzerklärung</h1>
     <p>Stand: 29. November 2024</p>
-    <NuxtLink class="btn w-1/3" target="_blank"
+    <NuxtLink class="btn md:w-1/3" target="_blank"
               to="https://plattenshop-uploads.s3.eu-central-1.amazonaws.com/Data+Protection+Declaration+Nov+24.pdf">
       Datenschutzerklärung als PDF zum Download
     </NuxtLink>
-    <h2>Inhaltsübersicht</h2>
+    <h2 class="text-xl">Inhaltsübersicht</h2>
     <ul class="index text-underline">
       <li><a class="index-link text-blue-600" href="#m3">Verantwortlicher</a></li>
       <li><a class="index-link text-blue-600" href="#mOverview">Übersicht der Verarbeitungen</a></li>
