@@ -85,7 +85,7 @@ export default defineNuxtConfig({
   },
 
   gtag: {
-    id: 'GTM-WTKNX3S4'
+    id: 'G-VZ5HE6C3RE'
   },
 
   compatibilityDate: '2024-10-29'
