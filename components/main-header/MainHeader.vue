@@ -35,7 +35,11 @@
           <li><a>Item 3</a></li>
         </ul>
       </div>
-      <NuxtLink :to="'/'" class="btn btn-ghost text-xl">FurnTune</NuxtLink>
+      <div class="flex items-center">
+        <LogoSVG class="w-10 h-10"/>
+        <NuxtLink :to="'/'" class="btn btn-ghost text-xl">FurnTune</NuxtLink>
+      </div>
+
     </div>
     <div class="hidden lg:flex">
       <ul class="menu menu-horizontal px-1">
@@ -89,6 +93,7 @@
   import {useMainStore} from "~/store/mainStore";
   import CartButton from "~/components/main-header/CartButton.vue";
   import {vOnClickOutside} from '@vueuse/components';
+  import LogoSVG from "~/components/icons/LogoSVG.vue";
 
   const props = defineProps({
     showToConfigurator: Boolean,

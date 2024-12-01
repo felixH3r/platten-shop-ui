@@ -50,15 +50,7 @@ export default defineNuxtConfig({
 
   // Remove buildModules (deprecated in Nuxt 3)
   // Add GraphQL module directly to modules
-  modules: [
-    '@pinia/nuxt',
-    '@nuxtjs/google-fonts',
-    'nuxt-medusa',
-    '@nuxt/image',
-    '@nuxtjs/tailwindcss',
-    '@vueuse/nuxt',
-
-  ],
+  modules: ['@pinia/nuxt', '@nuxtjs/google-fonts', 'nuxt-medusa', '@nuxt/image', '@nuxtjs/tailwindcss', '@vueuse/nuxt', 'nuxt-gtag'],
 
   plugins: [],
 
@@ -90,6 +82,10 @@ export default defineNuxtConfig({
       stripe_publishable_key: process.env.STRIPE_PUBLISHABLE_KEY,
       redirect_url: process.env.REDIRECT_URL
     }
+  },
+
+  gtag: {
+    id: 'GTM-WTKNX3S4'
   },
 
   compatibilityDate: '2024-10-29'
