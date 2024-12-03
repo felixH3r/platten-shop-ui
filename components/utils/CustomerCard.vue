@@ -1,7 +1,7 @@
 <template>
   <div class="
     pr-3 my-5 gap-10 w-full md:w-80
-    flex flex-col items-center justify-between">
+    flex flex-col items-center justify-start">
     <NuxtImg :alt="altText" :src="imageSrc" format="webp" loading="lazy"
              class="w-36 h-36 object-cover object-top rounded-full block"/>
     <div>

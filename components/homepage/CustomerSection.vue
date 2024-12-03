@@ -7,12 +7,12 @@
     </div>
     <div class="flex flex-col w-full max-w-screen-xl md:flex-row justify-between md:gap-8">
       <CustomerCard
-          :image-src="'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=2574&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'"
+          :image-src="'https://plattenshop-uploads.s3.eu-central-1.amazonaws.com/MoritzHolzleitner.jpg'"
           :alt-text="'Bild glücklichem Kunden der Möbelteile bei FurnTune gekauft hat'"
           :name="TC.customerSection.name_1"
           :content="TC.customerSection.content_1"/>
       <CustomerCard
-          :image-src="'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=2574&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'"
+          :image-src="'https://plattenshop-uploads.s3.eu-central-1.amazonaws.com/Alexander+Grieshofer.jpg'"
           :alt-text="'Bild glücklichem Kunden der Möbelteile bei FurnTune gekauft hat'"
           :name="TC.customerSection.name_2"
           :content="TC.customerSection.content_2"/>

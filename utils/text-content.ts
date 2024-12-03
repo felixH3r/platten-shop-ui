@@ -89,12 +89,12 @@ export const TC = {
   customerSection: {
     header: 'Das sagen unsere Kunden!',
     subHeader: 'Maßgefertigte Möbelteile für kreative Lösungen und beeindruckende Ergebnisse.',
-    name_1: 'Max Mustermann',
-    content_1: '“Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, “',
-    name_2: 'Anna Musterfrau',
-    content_2: '“Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, “',
+    name_1: 'Moritz Holzleitner',
+    content_1: '„Die maßgefertigten Möbelteile waren genau das, was ich gesucht habe, um mein Homeoffice aufzuwerten. Besonders beeindruckt hat mich die Kombination aus schneller Lieferung und hervorragender Verarbeitung. Einfach großartig, wenn man flexibel gestalten und dabei keine Kompromisse bei der Qualität eingehen möchte!“',
+    name_2: 'Alexander Grieshofer',
+    content_2: '„Ich bin begeistert, wie individuell ich meine Wohnräume gestalten konnte. Die bestellten Fronten und Platten wurden exakt nach meinen Wünschen gefertigt und innerhalb kürzester Zeit geliefert. Für alle, die Wert auf hochwertige Verarbeitung und schnelle Lieferung legen, absolut empfehlenswert!“',
     name_3: 'Alex Mayer',
-    content_3: '“Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, “',
+    content_3: '„Ich hätte nie gedacht, wie einfach es ist, meine alten Möbel zu einem echten Hingucker zu machen. Die bestellten Teile passten perfekt und waren schneller geliefert, als ich erwartet hatte. Die Qualität hat mich auf ganzer Linie überzeugt – präzise gefertigt und wunderschön verarbeitet!“',
   },
   panelOptionSection: {
     header: 'Große Auswahl an verschiedene Platten',
