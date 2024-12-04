@@ -1,6 +1,6 @@
 <template>
-  <div class=" layout-wrapper">
-    <main-header :show-to-configurator="onHome"/>
+  <div class="layout-wrapper">
+    <main-header :show-to-configurator="onHome" v-if="showHeader"/>
     <NuxtPage/>
     <main-footer v-if="showFooter"/>
   </div>
@@ -15,7 +15,12 @@
 
   const showFooter = computed((): boolean => {
     const route = useRoute();
-    return route.path !== '/shop-app' && route.path !== '/cart' && route.path !== '/shipment' && route.path !== '/payment';
+    return route.path !== '/shop-app' && route.path !== '/cart' && route.path !== '/shipment' && route.path !== '/payment' && route.path !== '/';
+  });
+
+  const showHeader = computed((): boolean => {
+    const route = useRoute();
+    return route.path !== '/';
   });
 </script>
 
