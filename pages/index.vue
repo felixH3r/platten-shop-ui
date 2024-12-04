@@ -1,8 +1,8 @@
 <template>
-  <section class="h-[100vh] flex items-center">
-    <div class="w-full max-w-7xl px-4 md:px-5 lg:px-5 mx-auto">
+  <section class="h-[100vh] bg-base-200 md:bg-white flex items-center">
+    <div class="w-full max-w-7xl md:px-5 lg:px-5 mx-auto">
       <div
-          class="w-full md:px-16 px-10 md:pt-16 pt-10 pb-10 bg-base-200 rounded-2xl flex-col justify-end items-center lg:gap-28 md:gap-16 gap-10 inline-flex shadow-xl">
+          class="w-full md:px-16 px-10 md:pt-16 pt-10 pb-10 md:bg-base-200 rounded-2xl flex-col justify-end items-center lg:gap-28 md:gap-16 gap-10 inline-flex md:shadow-xl">
         <div class="flex-col justify-end items-center lg:gap-16 gap-10 flex">
           <LogoInclTextSVG class="w-[300px]"/>
           <div class="flex-col justify-center items-center gap-10 flex">
