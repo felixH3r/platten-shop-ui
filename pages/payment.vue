@@ -88,11 +88,12 @@
       confirmParams: {
         return_url: `${redirectUrl}/thank-you/${useBackendDataStore().getCart.id}`,
       },
-      redirect: "if_required"
     });
     if (error) {
       console.log('there is some stripe error');
     }
+
+    // most probably not reached code because of the redirect
     useBackendDataStore().completeCart();
     localStorage.removeItem('cart_id');
     console.log('payment done');
