@@ -81,7 +81,7 @@
       console.log('submitError');
       return;
     }
-    const redirectUrl = config.public.redirect_url || 'https://meine-holzplatte.at';
+    const redirectUrl = config.public.redirect_url || 'https://furntune.at';
     const {error} = await stripe.confirmPayment({
       elements,
       clientSecret: clientSecret.value,
